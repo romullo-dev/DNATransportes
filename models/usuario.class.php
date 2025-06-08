@@ -23,9 +23,24 @@ class  usuario
     {
         return $this->crud->delete($condicao);
     }
+
+    public function update ($dados, $condicao)
+    {
+        return $this->crud->update($dados, $condicao);
+    }
+
+    public function read ($condicao)
+    {
+        return $this->crud->read($condicao);
+    }
     
 }
 
 
+$usuario = new Usuario();
+$usuarios = $usuario->read(''); 
+echo "<pre>";
+var_dump($usuarios);
+echo "</pre>";
 
 
