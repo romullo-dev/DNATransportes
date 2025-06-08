@@ -26,5 +26,12 @@ class Motorista
     {
         return $this->crud->delete($condicao);
     }
+
+    public function gerar_motorista ()
+    {
+        return $this->crud->gerarFormularioInserir();
+    }
 }
+
+
 

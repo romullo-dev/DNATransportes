@@ -79,4 +79,51 @@ class Crud
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function gerarFormularioInserir()
+    {
+        $sql = "DESCRIBE {$this->tabela}";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $campos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $form = '<form method="POST" enctype="multipart/form-data">' . PHP_EOL;
+
+        foreach ($campos as $campo) {
+            $nomeCampo = $campo['Field'];
+            $tipoCampo = $campo['Type'];
+
+            // Ignora campo auto_increment (ex: id_usuario)
+            if (strpos($campo['Extra'], 'auto_increment') !== false) {
+                continue;
+            }
+
+            // Detectar tipo
+            $tipoInput = 'text';
+            if (str_contains($tipoCampo, 'int')) $tipoInput = 'number';
+            elseif (str_contains($tipoCampo, 'date')) $tipoInput = 'date';
+            elseif (str_contains($tipoCampo, 'text')) $tipoInput = 'textarea';
+            elseif (str_contains($nomeCampo, 'senha')) $tipoInput = 'password';
+            elseif (str_contains($nomeCampo, 'email')) $tipoInput = 'email';
+            elseif (str_contains($nomeCampo, 'foto')) $tipoInput = 'file';
+
+            $label = ucwords(str_replace('_', ' ', $nomeCampo));
+
+            $form .= '<div class="mb-3">' . PHP_EOL;
+            $form .= "<label for=\"{$nomeCampo}\" class=\"form-label\">{$label}</label>" . PHP_EOL;
+
+            if ($tipoInput === 'textarea') {
+                $form .= "<textarea name=\"{$nomeCampo}\" id=\"{$nomeCampo}\" class=\"form-control\"></textarea>" . PHP_EOL;
+            } else {
+                $form .= "<input type=\"{$tipoInput}\" name=\"{$nomeCampo}\" id=\"{$nomeCampo}\" class=\"form-control\">" . PHP_EOL;
+            }
+
+            $form .= '</div>' . PHP_EOL;
+        }
+
+        $form .= '<button type="submit" class="btn btn-primary">Salvar</button>' . PHP_EOL;
+        $form .= '</form>';
+
+        return $form;
+    }
 }

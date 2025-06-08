@@ -33,14 +33,17 @@ class  usuario
     {
         return $this->crud->read($condicao);
     }
+
+    public function gerarFormulario()
+    {
+        return $this->crud->gerarFormularioInserir();
+    }
     
 }
 
 
+
 $usuario = new Usuario();
-$usuarios = $usuario->read(''); 
-echo "<pre>";
-var_dump($usuarios);
-echo "</pre>";
+echo $usuario->gerarFormulario();
 
 

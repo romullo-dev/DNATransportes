@@ -10,3 +10,8 @@ if (isset($pagina)) {
     $objController = new Controller();
     $objController->redirecionar($pagina);
 }
+
+if(isset($_GET['motorista'])) {
+    $objController = new Controller();
+    $objController->gerar_Motorista();
+}
