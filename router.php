@@ -12,6 +12,20 @@ if (isset($pagina)) {
 }
 
 if(isset($_GET['motorista'])) {
+    $formulario = 'motorista';
     $objController = new Controller();
-    $objController->gerar_Motorista();
+    $objController->gerar_Motorista($formulario);
+}
+
+if(isset($_POST['motorista'])) {
+    
+    $controller = new Controller();
+    $dados =  [
+        'cnh'=> $_POST['cnh'],
+        'categoria'=> $_POST['categoria'],
+        'validade_cnh'=> $_POST['validade_cnh'],
+        'id_Usuario'=> $_POST['id_Usuario'],
+    ];
+
+    $controller->inserirMotorista($dados);
 }

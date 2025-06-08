@@ -11,11 +11,17 @@ class Controller
         require_once 'views/' . $pagina . '.php';
     }
 
-    public function gerar_Motorista ()
+    public function gerar_Motorista ($formulario)
     {
         $moto = new Motorista();
-        echo $moto->gerar_motorista();
+        echo $moto->gerar_motorista($formulario);
         //require_once 'views/Motorista.php';
+    }
+
+    public function inserirMotorista ($dados)
+    {
+        $moto = new Motorista();
+        $moto->Adicionar($dados);
     }
 
 }

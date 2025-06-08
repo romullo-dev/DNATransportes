@@ -60,6 +60,7 @@ class Crud
 
     public function read($joins = [], $condicao = [])
     {
+          
         $sql = "SELECT * FROM {$this->tabela}";
         foreach ($joins as $join) {
             $sql .= "{$join['tipo']} JOIN {$join['tabela']} ON {$join['condicao']}";
@@ -80,8 +81,9 @@ class Crud
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function gerarFormularioInserir()
+    public function gerarFormularioInserir($formulario)
     {
+        $form = $formulario;
         $sql = "DESCRIBE {$this->tabela}";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -121,7 +123,7 @@ class Crud
             $form .= '</div>' . PHP_EOL;
         }
 
-        $form .= '<button type="submit" class="btn btn-primary">Salvar</button>' . PHP_EOL;
+$form .= "<button type=\"submit\" class=\"btn btn-primary\" name=\"{$formulario}\">Salvar</button>" . PHP_EOL;
         $form .= '</form>';
 
         return $form;

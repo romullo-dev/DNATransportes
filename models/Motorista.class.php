@@ -27,9 +27,9 @@ class Motorista
         return $this->crud->delete($condicao);
     }
 
-    public function gerar_motorista ()
+    public function gerar_motorista ($formulario)
     {
-        return $this->crud->gerarFormularioInserir();
+        return $this->crud->gerarFormularioInserir($formulario);
     }
 }
 
