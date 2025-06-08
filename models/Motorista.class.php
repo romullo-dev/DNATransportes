@@ -21,16 +21,10 @@ class Motorista
     {
         return $this->crud->inserir($dados);
     }
+
+    public function delete ($condicao)
+    {
+        return $this->crud->delete($condicao);
+    }
 }
 
-$motorista = new Motorista(
-);
-
-$dados = [
-          'cnh' => '12345678900',
-        'categoria' => 'B',
-        'validade_cnh' => '2027-05-10',
-        'id_Usuario' => 1
-];
-
-$motorista->Adicionar ($dados);

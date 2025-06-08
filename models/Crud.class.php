@@ -21,5 +21,22 @@ class Crud
         }
         return $query->execute();
     }
+
+    public function delete ($condicao)
+    {
+        $where = implode (" AND ", array_map( function ($campo){
+            return "{$campo} = :{$campo}";
+        }, array_keys( $condicao )));
+
+        $sql = "DELETE FROM {$this->tabela} WHERE {$where}";
+
+        $query = $this->db->prepare($sql);
+
+        foreach ($condicao as $campo => $value) {
+            $query->bindValue(":{$campo}", $value );
+        }
+
+        return $query->execute();
+    }
 }
 

@@ -18,23 +18,14 @@ class  usuario
     {
         return $this->crud->inserir($dados);
     }
+
+    public function delete($condicao) 
+    {
+        return $this->crud->delete($condicao);
+    }
     
 }
 
 
-$usuario = new usuario();
-
-$dados = [
-    'nome_usuario' => 'Carlos Oliveira',
-    'user' => 'carlos.oliveira3',
-    'senha' => 'senha123',
-    'tipo_usuario' => 'Motorista',
-    'cpf' => '12345678404',
-    'status_funcionario' => 'Ativo',
-    'email' => 'carlos@example.com',
-    'foto' => 'fotos/carlos.jpg'
-];
-
-$usuario->inserir($dados);
 
 
