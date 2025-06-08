@@ -39,4 +39,15 @@ class Crud
         return $query->execute();
     }
 }
+$usuario = new usuario();
+$usuario->inserir([
+    'nome_usuario' => 'Carlos Silva',
+    'user' => 'carlos',
+    'senha' => '12345',
+    'tipo_usuario' => 'Motorista',
+    'cpf' => '12345678901',
+    'status_funcionario' => 'Ativo',
+    'email' => 'carlos@email.com',
+    'foto' => 'foto.png'
+]);
 
