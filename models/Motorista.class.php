@@ -31,6 +31,8 @@ class Motorista
     {
         return $this->crud->gerarFormularioInserir($formulario);
     }
+
+    
 }
 
 
