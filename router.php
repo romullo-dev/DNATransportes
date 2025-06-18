@@ -29,3 +29,13 @@ if(isset($_POST['motorista'])) {
 
     $controller->inserirMotorista($dados);
 }
+
+
+if(isset($_GET['usuario'])) {
+    $ControllerUsuario = new ControllerUsuario();
+    $ControllerUsuario->formulario();
+
+
+
+}
+

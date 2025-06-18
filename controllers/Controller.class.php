@@ -24,5 +24,7 @@ class Controller
         $moto->Adicionar($dados);
     }
 
+    
+
 }
 

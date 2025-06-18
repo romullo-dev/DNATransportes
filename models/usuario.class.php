@@ -38,8 +38,17 @@ class  usuario
     {
         return $this->crud->gerarFormularioInserir($formulario);
     }
+
+     public function consulta()
+    {
+        return $this->crud->consulta();
+    }
+
+
     
 }
+
+
 
 
 
