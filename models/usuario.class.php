@@ -2,36 +2,35 @@
 require_once "Conexao.class.php";
 require_once "Crud.class.php";
 
-class  usuario  
+class  Usuario
 {
     private $db;
     private $crud;
 
-    public function __construct( )
+    public function __construct()
     {
-        $this->db = (new Conexao ()) ->conectar();
-        $this->crud = new Crud($this->db, 'usuario') ;
+        $this->db = (new Conexao())->conectar();
+        $this->crud = new Crud($this->db, 'usuario');
     }
 
-    
-    public function inserir ($dados)
+    public function inserir($dados)
     {
         return $this->crud->inserir($dados);
     }
 
-    public function delete($condicao) 
+    public function delete($condicao)
     {
         return $this->crud->delete($condicao);
     }
 
-    public function update ($dados, $condicao)
+    public function update($dados, $condicao)
     {
         return $this->crud->update($dados, $condicao);
     }
 
-    public function read ($condicao)
+    public function read($condicao)
     {
-        return $this->crud->read($condicao);
+        return $this->crud->read([], $condicao);
     }
 
     public function gerarFormulario($formulario)
@@ -39,6 +38,7 @@ class  usuario
         return $this->crud->gerarFormularioInserir($formulario);
     }
 
+<<<<<<< HEAD
      public function consulta()
     {
         return $this->crud->consulta();
@@ -55,3 +55,16 @@ class  usuario
 
 
 
+=======
+    public function Login(array $dados)
+    {
+        return $this->crud->login($dados);
+    }
+     public function readLike(array $dados, $coluna)
+    {
+        return $this->crud->readLike($dados, $coluna);
+    }
+
+    
+}
+>>>>>>> 96d6fb22c0c7162f4afb1dc2a01da67a6ec7aeb5

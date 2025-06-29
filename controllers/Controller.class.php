@@ -1,11 +1,12 @@
 <?php
-include_once("../models/Motorista.class.php");
 class Controller
 {
     public function redirecionar($pagina)
     {
         //iniciar sessao
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start(); 
+        }
         //incluir menu
         //incluir a view
         require_once 'views/' . $pagina . '.php';
