@@ -13,15 +13,13 @@ class VeiculoController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $modelos = Veiculo::with('modelo_veiculo')
-            ->paginate(perPage: 10);
-        $modeloSelect = Veiculo::with('modelo_veiculo')->get();
+{
+    $modelos = Veiculo::with('modelo_veiculo')->paginate(10);
+    $modeloSelect = ModeloVeiculo::all();
 
-        //dd($modelos);
-
-        return view('veiculo.veiculo.index', compact('modelos', 'modeloSelect'));
-    }
+    return view('veiculo.veiculo.index', compact('modelos', 'modeloSelect'));
+}
+    
 
     /**
      * Show the form for creating a new resource.

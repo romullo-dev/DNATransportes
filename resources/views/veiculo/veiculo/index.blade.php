@@ -111,7 +111,8 @@
 
         </div> 
 
-        @include('veiculo.veiculo.modais.novo')
+        @include('veiculo.veiculo.modais.novo', ['modelos' => $modelos, 'modeloSelect' => $modeloSelect])
+
 
     </div>
 @endsection
