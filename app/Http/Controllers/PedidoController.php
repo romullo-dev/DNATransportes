@@ -56,7 +56,6 @@ class PedidoController extends Controller
             'notaFiscal.enderecoDestinatario',
             'frete',
             'rotas.historicos',
-            'rotas'
         ])
             ->findOrFail($id);
 

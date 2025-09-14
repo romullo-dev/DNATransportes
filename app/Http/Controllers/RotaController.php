@@ -103,7 +103,7 @@ class RotaController extends Controller
             $rota = new Rota();
             $rota->tipo = $request->tipo;
             $rota->id_origem = $request->id_origem;
-            $rota->id_destino = $request->id_origem; 
+            $rota->id_destino = $request->id_origem;
             $rota->distancia = $request->distancia;
             $rota->previsao = $request->previsao;
             $rota->data_rota = $request->data_inicio;
@@ -120,14 +120,14 @@ class RotaController extends Controller
                     'rotas_id_rotas' => $rota->id_rotas,
                     'pedido_id_pedido' => $request->pedido_id_pedido,
                     'data' => $request->data_inicio,
-                    'status' => 'Aguardando liberação', 
-                    'foto' => '', 
+                    'status' => 'Aguardando liberação',
+                    'foto' => '',
                 ]);
 
                 $pedido = Pedido::find($request->pedido_id_pedido);
                 if ($pedido) {
-                    $pedido->status = 'Em Separação'; 
-                    $pedido->save(); 
+                    $pedido->status = 'Em Separação';
+                    $pedido->save();
                 }
             }
 
@@ -152,7 +152,7 @@ class RotaController extends Controller
         try {
             $data = $request->validated();
 
-            dd($data);
+
 
             $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
 
@@ -180,21 +180,6 @@ class RotaController extends Controller
                     $pedido->save();
                 }
             }
-
-            if ($data['status'] === 'Em trânsito') {
-            $pedido = Pedido::find($data['pedido_id_pedido']);
-            if ($pedido) {
-                // Verifica se a rota é de "entrega" e atualiza o status do pedido para "Em rota entrega"
-                if ($data['tipo'] === 'entrega') {
-                    $pedido->status = 'Em rota entrega'; // Atualizando o status do pedido para "Em rota entrega"
-                    $pedido->save();
-                } else {
-                    // Se não for rota de entrega, apenas atualiza para "Em trânsito"
-                    $pedido->status = 'Em trânsito';
-                    $pedido->save();
-                }
-            }
-        }
 
             if ($data['status'] === 'Finalizado') {
                 $pedido = Pedido::find($data['pedido_id_pedido']);
