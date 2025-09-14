@@ -54,25 +54,25 @@
                         <th>UF</th>
                         <th>Valor do Frete</th>
                         <th></th>
-
-
                     </tr>
                 </thead>
                 <tbody>
 
                     @foreach ($result as $pedidos)
-                        <td>{{ \Carbon\Carbon::parse($pedidos->created_at)->format('d/m/Y') }}</td>
-                        <td>{{ $pedidos->notaFiscal->remetente->nome }}</td>
-                        <td>{{ $pedidos->notaFiscal->destinatario->nome }}</td>
-                        <td>{{ $pedidos->notaFiscal->destinatario->documento }}</td>
-                        <td>{{ $pedidos->notaFiscal->enderecoRemetente->uf }}</td>
-                        <td>R$ {{ $pedidos->frete->valor_frete }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal"
-                                data-bs-target="#modalShow{{ $pedidos->id_pedido }}">
-                                <i class="bi bi-eye-fill"></i>
-                            </button>
-                        </td>
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($pedidos->created_at)->format('d/m/Y') }}</td>
+                            <td>{{ $pedidos->notaFiscal->remetente->nome }}</td>
+                            <td>{{ $pedidos->notaFiscal->destinatario->nome }}</td>
+                            <td>{{ $pedidos->notaFiscal->destinatario->documento }}</td>
+                            <td>{{ $pedidos->notaFiscal->enderecoRemetente->uf }}</td>
+                            <td>R$ {{ number_format($pedidos->frete->valor_frete, 2, ',', '.') }}</td> {{-- Formatação para valor do frete --}}
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal"
+                                    data-bs-target="#modalShow{{ $pedidos->id_pedido }}">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                            </td>
+                        </tr> 
                     @endforeach
 
                 </tbody>
@@ -80,11 +80,12 @@
         </div>
         <br>
 
-         <div class="d-flex justify-content-center">
-            {{ $result->links('pagination::bootstrap-5') }}
-        </div> 
 
-                @include('pedido.modais.show')
+        <div class="d-flex justify-content-center">
+            {{ $result->links('pagination::bootstrap-5') }}
+        </div>
+
+        @include('pedido.modais.show')
 
     </div>
 @endsection

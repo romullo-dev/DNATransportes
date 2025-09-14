@@ -15,18 +15,12 @@ use Illuminate\Http\Request;
 
 class RotaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $rota =  Rota::with(['pedidos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
         return View('rotas.index', compact('rota'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $centros = CentroDistribuicao::where('status', 'Ativo')->get();
@@ -83,9 +77,6 @@ class RotaController extends Controller
         return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Rota $rotas)
     {
         $data = $rotas;
@@ -95,19 +86,19 @@ class RotaController extends Controller
         ]);
     }
 
-
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function historico(RotaRequest $request)
     {
-
         try {
             $data = $request->validated();
             $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
 
+            $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+                ->orderBy('data', 'desc')
+                ->first();
+
+            if ($ultimoHistorico && $ultimoHistorico->status == 'Finalizado') {
+                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
+            }
 
             if ($request->hasFile('foto')) {
                 $path = $request->file('foto')->store('historicos', 'public');
@@ -116,17 +107,14 @@ class RotaController extends Controller
                 $data['foto'] = null;
             }
 
-
             Historico::create($data);
+
             return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('rotas.index')->with('error', 'Erro ao alterada a rota.' . $e);
+            return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function store_entrega(Request $request)
     {
         try {
@@ -174,9 +162,6 @@ class RotaController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Rota $rota)
     {
         //

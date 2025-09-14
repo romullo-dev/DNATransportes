@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CentroController;
+use App\Http\Controllers\EnderecoController;
 use App\Http\Controllers\ImportacaoController;
 use App\Http\Controllers\ModeloController;
 use App\Http\Controllers\MotoristaController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\RotaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\VeiculoController;
+use App\Models\CentroDistribuicao;
 use App\Models\Pedido;
 
 Route::get('/', function () {
@@ -72,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('centro')->name('centro.')->group(function () {
         Route::get('/', [CentroController::class, 'index'])->name('index');
         Route::post('/store', [CentroController::class, 'store'])->name('store');
+
     });
 
     Route::prefix('importacao')->name('importacao.')->group(function () {
@@ -83,6 +86,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [PedidoController::class, 'index'])->name('index');
         Route::get('/rastreamento', [PedidoController::class, 'rastreamento'])->name('rastreamento');
         Route::post('/show', [PedidoController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('endereco')->name('endereco.')->group(function () {
+        Route::get('/', [EnderecoController::class, 'index'])->name('index');
     });
 
     Route::prefix('rotas')->name('rotas.')->group(function () {

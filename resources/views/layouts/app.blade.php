@@ -19,8 +19,10 @@
         body {
             display: flex;
             flex-direction: column;
-            background-color: #101010; /* cor principal do sistema */
-            color: #213d55; /* cor de texto padrão clara */
+            background-color: #101010;
+            /* cor principal do sistema */
+            color: #213d55;
+            /* cor de texto padrão clara */
         }
 
         main {
@@ -35,7 +37,8 @@
         .navbar-brand {
             font-weight: bold;
             font-size: 1.4rem;
-            color: #ffc107 !important; /* marca em dourado */
+            color: #ffc107 !important;
+            /* marca em dourado */
         }
 
         .nav-link {
@@ -107,7 +110,7 @@
                                     <i class="bi bi-truck-front-fill me-1"></i> Rastreamento
                                 </a>
                             </li>
-    
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="operacionalDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -125,7 +128,7 @@
                                     </li>
                                 </ul>
                             </li>
-    
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="cadastrosDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -138,9 +141,9 @@
                                             <i class="bi bi-truck fs-5 text-primary"></i> Centro de Distribuição
                                         </a>
                                     </li>
-    
+
                                     <li class="dropdown-divider"></li>
-    
+
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2"
                                             href="{{ route('veiculo.index') }}">
@@ -175,21 +178,44 @@
                                                 class="bi bi-person-badge"></i> Motorista</a></li>
                                     <li><a class="dropdown-item" href="{{ route('read-user') }}"><i
                                                 class="bi bi-people"></i> Usuários</a></li>
+
                                 </ul>
                             </li>
-    
+
+                           <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="ajusteDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-gear-fill me-1"></i> Ajuste
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="ajusteDropdown">
+        <li>
+            <a class="dropdown-item" href="{{ route('endereco.index') }}">
+                <i class="bi bi-house-door me-2"></i> Endereço
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">
+                <i class="bi bi-person-circle me-2"></i> Perfil
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">
+                <i class="bi bi-sliders me-2"></i> Configurações
+            </a>
+        </li>
+    </ul>
+</li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{{ route('importacao.index') }}">
                                     <i class="bi bi-calculator me-1"></i> Cotação
                                 </a>
                             </li>
-    
+
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="?AWB">
                                     <i class="bi bi-airplane-engines-fill me-1"></i> Tracking Aéreo
                                 </a>
                             </li>
-    
+
                             <!-- Usuário / Logout -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-light ms-2" href="#" role="button"
@@ -214,7 +240,7 @@
                                         </a>
                                     </li>
                                 </ul>
-    
+
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                     style="display: none;">
                                     @csrf
@@ -242,13 +268,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-

@@ -60,7 +60,7 @@
                 <h5 class="mb-0">Mapa da Rota</h5>
             </div>
             <div class="card-body">
-                <div id="map" style="width: 100%; height: 400px; border-radius: 8px; overflow: hidden;"></div>
+                <div id="map" style="width: 100%; height: 500px; border-radius: 8px; overflow: hidden;"></div>
             </div>
         </div>
     </div>
@@ -70,23 +70,25 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
 
     <script>
-        mapboxgl.accessToken = '{{ $mapboxToken }}';
+        //mapboxgl.accessToken = '{{ $mapboxToken }}';
 
         const origem = [{{ $data->origem->longitude }}, {{ $data->origem->latitude }}];
         const destino = [{{ $data->destino->longitude }}, {{ $data->destino->latitude }}];
-        const veiculo = origem;
 
         const map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v12',
+            style: 'mapbox://styles/mapbox/streets-v11',  // Mapa detalhado com ruas e avenidas
             center: origem,
-            zoom: 12
+            zoom: 13,  // Zoom ajustado para maior visibilidade
+            pitch: 45,  // Inclinação para uma visualização 3D
+            bearing: 0
         });
 
         const bounds = new mapboxgl.LngLatBounds();
-        [origem, destino, veiculo].forEach(coord => bounds.extend(coord));
-        map.fitBounds(bounds, { padding: 60 });
+        [origem, destino].forEach(coord => bounds.extend(coord));
+        map.fitBounds(bounds, { padding: 80 });
 
+        // Função para criar o marcador com o nome do motorista e placa no meio da rota
         function createMarkerWithFixedLabel(coordinates, color, labelText, customIconHTML = null) {
             const el = document.createElement('div');
             el.style.position = 'relative';
@@ -97,24 +99,24 @@
             if (customIconHTML) {
                 el.innerHTML = customIconHTML;
             } else {
-                el.style.width = '22px';
-                el.style.height = '22px';
+                el.style.width = '30px';
+                el.style.height = '30px';
                 el.style.backgroundColor = color;
                 el.style.borderRadius = '50%';
                 el.style.border = '2px solid white';
-                el.style.boxShadow = '0 0 6px rgba(0,0,0,0.3)';
+                el.style.boxShadow = '0 0 8px rgba(0,0,0,0.5)';
             }
 
             const label = document.createElement('div');
             label.textContent = labelText;
-            label.style.marginTop = '6px';
+            label.style.marginTop = '8px';
             label.style.backgroundColor = '#264653';
             label.style.color = 'white';
-            label.style.padding = '4px 10px';
-            label.style.borderRadius = '6px';
-            label.style.fontSize = '13px';
-            label.style.fontWeight = '500';
-            label.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+            label.style.padding = '6px 12px';
+            label.style.borderRadius = '8px';
+            label.style.fontSize = '14px';
+            label.style.fontWeight = '600';
+            label.style.boxShadow = '0 4px 8px rgba(0,0,0,0.4)';
             label.style.whiteSpace = 'nowrap';
             label.style.pointerEvents = 'none';
             label.style.userSelect = 'none';
@@ -123,21 +125,6 @@
 
             return new mapboxgl.Marker(el).setLngLat(coordinates).addTo(map);
         }
-
-        createMarkerWithFixedLabel(origem, '#2a9d8f', "Origem - {{ $data->origem->nome }}");
-        createMarkerWithFixedLabel(destino, '#e76f51', "Destino - {{ $data->destino->nome }}");
-
-        const truckSVG = `
-            <div style="width:40px; height:40px; display:flex; justify-content:center; align-items:center;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2a9d8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="1" y="3" width="15" height="13"></rect>
-                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                </svg>
-            </div>
-        `;
-        createMarkerWithFixedLabel(veiculo, null, "{{ $data->veiculo->placa }} - {{ $data->motorista->usuario->nome }}", truckSVG);
 
         map.on('load', async () => {
             const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
@@ -150,6 +137,7 @@
                 const duracaoMin = Math.round(data.routes[0].duration / 60);
                 const distanciaKm = (data.routes[0].distance / 1000).toFixed(1);
 
+                // Adicionando a linha da rota ao mapa
                 map.addSource('route', {
                     type: 'geojson',
                     data: {
@@ -168,12 +156,20 @@
                     },
                     paint: {
                         'line-color': '#2a9d8f',
-                        'line-width': 5,
-                        'line-opacity': 0.9
+                        'line-width': 6,
+                        'line-opacity': 0.8
                     }
                 });
 
-                                const infoBox = document.createElement('div');
+                // Calculando o ponto médio da rota
+                const midwayPoint = route.coordinates[Math.floor(route.coordinates.length / 2)];
+
+                
+                // Criando o marcador do motorista no meio da rota, com o nome e placa
+                const motoristaText = "{{ $data->motorista->usuario->nome }} - {{ $data->veiculo->placa }}";
+                createMarkerWithFixedLabel(midwayPoint, '#ff6347', motoristaText);
+
+                const infoBox = document.createElement('div');
                 infoBox.innerHTML = `
                     <div style="
                         position: absolute;
@@ -185,7 +181,7 @@
                         border-radius: 8px;
                         font-size: 14px;
                         font-weight: 500;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
                         z-index: 999;
                     ">
                         🕒 Estimado: ${duracaoMin} min<br>
@@ -193,6 +189,21 @@
                     </div>
                 `;
                 map.getContainer().appendChild(infoBox);
+
+                map.flyTo({
+                    center: midwayPoint,  // Centraliza no ponto médio da rota
+                    zoom: 13,
+                    speed: 1.2,
+                    curve: 1.2
+                });
+
+                // Movendo a câmera para o ponto médio da rota
+                map.flyTo({
+                    center: midwayPoint,  // Centraliza no ponto médio da rota
+                    zoom: 13,
+                    speed: 1.2,
+                    curve: 1.2
+                });
 
             } catch (error) {
                 console.error('Erro ao carregar rota:', error);
