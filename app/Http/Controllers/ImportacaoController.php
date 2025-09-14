@@ -90,8 +90,9 @@ class ImportacaoController extends Controller
             ]);
 
             $pedido = Pedido::create([
-                'codigo_rastreamento' => uniqid('rast_'),
+                'codigo_rastreamento' => uniqid('dna_'),
                 'id_notaFiscal' => $notaFiscal->id_notaFiscal,
+                'status' => $request->status,
             ]);
 
 

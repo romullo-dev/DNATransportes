@@ -22,6 +22,9 @@
                 <div class="mb-3">
                     <input type="file" class="form-control" name="xml" accept=".xml" required>
                 </div>
+
+                <input type="hidden" name="status" value="em preparo">
+
                 <button type="submit" class="btn btn-primary w-100" style="background-color: #005f8f; border: none;">Enviar</button>
             </form>
 

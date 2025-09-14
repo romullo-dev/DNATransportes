@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NotaFiscal;
 use App\Models\Pedido;
+use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
 
 class PedidoController extends Controller
@@ -46,27 +47,56 @@ class PedidoController extends Controller
     }
 
 
-   public function edit($id)
-{
-    // Buscar o pedido e incluir as rotas, agrupando por rota única
-    $pedido = Pedido::with([
-        'notaFiscal.remetente',
-        'notaFiscal.destinatario',
-        'notaFiscal.enderecoRemetente',
-        'notaFiscal.enderecoDestinatario',
-        'frete',
-        'rotas.historicos' // Incluir históricos das rotas
-    ])
-    ->findOrFail($id);
+    public function edit($id)
+    {
+        $pedido = Pedido::with([
+            'notaFiscal.remetente',
+            'notaFiscal.destinatario',
+            'notaFiscal.enderecoRemetente',
+            'notaFiscal.enderecoDestinatario',
+            'frete',
+            'rotas.historicos'
+        ])
+            ->findOrFail($id);
 
-    // Agrupar as rotas pela ID para garantir que não sejam duplicadas
-    $rotas = $pedido->rotas->unique('id_rotas'); // Ajustar aqui para garantir que não duplicamos rotas
+        $rotas = $pedido->rotas->unique('id_rotas');
 
-    // Retornar a view com as rotas únicas
-    return view('pedido.modais.edit', compact('pedido', 'rotas'));
-}
+        return view('pedido.edit', compact('pedido', 'rotas'));
+    }
 
+    public function update(Request $request, $id)
+    {
+        // Encontrar o pedido pelo ID
+        $pedido = Pedido::findOrFail($id);
 
+        // Verificar se o status atual do pedido permite a atualização
+        if ($pedido->status != 'em_rota_entrega') {
+            // Se o status não for 'em_rota_entrega', não permite alteração
+            return redirect()->back()->with('error', 'O status só pode ser alterado quando a carga estiver em rota de entrega.');
+        }
 
+        // Validar os dados recebidos
+        $validated = $request->validate([
+            'status' => 'required|in:em_preparo,no_centro_transferencia,em_transito,em_rota_entrega,entregue',  // Pode adicionar mais status aqui
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validação para a foto
+        ]);
 
+        // Atualizando o status do pedido
+        $pedido->status = $validated['status'];
+
+        // Verificar se há foto e atualizar
+        if ($request->hasFile('foto')) {
+            // Se o pedido já tem uma foto, excluímos a antiga
+
+            // Armazenar a nova foto
+            $path = $request->file('foto')->store('public/fotos_pedidos');
+            $pedido->foto = basename($path);
+        }
+
+        // Salvar a atualização do pedido
+        $pedido->save();
+
+        // Retornar ao usuário com sucesso
+        return redirect()->route('pedidos.index')->with('success', 'Status do pedido atualizado com sucesso!');
+    }
 }

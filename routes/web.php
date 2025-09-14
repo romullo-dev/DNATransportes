@@ -86,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rastreamento', [PedidoController::class, 'rastreamento'])->name('rastreamento');
         Route::post('/show', [PedidoController::class, 'show'])->name('show');
         Route::get('/editar/{id}', [PedidoController::class, 'edit'])->name('edit');
-        Route::post('/editando', [PedidoController::class, 'update'])->name('update');
+        Route::post('/editando/{id}', [PedidoController::class, 'update'])->name('update');
     });
 
     Route::prefix('endereco')->name('endereco.')->group(function () {
