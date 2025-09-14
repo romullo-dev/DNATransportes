@@ -12,12 +12,12 @@ class MotoristaController extends Controller
 {
     public function index()
 {
-    $usuarios = Usuario::with('motorista') // Eager Loading para carregar o motorista
+    $usuarios = Usuario::with('motorista')
         ->where('tipo_usuario', 'motorista')
         ->paginate(10);
 
     $usuariosSelect = Usuario::where('tipo_usuario', 'motorista')
-        ->doesntHave('motorista') // Carregar usuários sem motorista
+        ->doesntHave('motorista') 
         ->get();
 
     return view('motorista.index', compact('usuarios', 'usuariosSelect'));

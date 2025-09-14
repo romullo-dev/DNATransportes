@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Endereco;
+use Doctrine\DBAL\Schema\View;
 use Illuminate\Http\Request;
 
 class EnderecoController extends Controller
@@ -12,48 +13,46 @@ class EnderecoController extends Controller
      */
     public function index()
     {
-        //
+        $result = Endereco::paginate(10);
+        return View('ajuste.endereco.index', compact('result'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Endereco $endereco)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Endereco $endereco)
+    public function update(Request $request, $id_endereco)
     {
-        //
+        $request->validate([
+            'logradouro' => 'required|string',
+            'bairro' => 'required|string',
+            'cidade' => 'required|string',
+            'uf' => 'required|string|max:2',  
+            'cep' => 'required|string|max:8', 
+            'casa' => 'required|string',
+            'observacao' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'latitude' => 'nullable|string',
+        ]);
+
+        $endereco = Endereco::findOrFail($id_endereco);
+
+        $endereco->logradouro = $request->logradouro;
+        $endereco->bairro = $request->bairro;
+        $endereco->cidade = $request->cidade;
+        $endereco->uf = $request->uf;
+        $endereco->cep = $request->cep;
+        $endereco->casa = $request->casa;
+        $endereco->observacao = $request->observacao;
+        $endereco->longitude = $request->longitude;
+        $endereco->latitude = $request->latitude;
+
+        $endereco->save();
+
+        return redirect()->route('endereco.index')->with('success', 'Endereço atualizado com sucesso!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Endereco $endereco)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.

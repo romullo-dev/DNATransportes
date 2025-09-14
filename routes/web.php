@@ -74,7 +74,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('centro')->name('centro.')->group(function () {
         Route::get('/', [CentroController::class, 'index'])->name('index');
         Route::post('/store', [CentroController::class, 'store'])->name('store');
-
     });
 
     Route::prefix('importacao')->name('importacao.')->group(function () {
@@ -90,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('endereco')->name('endereco.')->group(function () {
         Route::get('/', [EnderecoController::class, 'index'])->name('index');
+        Route::put('/{id_endereco}', [EnderecoController::class, 'update'])->name('update');
     });
 
     Route::prefix('rotas')->name('rotas.')->group(function () {
