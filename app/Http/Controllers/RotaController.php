@@ -64,10 +64,9 @@ class RotaController extends Controller
         $rota->save();
 
         if ($rota->tipo === 'transferencia' && $request->filled('pedido_id_pedido')) {
-            // Atualiza o status do pedido associado à rota
             $pedido = Pedido::find($request->pedido_id_pedido);
             if ($pedido) {
-                $pedido->status = 'Aguardando transferencia'; // ou o status que você preferir
+                $pedido->status = 'Aguardando transferencia';
                 $pedido->save();
             }
         }
@@ -85,50 +84,6 @@ class RotaController extends Controller
 
         return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
     }
-
-    public function show(Rota $rotas)
-    {
-        $data = $rotas;
-        return view('rotas.show', [
-            'data' => $data,
-            'mapboxToken' => env('MAPBOX_ACCESS_TOKEN')
-        ]);
-    }
-
-    public function historico(RotaRequest $request)
-{
-    try {
-        $data = $request->validated();
-        $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
-
-        // Verificar o último histórico
-        $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
-            ->orderBy('data', 'desc')
-            ->first();
-
-        // Se o último status da rota for "Finalizado", não permite alteração
-        if ($ultimoHistorico && $ultimoHistorico->status == 'Finalizado') {
-            return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
-        }
-
-        // Se houver uma foto, salva no diretório 'historicos'
-        if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('historicos', 'public');
-            $data['foto'] = $path;
-        } else {
-            $data['foto'] = null;
-        }
-
-        // Cria o histórico da rota
-        Historico::create($data);
-
-        return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
-    } catch (\Exception $e) {
-        return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ' . $e->getMessage());
-    }
-}
-
-
 
     public function store_entrega(Request $request)
     {
@@ -148,7 +103,7 @@ class RotaController extends Controller
             $rota = new Rota();
             $rota->tipo = $request->tipo;
             $rota->id_origem = $request->id_origem;
-            $rota->id_destino = $request->id_origem;
+            $rota->id_destino = $request->id_origem; 
             $rota->distancia = $request->distancia;
             $rota->previsao = $request->previsao;
             $rota->data_rota = $request->data_inicio;
@@ -160,22 +115,103 @@ class RotaController extends Controller
 
             $rota->save();
 
-
             if ($request->filled('pedido_id_pedido')) {
                 Historico::create([
                     'rotas_id_rotas' => $rota->id_rotas,
                     'pedido_id_pedido' => $request->pedido_id_pedido,
                     'data' => $request->data_inicio,
-                    'status' => 'Aguardando liberação',
-                    'foto' => '',
+                    'status' => 'Aguardando liberação', 
+                    'foto' => '', 
                 ]);
+
+                $pedido = Pedido::find($request->pedido_id_pedido);
+                if ($pedido) {
+                    $pedido->status = 'Em Separação'; 
+                    $pedido->save(); 
+                }
             }
 
             return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('rotas.index')->with('error', 'Erro ao cadastrar a rota.' . $e);
+            return redirect()->route('rotas.index')->with('error', 'Erro ao cadastrar a rota: ' . $e->getMessage());
         }
     }
+
+
+    public function show(Rota $rotas)
+    {
+        $data = $rotas;
+        return view('rotas.show', [
+            'data' => $data,
+            'mapboxToken' => env('MAPBOX_ACCESS_TOKEN')
+        ]);
+    }
+
+    public function historico(RotaRequest $request)
+    {
+        try {
+            $data = $request->validated();
+
+            dd($data);
+
+            $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
+
+            $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+                ->orderBy('data', 'desc')
+                ->first();
+
+            if ($ultimoHistorico && $ultimoHistorico->status == 'Finalizado') {
+                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
+            }
+
+            if ($request->hasFile('foto')) {
+                $path = $request->file('foto')->store('historicos', 'public');
+                $data['foto'] = $path;
+            } else {
+                $data['foto'] = null;
+            }
+
+            $historico = Historico::create($data);
+
+            if ($data['status'] === 'Em trânsito') {
+                $pedido = Pedido::find($data['pedido_id_pedido']);
+                if ($pedido) {
+                    $pedido->status = 'Em trânsito';
+                    $pedido->save();
+                }
+            }
+
+            if ($data['status'] === 'Em trânsito') {
+            $pedido = Pedido::find($data['pedido_id_pedido']);
+            if ($pedido) {
+                // Verifica se a rota é de "entrega" e atualiza o status do pedido para "Em rota entrega"
+                if ($data['tipo'] === 'entrega') {
+                    $pedido->status = 'Em rota entrega'; // Atualizando o status do pedido para "Em rota entrega"
+                    $pedido->save();
+                } else {
+                    // Se não for rota de entrega, apenas atualiza para "Em trânsito"
+                    $pedido->status = 'Em trânsito';
+                    $pedido->save();
+                }
+            }
+        }
+
+            if ($data['status'] === 'Finalizado') {
+                $pedido = Pedido::find($data['pedido_id_pedido']);
+                if ($pedido) {
+                    $pedido->status = 'Transferência Finalizada';
+                    $pedido->save();
+                }
+            }
+
+            return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ' . $e->getMessage());
+        }
+    }
+
+
+
 
     public function destroy(Rota $rota)
     {
