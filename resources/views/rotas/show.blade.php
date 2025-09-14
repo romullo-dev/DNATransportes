@@ -17,10 +17,15 @@
                     <p><strong>Capacidade:</strong> KG {{ $data->veiculo->capacidade_kg ?? 'Não informado' }}</p>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }} ({{ $data->origem->uf ?? '--' }})</p>
-                    <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }} ({{ $data->destino->uf ?? '--' }})</p>
-                    <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}</p>
-                    <p><strong>Data de Criação:</strong> {{ $data->historicos->first()->created_at?->format('d/m/Y H:i') ?? '--' }}</p>
+                    <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }}
+                        ({{ $data->origem->uf ?? '--' }})</p>
+                    <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }}
+                        ({{ $data->destino->uf ?? '--' }})</p>
+                    <p><strong>Tipo de Rota:</strong> {{ $data->tipo ?? 'Não informado' }}
+                    <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}
+                    </p>
+                    <p><strong>Data de Criação:</strong>
+                        {{ $data->historicos->first()->created_at?->format('d/m/Y H:i') ?? '--' }}</p>
                 </div>
             </div>
         </div>
@@ -77,16 +82,18 @@
 
         const map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',  // Mapa detalhado com ruas e avenidas
+            style: 'mapbox://styles/mapbox/streets-v11', // Mapa detalhado com ruas e avenidas
             center: origem,
-            zoom: 13,  // Zoom ajustado para maior visibilidade
-            pitch: 45,  // Inclinação para uma visualização 3D
+            zoom: 13, // Zoom ajustado para maior visibilidade
+            pitch: 45, // Inclinação para uma visualização 3D
             bearing: 0
         });
 
         const bounds = new mapboxgl.LngLatBounds();
         [origem, destino].forEach(coord => bounds.extend(coord));
-        map.fitBounds(bounds, { padding: 80 });
+        map.fitBounds(bounds, {
+            padding: 80
+        });
 
         // Função para criar o marcador com o nome do motorista e placa no meio da rota
         function createMarkerWithFixedLabel(coordinates, color, labelText, customIconHTML = null) {
@@ -127,7 +134,8 @@
         }
 
         map.on('load', async () => {
-            const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+            const url =
+                `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
             try {
                 const response = await fetch(url);
@@ -164,7 +172,7 @@
                 // Calculando o ponto médio da rota
                 const midwayPoint = route.coordinates[Math.floor(route.coordinates.length / 2)];
 
-                
+
                 // Criando o marcador do motorista no meio da rota, com o nome e placa
                 const motoristaText = "{{ $data->motorista->usuario->nome }} - {{ $data->veiculo->placa }}";
                 createMarkerWithFixedLabel(midwayPoint, '#ff6347', motoristaText);
@@ -191,7 +199,7 @@
                 map.getContainer().appendChild(infoBox);
 
                 map.flyTo({
-                    center: midwayPoint,  // Centraliza no ponto médio da rota
+                    center: midwayPoint, // Centraliza no ponto médio da rota
                     zoom: 13,
                     speed: 1.2,
                     curve: 1.2
@@ -199,7 +207,7 @@
 
                 // Movendo a câmera para o ponto médio da rota
                 map.flyTo({
-                    center: midwayPoint,  // Centraliza no ponto médio da rota
+                    center: midwayPoint, // Centraliza no ponto médio da rota
                     zoom: 13,
                     speed: 1.2,
                     curve: 1.2
