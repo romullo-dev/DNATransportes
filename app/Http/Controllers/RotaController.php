@@ -200,7 +200,11 @@ class RotaController extends Controller
                     }
                 } 
                 elseif ($data['status'] === 'Finalizado') {
-                    return redirect()->route('rotas.index')->with('success', 'Rota finalizada');
+                    $pedido = Pedido::find($data['pedido_id_pedido']);
+                    if ($pedido) {
+                        $pedido->status = 'entregue';
+                        $pedido->save();
+                    }
                 }
                 break;
 

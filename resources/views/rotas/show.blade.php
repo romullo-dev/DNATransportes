@@ -75,7 +75,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
 
     <script>
-        //mapboxgl.accessToken = '{{ $mapboxToken }}';
+        mapboxgl.accessToken = '{{ $mapboxToken }}';
 
         const origem = [{{ $data->origem->longitude }}, {{ $data->origem->latitude }}];
         const destino = [{{ $data->destino->longitude }}, {{ $data->destino->latitude }}];
