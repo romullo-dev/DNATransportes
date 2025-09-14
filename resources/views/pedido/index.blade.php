@@ -65,14 +65,21 @@
                             <td>{{ $pedidos->notaFiscal->destinatario->nome }}</td>
                             <td>{{ $pedidos->notaFiscal->destinatario->documento }}</td>
                             <td>{{ $pedidos->notaFiscal->enderecoRemetente->uf }}</td>
-                            <td>R$ {{ number_format($pedidos->frete->valor_frete, 2, ',', '.') }}</td> {{-- Formatação para valor do frete --}}
+                            <td>R$ {{ number_format($pedidos->frete->valor_frete, 2, ',', '.') }}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal"
                                     data-bs-target="#modalShow{{ $pedidos->id_pedido }}">
                                     <i class="bi bi-eye-fill"></i>
                                 </button>
+                                <!-- Botão Editar -->
+                                <button type="button" class="btn btn-primary btn-sm me-1" title="Editar">
+                                    <a href="{{ route('pedidos.edit', $pedidos->id_pedido) }}" class="text-white">
+                                        <i class="bi bi-pencil-fill"></i> Editar
+                                    </a>
+                                </button>
+
                             </td>
-                        </tr> 
+                        </tr>
                     @endforeach
 
                 </tbody>
@@ -84,6 +91,8 @@
         <div class="d-flex justify-content-center">
             {{ $result->links('pagination::bootstrap-5') }}
         </div>
+
+        <!-- Modal: Editar para cada usuário -->
 
         @include('pedido.modais.show')
 

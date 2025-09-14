@@ -23,6 +23,7 @@
                 <i class="bi bi-person-plus-fill me-1"></i> Novo Motorista
             </button>
         </div>
+        
 
         {{-- Filtros --}}
         <form method="GET" class="row g-2 mb-3">

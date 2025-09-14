@@ -79,11 +79,10 @@ class Rota extends Model
         return $this->belongsTo(CentroDistribuicao::class, 'id_destino');
     }
 
-    public function historicos()
+     public function historicos()
     {
-        return $this->hasMany(Historico::class, 'rotas_id_rotas');
+        return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
     }
-
 public function pedidos()
 {
     return $this->hasManyThrough(

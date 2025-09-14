@@ -1,3 +1,4 @@
+
 <div class="modal fade" id="modalEdit{{ $usuario->id_usuario }}" tabindex="-1">
     <div class="modal-dialog">
         <form method="POST" action="{{ route('update-user', $usuario->id_usuario) }}" enctype="multipart/form-data"

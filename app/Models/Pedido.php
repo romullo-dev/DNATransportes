@@ -30,8 +30,14 @@ class Pedido extends Model
     {
         return $this->hasOne(Frete::class, 'id_pedido', 'id_pedido');
     }
+
     public function historicos()
     {
         return $this->hasMany(Historico::class, 'pedido_id_pedido', 'id_pedido');
+    }
+
+      public function rotas()
+    {
+        return $this->hasManyThrough(Rota::class, Historico::class, 'pedido_id_pedido', 'id_rotas', 'id_pedido', 'rotas_id_rotas');
     }
 }
