@@ -182,28 +182,30 @@
                                 </ul>
                             </li>
 
-                           <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle text-white" href="#" id="ajusteDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-gear-fill me-1"></i> Ajuste
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="ajusteDropdown">
-        <li>
-            <a class="dropdown-item" href="{{ route('endereco.index') }}">
-                <i class="bi bi-house-door me-2"></i> Endereço
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="#">
-                <i class="bi bi-person-circle me-2"></i> Perfil
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="#">
-                <i class="bi bi-sliders me-2"></i> Configurações
-            </a>
-        </li>
-    </ul>
-</li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="ajusteDropdown"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear-fill me-1"></i> Ajuste
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark"
+                                    aria-labelledby="ajusteDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('endereco.index') }}">
+                                            <i class="bi bi-house-door me-2"></i> Endereço
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-person-circle me-2"></i> Perfil
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-sliders me-2"></i> Configurações
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{{ route('importacao.index') }}">
                                     <i class="bi bi-calculator me-1"></i> Cotação
@@ -211,8 +213,8 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-white" href="?AWB">
-                                    <i class="bi bi-airplane-engines-fill me-1"></i> Tracking Aéreo
+                                <a class="nav-link text-white" href="{{ route('pedidos.painel') }}">
+                                    <i class="bi bi-airplane-engines-fill me-1"></i> Painel
                                 </a>
                             </li>
 

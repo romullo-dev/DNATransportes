@@ -22,6 +22,14 @@ class PedidoController extends Controller
         return view('pedido.index', compact('result'));
     }
 
+    public function painel()
+    {
+        return view('painel.index' );
+    }
+
+
+    
+
     public function rastreamento()
     {
         return view('rastreio.index');
