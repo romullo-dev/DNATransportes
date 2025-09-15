@@ -15,6 +15,7 @@ class Pedido extends Model
     protected $fillable = [
         'codigo_rastreamento',
         'id_notaFiscal',
+        'status',
         'created_at',
         'updated_at'
     ];

@@ -27,7 +27,8 @@ class RotaRequest extends FormRequest
             'data' => 'required|date|before_or_equal:' . now()->format('Y-m-d H:i:s'),
             'status' => 'required',
             'foto' => 'nullable|image|max:2048',
-            'observacao' => 'nullable|string|max:255'
+            'observacao' => 'nullable|string|max:255',
+            'tipo' => 'nullable'
         ];
     }
 }

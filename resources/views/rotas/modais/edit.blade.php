@@ -6,9 +6,13 @@
                 <h5 class="modal-title">Atualizar Status da Rota #{{ $rotas->id_rotas }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
+
+            <input type="hidden" name="tipo" value="{{ ucfirst($rotas->tipo)  }}">
+
             <div class="modal-body">
                 <input type="hidden" name="rotas_id_rotas" value="{{ $rotas->id_rotas }}">
-                <input type="hidden" name="pedido_id_pedido" value="{{ optional($rotas->historicos->last())->pedido_id_pedido}}">
+                <input type="hidden" name="pedido_id_pedido"
+                    value="{{ optional($rotas->historicos->last())->pedido_id_pedido }}">
 
                 <div class="mb-3">
                     <label for="status_{{ $rotas->id_rotas }}" class="form-label">Novo Status</label>
@@ -24,12 +28,13 @@
                     <input name="foto" type="file" class="form-control">
                 </div>
                 <div class="col-md-4">
-                        <label for="data" class="form-label"><i class="bi bi-calendar-event me-1"></i>Data</label>
-                        <input type="datetime-local" class="form-control" id="data" name="data" required>
-                    </div>
+                    <label for="data" class="form-label"><i class="bi bi-calendar-event me-1"></i>Data</label>
+                    <input type="datetime-local" class="form-control" id="data" name="data" required>
+                </div>
                 <div class="mb-3">
                     <label for="observacao_{{ $rotas->id_rotas }}" class="form-label">Observações (opcional)</label>
-                    <textarea class="form-control" id="observacao_{{ $rotas->id_rotas }}" name="observacao" rows="3" placeholder="Detalhes adicionais..."></textarea>
+                    <textarea class="form-control" id="observacao_{{ $rotas->id_rotas }}" name="observacao" rows="3"
+                        placeholder="Detalhes adicionais..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">

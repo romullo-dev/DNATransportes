@@ -71,17 +71,22 @@
                             <td>{{ ucfirst($pedido->status) }}</td>
 
                             <td class="text-center">
-                                <!-- Visualizar Pedido -->
-                                <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#modalShow{{ $pedido->id_pedido }}">
-                                    <i class="bi bi-eye-fill"></i> Visualizar
-                                </button>
-                                <!-- Editar Pedido -->
-                                <button type="button" class="btn btn-primary btn-sm me-1" title="Editar">
-                                    <a href="{{ route('pedidos.edit', $pedido->id_pedido) }}" class="text-white">
-                                        <i class="bi bi-pencil-fill"></i> Editar
-                                    </a>
-                                </button>
-                            </td>
+    <div class="d-flex justify-content-center align-items-center gap-2">
+        <!-- Visualizar Pedido -->
+        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalShow{{ $pedido->id_pedido }}">
+            <i class="bi bi-eye-fill"></i> 
+        </button>
+
+        <!-- Histórico de Pedido -->
+        <a href="{{ route('pedidos.edit', $pedido->id_pedido) }}" class="btn btn-sm btn-info text-white">
+            <i class="bi bi-clock-history"></i> 
+        </a>
+    </div>
+</td>
+
+
+
+
                         </tr>
                     @endforeach
                 </tbody>

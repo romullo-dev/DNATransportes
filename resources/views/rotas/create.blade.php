@@ -4,7 +4,7 @@
     <div class="container mt-5">
         <div class="card shadow rounded-4">
             <div class="card-header text-white d-flex justify-content-between align-items-center"
-                style="background-color: #3e84b0;">
+                style="background-color: #01101a;">
                 <h5 class="mb-0"><i class="bi bi-map-fill me-2"></i>Cadastrar Nova Rota</h5>
             </div>
             <div class="card-body">
