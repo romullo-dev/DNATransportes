@@ -19,7 +19,8 @@
         {{-- Filtros --}}
         <form method="GET" class="row g-2 mb-4">
             <div class="col-md-4 col-12">
-                <input type="text" name="busca" class="form-control" placeholder="Buscar por nome ou CPF" value="{{ request('busca') }}">
+                <input type="text" name="busca" class="form-control" placeholder="Buscar por nome ou CPF"
+                    value="{{ request('busca') }}">
             </div>
             <div class="col-md-3 col-12">
                 <select name="tipo" class="form-select">
@@ -65,24 +66,33 @@
                             <td>{{ $pedido->notaFiscal->destinatario->nome }}</td>
                             <td>{{ $pedido->notaFiscal->destinatario->documento }}</td>
                             <td>{{ $pedido->notaFiscal->enderecoRemetente->uf }}</td>
-                            <td>R$ {{ number_format($pedido->frete->valor_frete, 2, ',', '.') }}</td>
+                            <td>
+                                @if ($pedido->frete)
+                                    R$ {{ number_format($pedido->frete->valor_frete, 2, ',', '.') }}
+                                @else
+                                    <span class="text-muted">Sem frete</span>
+                                @endif
+                            </td>
+
                             <td>{{ $pedido->notaFiscal->numero_nfe }}</td>
                             <td>{{ $pedido->codigo_rastreamento }}</td>
                             <td>{{ ucfirst($pedido->status) }}</td>
 
                             <td class="text-center">
-    <div class="d-flex justify-content-center align-items-center gap-2">
-        <!-- Visualizar Pedido -->
-        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalShow{{ $pedido->id_pedido }}">
-            <i class="bi bi-eye-fill"></i> 
-        </button>
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <!-- Visualizar Pedido -->
+                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#modalShow{{ $pedido->id_pedido }}">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
 
-        <!-- Histórico de Pedido -->
-        <a href="{{ route('pedidos.edit', $pedido->id_pedido) }}" class="btn btn-sm btn-info text-white">
-            <i class="bi bi-clock-history"></i> 
-        </a>
-    </div>
-</td>
+                                    <!-- Histórico de Pedido -->
+                                    <a href="{{ route('pedidos.edit', $pedido->id_pedido) }}"
+                                        class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-clock-history"></i>
+                                    </a>
+                                </div>
+                            </td>
 
 
 

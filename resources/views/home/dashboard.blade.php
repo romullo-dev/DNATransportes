@@ -44,7 +44,7 @@
 
         <!-- Botão de ação -->
         <div class="text-center mt-4">
-            <a href="{{ route('dashboard') }}" class="btn btn-warning btn-lg fw-bold px-5 shadow-lg" 
+            <a href="{{ route('pedidos.painel') }}" class="btn btn-warning btn-lg fw-bold px-5 shadow-lg" 
                style="transition: transform 0.3s, box-shadow 0.3s;" 
                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0.75rem 1.5rem rgba(255,193,7,0.5)';" 
                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.3)';">
