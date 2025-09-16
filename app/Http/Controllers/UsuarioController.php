@@ -85,14 +85,7 @@ class UsuarioController extends Controller
 
     public function update(Request $request, Usuario $usuario)
     {
-        $request->validate([
-            'nome' => 'required|string|max:100',
-            'email' => 'required|email|unique:usuario,email',
-            'status_funcionario' => 'required|in:ativo,inativo',
-            'tipo_usuario' => 'required|in:admin,operador,motorista',
-            'foto' => 'nullable',
-            'telefone' => 'required|min:10|max:11|unique:usuario,telefone'
-        ]);
+        
 
         try {
             $data = $request->only(['nome', 'email', 'status_funcionario', 'tipo_usuario', 'telefone']);
@@ -137,7 +130,7 @@ class UsuarioController extends Controller
     }
 
 
-    
+
 
 
     public function destroy($id_usuario)

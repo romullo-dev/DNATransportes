@@ -35,7 +35,12 @@
                 <p><strong>Cliente:</strong> {{ $pedido->notaFiscal->remetente->nome }}</p>
                 <p><strong>Destinatário:</strong> {{ $pedido->notaFiscal->destinatario->nome }}</p>
                 <p><strong>Data de Emissão:</strong> {{ \Carbon\Carbon::parse($pedido->created_at)->format('d/m/Y') }}</p>
-                <p><strong>Valor do Frete:</strong> R$ {{ number_format($pedido->frete->valor_frete, 2, ',', '.') }}</p>
+
+                @if ($pedido->frete)
+                    <p><strong>Valor do Frete:</strong> R$ {{ number_format($pedido->frete->valor_frete, 2, ',', '.') }}</p>
+                @else
+                    <p class="text-muted">Sem frete</p>
+                @endif
                 <p><strong>Status:</strong> {{ ucfirst($pedido->status) }}</p>
             </div>
         </div>
