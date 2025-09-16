@@ -42,7 +42,6 @@
             @endforeach
         </div>
 
-        <!-- Botão de ação -->
         <div class="text-center mt-4">
             <a href="{{ route('pedidos.painel') }}" class="btn btn-warning btn-lg fw-bold px-5 shadow-lg" 
                style="transition: transform 0.3s, box-shadow 0.3s;" 
