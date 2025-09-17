@@ -11,7 +11,7 @@
                 <div class="row g-3">
                     <div class="col-md-4 text-center">
                         @if ($usuario->foto)
-                            <img src="{{ asset('storage/' . $usuario->foto) }}" alt="Foto do usuário"
+                            <img src="{{ asset('usuarios/' . $usuario->foto) }}" alt="Foto do usuário"
                                 class="img-thumbnail rounded-circle" width="150">
                         @else
                             <div class="border rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"

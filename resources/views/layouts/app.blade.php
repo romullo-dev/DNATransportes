@@ -220,16 +220,19 @@
 
                             <!-- Usuário / Logout -->
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-light ms-2" href="#" role="button"
-                                    data-bs-toggle="dropdown">
-                                    {{ Auth::user()->nome ?? Auth::user()->user }}
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
+                                    role="button" data-bs-toggle="dropdown" style="color: #fff;">
+
+                                    <!-- Foto do usuário -->
                                     @if (Auth::user()->foto)
-                                        <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Foto do usuário"
-                                            class="img-fluid rounded-circle" style="width: 50px; height: 50px;">
+                                        <img src="{{ asset('usuarios/' . Auth::user()->foto) }}"
+                                            alt="Foto do usuário" class="rounded-circle border border-warning"
+                                            style="width: 36px; height: 36px; object-fit: cover;">
                                     @else
-                                        <i class="bi bi-person-circle fs-5"></i>
+                                        <i class="bi bi-person-circle fs-3"></i>
                                     @endif
                                 </a>
+
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                                     <li>
                                         <a class="dropdown-item"

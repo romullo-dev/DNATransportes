@@ -31,8 +31,18 @@ class UsuarioController extends Controller
             $data['password'] = Hash::make($request->password);
 
             if ($request->hasFile('foto')) {
-                $data['foto'] = $request->file('foto')->store('', 'usuario_fotos');
+                $file = $request->file('foto');
+
+                // Gera um nome único aleatório, mantém a extensão
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                // Salva na pasta public/usuarios
+                $file->move(public_path('usuarios'), $filename);
+
+                // Salva só o nome no banco
+                $data['foto'] = $filename;
             }
+
 
 
             Usuario::create($data);
@@ -86,20 +96,22 @@ class UsuarioController extends Controller
 
     public function update(Request $request, Usuario $usuario)
     {
-        $request->validate([
-            
-        ]);
+
 
         try {
             $data = $request->only(['nome', 'email', 'status_funcionario', 'tipo_usuario', 'telefone']);
 
             if ($request->hasFile('foto')) {
-                if ($usuario->foto) {
-                    Storage::disk('public')->delete($usuario->foto);
+                if ($usuario->foto && file_exists(public_path('usuarios/' . $usuario->foto))) {
+                    unlink(public_path('usuarios/' . $usuario->foto));
                 }
 
-                $data['foto'] = $request->file('foto')->store('usuarios', 'public');
+                $file = $request->file('foto');
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('usuarios'), $filename);
+                $data['foto'] = $filename;
             }
+
 
             $usuario->update($data);
 

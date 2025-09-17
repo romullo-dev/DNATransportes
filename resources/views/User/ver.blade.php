@@ -18,7 +18,7 @@
 
     <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
         {{-- Topo escuro --}}
-        <div class="card-header text-white rounded-top p-3 d-flex justify-content-between align-items-center" 
+        <div class="card-header text-white rounded-top p-3 d-flex justify-content-between align-items-center"
              style="background: linear-gradient(90deg, #1d3557, #264653);">
             <h4 class="mb-0">
                 <i class="bi bi-person-circle me-2"></i> Perfil do Usuário
@@ -34,7 +34,7 @@
                 {{-- Coluna da Foto --}}
                 <div class="col-md-4 text-center d-flex flex-column align-items-center justify-content-center">
                     @if ($usuario->foto)
-                        <img src="{{ asset('storage/' . $usuario->foto) }}" alt="Foto do Usuário"
+                        <img src="{{ asset('usuarios/' . $usuario->foto) }}" alt="Foto do Usuário"
                             class="rounded-circle shadow mb-3 border border-3 border-primary"
                             style="width: 200px; height: 200px; object-fit: cover;">
                     @else
@@ -88,7 +88,7 @@
                             <strong><i class="bi bi-calendar-check-fill text-info me-2"></i>Última atualização:</strong>
                             <span>{{ $usuario->updated_at->format('d/m/Y H:i') }}</span>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
