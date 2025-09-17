@@ -31,8 +31,9 @@ class UsuarioController extends Controller
             $data['password'] = Hash::make($request->password);
 
             if ($request->hasFile('foto')) {
-                $data['foto'] = $request->file('foto')->store('usuarios', 'public');
+                $data['foto'] = $request->file('foto')->store('', 'usuario_fotos');
             }
+
 
             Usuario::create($data);
 
@@ -85,7 +86,9 @@ class UsuarioController extends Controller
 
     public function update(Request $request, Usuario $usuario)
     {
-        
+        $request->validate([
+            
+        ]);
 
         try {
             $data = $request->only(['nome', 'email', 'status_funcionario', 'tipo_usuario', 'telefone']);
@@ -107,10 +110,9 @@ class UsuarioController extends Controller
     }
 
 
-    public function inserirFoto (Request $request, Usuario $usuario)
+    public function inserirFoto(Request $request, Usuario $usuario)
     {
-        $request->validate([
-        ]);
+        $request->validate([]);
 
         try {
             if ($request->hasFile('foto')) {
