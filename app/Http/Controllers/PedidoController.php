@@ -28,7 +28,7 @@ class PedidoController extends Controller
     }
 
 
-    
+
 
     public function rastreamento()
     {
@@ -38,11 +38,9 @@ class PedidoController extends Controller
     public function show(Request $request)
     {
         try {
-            // Obtém o código de rastreio enviado via formulário
             $codigoRastreamento = $request->input('codigo_rastreamento');
 
-            // Procura o pedido com base no código de rastreio
-            $pedido = Pedido::with([
+             $pedido = Pedido::with([
                 'historicos',
                 'frete',
                 'notaFiscal.remetente',
@@ -50,15 +48,13 @@ class PedidoController extends Controller
                 'notaFiscal.enderecoRemetente',
                 'notaFiscal.enderecoDestinatario'
             ])
-                ->where('codigo_rastreamento', $codigoRastreamento) // Adiciona a condição para buscar pelo código
+                ->where('codigo_rastreamento', $codigoRastreamento) 
                 ->first();
 
-            // Se não encontrar o pedido
             if (!$pedido) {
                 return redirect()->back()->with('error', 'Código de rastreio não encontrado.');
             }
 
-            // Retorna para a view de rastreio com os dados do pedido
             return view('rastreio.rastreio', compact('pedido'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro: ' . $e->getMessage());

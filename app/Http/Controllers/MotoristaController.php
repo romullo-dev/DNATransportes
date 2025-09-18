@@ -17,9 +17,9 @@ class MotoristaController extends Controller
         ->paginate(10);
 
     $usuariosSelect = Usuario::where('tipo_usuario', 'motorista')
-        ->doesntHave('motorista') 
+        ->doesntHave('motorista')
         ->get();
-
+        
     return view('motorista.index', compact('usuarios', 'usuariosSelect'));
 }
 
@@ -33,18 +33,18 @@ class MotoristaController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Erro ao cadastrar motorista.');
         }
-    }    
+    }
 
     public function show(string $id)
     {
         //
     }
 
-  
+
     public function update(MotoristaRequest $request, Motorista $motorista)
     {
         try
-        { 
+        {
          $data = $request->only(['cnh', 'categoria', 'validade_cnh']);
          $motorista->update($data);
 
