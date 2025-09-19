@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 //return redirect()->route('login');
 
-Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::get('/login', [AuthController::class, 'index'])->name(name: 'login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
 Route::middleware(['auth'])->group(function () {
@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     /*Route::prefix('user')->name('user.')->group(function() {
-        
+
     });*/
 
 
