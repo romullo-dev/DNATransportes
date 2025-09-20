@@ -24,7 +24,7 @@ class PedidoController extends Controller
 
     public function painel()
     {
-        return view('painel.index' );
+        return view('painel.index');
     }
 
 
@@ -40,7 +40,7 @@ class PedidoController extends Controller
         try {
             $codigoRastreamento = $request->input('codigo_rastreamento');
 
-             $pedido = Pedido::with([
+            $pedido = Pedido::with([
                 'historicos',
                 'frete',
                 'notaFiscal.remetente',
@@ -48,7 +48,7 @@ class PedidoController extends Controller
                 'notaFiscal.enderecoRemetente',
                 'notaFiscal.enderecoDestinatario'
             ])
-                ->where('codigo_rastreamento', $codigoRastreamento) 
+                ->where('codigo_rastreamento', $codigoRastreamento)
                 ->first();
 
             if (!$pedido) {
@@ -76,7 +76,7 @@ class PedidoController extends Controller
         ])
             ->findOrFail($id);
 
-        $rotas = $pedido->rotas->unique('id_rotas');
+        $rotas = $pedido->rotas()->distinct()->get();
 
         return view('pedido.edit', compact('pedido', 'rotas'));
     }

@@ -106,9 +106,9 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pedido_id_pedido" class="form-label"><i
-                                class="bi bi-truck-front-fill me-1"></i>pedido_id_pedido</label>
-                        <select class="form-select" id="pedido_id_pedido" name="pedido_id_pedido" required>
+                        <label for="id_pedido" class="form-label"><i
+                                class="bi bi-truck-front-fill me-1"></i>id_pedido</label>
+                        <select class="form-select" id="id_pedido" name="id_pedido" required>
                             <option value="" disabled selected>Selecione um veículo</option>
 
                             @foreach ($pedido as $item)
@@ -206,9 +206,9 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pedido_id_pedido" class="form-label"><i
-                                class="bi bi-truck-front-fill me-1"></i>pedido_id_pedido</label>
-                        <select class="form-select" id="pedido_id_pedido" name="pedido_id_pedido" required>
+                        <label for="id_pedido" class="form-label"><i
+                                class="bi bi-truck-front-fill me-1"></i>id_pedido</label>
+                        <select class="form-select" id="id_pedido" name="id_pedido" required>
                             <option value="" disabled selected>Selecione um veículo</option>
 
                             @foreach ($pedido as $item)
@@ -301,9 +301,9 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pedido_id_pedido" class="form-label"><i
-                                class="bi bi-truck-front-fill me-1"></i>pedido_id_pedido</label>
-                        <select class="form-select" id="pedido_id_pedido" name="pedido_id_pedido" required>
+                        <label for="id_pedido" class="form-label"><i
+                                class="bi bi-truck-front-fill me-1"></i>id_pedido</label>
+                        <select class="form-select" id="id_pedido" name="id_pedido" required>
                             <option value="" disabled selected>Selecione um veículo</option>
 
                             @foreach ($pedido as $item)

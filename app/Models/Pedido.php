@@ -10,17 +10,24 @@ class Pedido extends Model
     use HasFactory;
 
     protected $table = 'pedido';
-    protected $primaryKey = 'id_pedido';
 
+    protected $primaryKey = 'id_pedido';
+    
+    public $timestamps = true;
+
+    
     protected $fillable = [
-        'codigo_rastreamento',
-        'id_notaFiscal',
-        'status',
-        'created_at',
-        'updated_at'
+        'codigo_rastreamento',  
+        'id_notaFiscal',        
     ];
 
-    public $timestamps = true;
+    protected $casts = [
+        'id_pedido' => 'int',           
+        'id_notaFiscal' => 'int',      
+        'codigo_rastreamento' => 'string', 
+        'created_at' => 'datetime',    
+        'updated_at' => 'datetime',   
+    ];
 
     public function notaFiscal()
     {
@@ -37,7 +44,7 @@ class Pedido extends Model
         return $this->hasMany(Historico::class, 'pedido_id_pedido', 'id_pedido');
     }
 
-      public function rotas()
+    public function rotas()
     {
         return $this->hasManyThrough(Rota::class, Historico::class, 'pedido_id_pedido', 'id_rotas', 'id_pedido', 'rotas_id_rotas');
     }

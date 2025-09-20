@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RotaRequest;
 use App\Models\CentroDistribuicao;
 use App\Models\Historico;
+use App\Models\HistoricoPedido;
 use App\Models\Motorista;
 use App\Models\Pedido;
 use App\Models\Rota;
@@ -17,7 +18,7 @@ class RotaController extends Controller
 {
     public function index()
     {
-        $rota =  Rota::with(['pedidos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
+        $rota =  Rota::with([/*'pedidos',*/ 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
         return View('rotas.index', compact('rota'));
     }
 
@@ -33,57 +34,55 @@ class RotaController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'tipo' => 'required|string',
-            'id_origem' => 'required|integer',
-            'id_destino' => 'required|integer',
-            'distancia' => 'required|numeric',
-            'previsao' => 'required|date',
-            'data_inicio' => 'required|date',
-            'id_motorista' => 'required|integer',
-            'id_veiculo' => 'required|integer',
-            'observacoes' => 'nullable|string',
-            'pedido_id_pedido' => 'nullable|integer',
+   public function store(Request $request)
+{
+    $request->validate([
+        'tipo' => 'required|string',
+        'id_origem' => 'required|integer',
+        'id_destino' => 'required|integer',
+        'distancia' => 'required|numeric',
+        'previsao' => 'required|date',
+        'data_inicio' => 'required|date',
+        'id_motorista' => 'required|integer',
+        'id_veiculo' => 'required|integer',
+        'observacoes' => 'nullable|string',
+        'id_pedido' => 'nullable|integer',
+    ]);
+
+    $rota = new Rota();
+    $rota->tipo = $request->tipo;
+    $rota->id_origem = $request->id_origem;
+    $rota->id_destino = $request->id_destino;
+    $rota->distancia = $request->distancia;
+    $rota->previsao = $request->previsao;
+    $rota->data_rota = $request->data_inicio;
+    $rota->data_inicio = $request->data_inicio;
+    $rota->data_criacao = now(); 
+    $rota->id_motorista = $request->id_motorista;
+    $rota->id_veiculo = $request->id_veiculo;
+    $rota->observacoes = $request->observacoes ?? ''; 
+
+    $rota->save();
+
+    if ($request->filled('id_pedido')) {
+        $historico = Historico::create([
+            'rotas_id_rotas' => $rota->id_rotas,        
+            'data' => $request->data_inicio,             
+            'status' => 'Aguardando liberação',         
+            'foto' => '',    
+            'observacao' => $request->observacoes ?? '',                         
         ]);
 
-        $rota = new Rota();
-        $rota->tipo = $request->tipo;
-        $rota->id_origem = $request->id_origem;
-        $rota->id_destino = $request->id_destino;
-        $rota->distancia = $request->distancia;
-        $rota->previsao = $request->previsao;
-        $rota->data_rota = $request->data_inicio;
-        $rota->data_inicio = $request->data_inicio;
-        $rota->data_criacao = now();
-        $rota->id_motorista = $request->id_motorista;
-        $rota->id_veiculo = $request->id_veiculo;
-        $rota->observacoes = $request->observacoes ?? '';
-
-        $rota->save();
-
-        if ($rota->tipo === 'transferencia' && $request->filled('pedido_id_pedido')) {
-            $pedido = Pedido::find($request->pedido_id_pedido);
-            if ($pedido) {
-                $pedido->status = 'Aguardando transferencia';
-                $pedido->save();
-            }
-        }
-
-
-        if ($request->filled('pedido_id_pedido')) {
-            Historico::create([
-                'rotas_id_rotas' => $rota->id_rotas,
-                'pedido_id_pedido' => $request->pedido_id_pedido,
-                'data' => $request->data_inicio,
-                'status' => 'Aguardando liberação',
-                'foto' => '',
-            ]);
-        }
-
-        return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
+        HistoricoPedido::create([
+            'id_pedido' =>  $request->id_pedido, 
+            'historico_rotas_id_historico' => $historico->id_historico, 
+            'status' => 'deu bom',
+        ]);
     }
+
+    return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
+}
+
 
     public function store_entrega(Request $request)
     {
@@ -97,7 +96,6 @@ class RotaController extends Controller
                 'id_motorista' => 'required|integer',
                 'id_veiculo' => 'required|integer',
                 'observacoes' => 'nullable|string',
-                'pedido_id_pedido' => 'nullable|integer',
             ]);
 
             $rota = new Rota();
@@ -124,7 +122,7 @@ class RotaController extends Controller
                     'foto' => '',
                 ]);
 
-                $pedido = Pedido::find($request->pedido_id_pedido);
+                $pedido = Pedido::find($request->id_pedido);
                 if ($pedido) {
                     $pedido->status = 'Em Separação';
                     $pedido->save();
