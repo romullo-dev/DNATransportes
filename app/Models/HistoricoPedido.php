@@ -17,13 +17,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * 
  * @property Pedido $pedido
  * @property Rota $rota
- * @property HistoricoRotas $historicoRotas
+ * @property Historico $historicoRotas
  */
 class HistoricoPedido extends Model
 {
     protected $table = 'historico_pedido'; // Nome da tabela no banco
     protected $primaryKey = 'id'; // Chave primária
-    public $timestamps = TRUE; // Defina para true se quiser usar created_at/updated_at
+    public $timestamps = true; // Corrigido para "true" em minúsculas
 
     protected $casts = [
         'id' => 'int',

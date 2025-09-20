@@ -18,9 +18,12 @@ class RotaController extends Controller
 {
     public function index()
     {
-        $rota =  Rota::with([/*'pedidos',*/ 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
+        $rota = Rota::with([/*'pedidos',*/'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])
+            ->paginate(5);
+
         return View('rotas.index', compact('rota'));
     }
+
 
     public function create()
     {
@@ -34,54 +37,71 @@ class RotaController extends Controller
     }
 
 
-   public function store(Request $request)
-{
-    $request->validate([
-        'tipo' => 'required|string',
-        'id_origem' => 'required|integer',
-        'id_destino' => 'required|integer',
-        'distancia' => 'required|numeric',
-        'previsao' => 'required|date',
-        'data_inicio' => 'required|date',
-        'id_motorista' => 'required|integer',
-        'id_veiculo' => 'required|integer',
-        'observacoes' => 'nullable|string',
-        'id_pedido' => 'nullable|integer',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'tipo' => 'required|string',
+            'id_origem' => 'required|integer',
+            'id_destino' => 'required|integer',
+            'distancia' => 'required|numeric',
+            'previsao' => 'required|date',
+            'data_inicio' => 'required|date',
+            'id_motorista' => 'required|integer',
+            'id_veiculo' => 'required|integer',
+            'observacoes' => 'nullable|string',
+            'chave_nota' => 'nullable|string',
+        ]);
 
-    $rota = new Rota();
-    $rota->tipo = $request->tipo;
-    $rota->id_origem = $request->id_origem;
-    $rota->id_destino = $request->id_destino;
-    $rota->distancia = $request->distancia;
-    $rota->previsao = $request->previsao;
-    $rota->data_rota = $request->data_inicio;
-    $rota->data_inicio = $request->data_inicio;
-    $rota->data_criacao = now(); 
-    $rota->id_motorista = $request->id_motorista;
-    $rota->id_veiculo = $request->id_veiculo;
-    $rota->observacoes = $request->observacoes ?? ''; 
+        $rota = new Rota();
+        $rota->tipo = $request->tipo;
+        $rota->id_origem = $request->id_origem;
+        $rota->id_destino = $request->id_destino;
+        $rota->distancia = $request->distancia;
+        $rota->previsao = $request->previsao;
+        $rota->data_rota = $request->data_inicio;
+        $rota->data_inicio = $request->data_inicio;
+        $rota->data_criacao = now();
+        $rota->id_motorista = $request->id_motorista;
+        $rota->id_veiculo = $request->id_veiculo;
+        $rota->observacoes = $request->observacoes ?? '';
+        $rota->save(); 
 
-    $rota->save();
-
-    if ($request->filled('id_pedido')) {
         $historico = Historico::create([
-            'rotas_id_rotas' => $rota->id_rotas,        
-            'data' => $request->data_inicio,             
-            'status' => 'Aguardando liberação',         
-            'foto' => '',    
-            'observacao' => $request->observacoes ?? '',                         
+            'rotas_id_rotas' => $rota->id_rotas, 
+            'data' => $request->data_inicio,
+            'status' => 'Aguardando liberação',
+            'foto' => '',
+            'observacao' => $request->observacoes ?? '',
         ]);
 
-        HistoricoPedido::create([
-            'id_pedido' =>  $request->id_pedido, 
-            'historico_rotas_id_historico' => $historico->id_historico, 
-            'status' => 'deu bom',
-        ]);
+        if ($request->filled('chave_nota')) {
+            $chaves_nota = explode(',', $request->chave_nota);
+
+            foreach ($chaves_nota as $chave) {
+                $chave = trim($chave);
+
+                $pedidos = Pedido::whereHas('notaFiscal', function ($query) use ($chave) {
+                    $query->where('chave_acesso', $chave);
+                })->get();
+
+                foreach ($pedidos as $pedido) {
+                    HistoricoPedido::create([
+                        'id_pedido' => $pedido->id_pedido,
+                        'historico_rotas_id_historico' => $historico->id_historico, 
+                        'status' => 'Aguardando liberação',
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
     }
 
-    return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
-}
+
+
+
+
+
 
 
     public function store_entrega(Request $request)
@@ -113,21 +133,33 @@ class RotaController extends Controller
 
             $rota->save();
 
-            if ($request->filled('pedido_id_pedido')) {
-                Historico::create([
-                    'rotas_id_rotas' => $rota->id_rotas,
-                    'pedido_id_pedido' => $request->pedido_id_pedido,
-                    'data' => $request->data_inicio,
-                    'status' => 'Aguardando liberação',
-                    'foto' => '',
-                ]);
+             $historico = Historico::create([
+            'rotas_id_rotas' => $rota->id_rotas, 
+            'data' => $request->data_inicio,
+            'status' => 'Aguardando liberação',
+            'foto' => '',
+            'observacao' => $request->observacoes ?? '',
+        ]);
 
-                $pedido = Pedido::find($request->id_pedido);
-                if ($pedido) {
-                    $pedido->status = 'Em Separação';
-                    $pedido->save();
+        if ($request->filled('chave_nota')) {
+            $chaves_nota = explode(',', $request->chave_nota);
+
+            foreach ($chaves_nota as $chave) {
+                $chave = trim($chave);
+
+                $pedidos = Pedido::whereHas('notaFiscal', function ($query) use ($chave) {
+                    $query->where('chave_acesso', $chave);
+                })->get();
+
+                foreach ($pedidos as $pedido) {
+                    HistoricoPedido::create([
+                        'id_pedido' => $pedido->id_pedido,
+                        'historico_rotas_id_historico' => $historico->id_historico, 
+                        'status' => 'Aguardando liberação',
+                    ]);
                 }
             }
+        }
 
             return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
         } catch (\Exception $e) {
