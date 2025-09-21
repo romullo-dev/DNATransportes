@@ -215,13 +215,13 @@ class RotaController extends Controller
                 continue; // Ignora o pedido e continua com o próximo
             }
 
-
+            // Determinando o status
             switch ($data['tipo']) {
                 case 'Coleta':
                     if ($data['status'] === 'Em trânsito') {
-                        $status = '1.1'; 
+                        $status = '1.1';
                     } elseif ($data['status'] === 'Finalizado') {
-                        $status = '1.2'; 
+                        $status = '1.2';
                     }
                     break;
 
@@ -245,12 +245,23 @@ class RotaController extends Controller
                     return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: Tipo inválido.');
             }
 
-            // Criando o histórico do pedido com a referência ao histórico da rota
-            HistoricoPedido::create([
-                'id_pedido' => $pedido->id_pedido,
-                'historico_rotas_id_historico' => $historico->id_historico, // Associando o histórico da rota
-                'status' => $status, // Atribuindo o código de status
-            ]);
+            // Verificando se já existe um histórico de pedido com o mesmo pedido e histórico de rota
+            $historicoPedidoExistente = HistoricoPedido::where('id_pedido', $pedido->id_pedido)
+                ->where('historico_rotas_id_historico', $historico->id_historico)
+                ->first();
+
+            if ($historicoPedidoExistente) {
+                // Se o histórico de pedido já existe, apenas atualize o status
+                $historicoPedidoExistente->status = $status;
+                $historicoPedidoExistente->save(); // Atualiza o status
+            } else {
+                // Caso contrário, cria um novo histórico de pedido
+                HistoricoPedido::create([
+                    'id_pedido' => $pedido->id_pedido,
+                    'historico_rotas_id_historico' => $historico->id_historico, // Associando o histórico da rota
+                    'status' => $status, // Atribuindo o código de status
+                ]);
+            }
         }
 
         return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
