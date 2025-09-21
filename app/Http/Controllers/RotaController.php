@@ -192,12 +192,10 @@ class RotaController extends Controller
     {
         try {
             $data = $request->validated();
-            $rota = Rota::findOrFail($data['rotas_id_rotas']); // Garantindo que a rota exista
+            $rota = Rota::findOrFail($data['rotas_id_rotas']); 
 
-            // Obtendo os históricos de pedidos associados à rota
             $historico_pedidos = $rota->historicoPedidos;
 
-            // Verificando se existem históricos de pedidos associados à rota
             if ($historico_pedidos->isEmpty()) {
                 return redirect()->route('rotas.index')->with('error', 'Não há históricos de pedidos associados a esta rota.');
             }
@@ -208,42 +206,38 @@ class RotaController extends Controller
                 return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota finalizada.');
             }
 
-            // Criando o histórico de rota
             $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
-            $historico = Historico::create($data); // Cria o novo histórico de rota
+            $historico = Historico::create($data); 
 
-            // Processando os pedidos para associá-los ao histórico de rota
             foreach ($historico_pedidos as $historicoPedido) {
-                $pedido = $historicoPedido->pedido; // Acessando o pedido relacionado ao histórico de pedido
+                $pedido = $historicoPedido->pedido; 
 
-                // Verificando se o pedido não foi encontrado
                 if (!$pedido) {
-                    continue; // Ignora o pedido e continua com o próximo
+                    continue; 
                 }
 
-                // Determinando o status
                 switch ($data['tipo']) {
                     case 'Coleta':
                         if ($data['status'] === 'Em trânsito') {
-                            $status = 'Coleta em andamento'; // Status para "Em trânsito" na coleta
+                            $status = 'Coleta em andamento';
                         } elseif ($data['status'] === 'Finalizado') {
-                            $status = 'Coleta finalizada'; // Status para "Finalizado" na coleta
+                            $status = 'Coleta finalizada'; 
                         }
                         break;
 
                     case 'Transferencia':
                         if ($data['status'] === 'Em trânsito') {
-                            $status = 'Transferência em andamento'; // Status para "Em trânsito" na transferência
+                            $status = 'Transferência em andamento';
                         } elseif ($data['status'] === 'Finalizado') {
-                            $status = 'Transferência finalizada'; // Status para "Finalizado" na transferência
+                            $status = 'Transferência finalizada'; 
                         }
                         break;
 
                     case 'Entrega':
                         if ($data['status'] === 'Em trânsito') {
-                            $status = 'Entrega em andamento'; // Status para "Em trânsito" na entrega
+                            $status = 'Entrega em andamento'; 
                         } elseif ($data['status'] === 'Finalizado') {
-                            $status = 'Entrega finalizada'; // Status para "Finalizado" na entrega
+                            $status = 'Entrega finalizada'; 
                         }
                         break;
 
@@ -251,21 +245,18 @@ class RotaController extends Controller
                         return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: Tipo inválido.');
                 }
 
-                // Verificando se já existe um histórico de pedido com o mesmo pedido e histórico de rota
                 $historicoPedidoExistente = HistoricoPedido::where('id_pedido', $pedido->id_pedido)
                     ->where('historico_rotas_id_historico', $historico->id_historico)
                     ->first();
 
                 if ($historicoPedidoExistente) {
-                    // Se o histórico de pedido já existe, apenas atualize o status
                     $historicoPedidoExistente->status = $status;
-                    $historicoPedidoExistente->save(); // Atualiza o status
+                    $historicoPedidoExistente->save();
                 } else {
-                    // Caso contrário, cria um novo histórico de pedido
                     HistoricoPedido::create([
                         'id_pedido' => $pedido->id_pedido,
-                        'historico_rotas_id_historico' => $historico->id_historico, // Associando o histórico da rota
-                        'status' => $status, // Atribuindo o código de status
+                        'historico_rotas_id_historico' => $historico->id_historico, 
+                        'status' => $status, 
                     ]);
                 }
             }
@@ -275,17 +266,6 @@ class RotaController extends Controller
             return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ' . $e->getMessage());
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
     public function destroy(Rota $rota)
     {

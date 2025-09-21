@@ -80,9 +80,9 @@ class Rota extends Model
     }
 
     public function historicos()
-    {
-        return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
-    }
+{
+    return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
+}
 
     public function historicoRotas()
     {
@@ -93,12 +93,12 @@ class Rota extends Model
     public function historicoPedidos()
 {
     return $this->hasManyThrough(
-        HistoricoPedido::class, // Modelo de destino
-        Historico::class,       // Modelo intermediário
-        'rotas_id_rotas',       // Chave estrangeira em Historico
+        HistoricoPedido::class, 
+        Historico::class,         // Agora usa Historico como intermediário
+        'rotas_id_rotas',         // Chave estrangeira em Historico
         'historico_rotas_id_historico', // Chave estrangeira em HistoricoPedido
-        'id_rotas',             // Chave local em Rota
-        'id_historico'          // Chave local em Historico
+        'id_rotas',               // Chave primária em Rota
+        'id_historico'            // Chave local em Historico
     );
 }
 

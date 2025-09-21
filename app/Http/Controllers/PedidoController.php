@@ -61,25 +61,34 @@ class PedidoController extends Controller
         }
     }
 
-
-
-
     public function edit($id)
-    {
-        $pedido = Pedido::with([
-            'notaFiscal.remetente',
-            'notaFiscal.destinatario',
-            'notaFiscal.enderecoRemetente',
-            'notaFiscal.enderecoDestinatario',
-            'frete',
-            'rotas.historicos',
-        ])
-            ->findOrFail($id);
+{
+    // Carregar o pedido com todos os detalhes relacionados, incluindo históricos
+    $pedido = Pedido::with([
+        'notaFiscal.remetente',              // Remetente da nota fiscal
+        'notaFiscal.destinatario',           // Destinatário da nota fiscal
+        'notaFiscal.enderecoRemetente',      // Endereço do remetente
+        'notaFiscal.enderecoDestinatario',   // Endereço do destinatário
+        'frete',                             // Detalhes do frete
+        'historicos',                        // Carregar históricos do pedido
+        //'rotas',                             // Carregar rotas associadas ao pedido
+        //'rotas.historicoPedidos',            // Carregar histórico de pedidos das rotas
+    ])
+    ->findOrFail($id);  // Garantir que o pedido existe, caso contrário, erro 404
 
-        $rotas = $pedido->rotas()->distinct()->get();
+    // Usando o dd() para depuração (remover quando finalizar)
+    dd($pedido);
 
-        return view('pedido.edit', compact('pedido', 'rotas'));
-    }
+    // Recupera todas as rotas associadas a esse pedido
+    $rotas = $pedido->rotas()->distinct()->get();
+
+
+    // Retorna a view passando o pedido e as rotas
+    return view('pedido.edit', compact('pedido', 'rotas'));
+}
+
+
+
 
     public function update(Request $request, $id)
     {

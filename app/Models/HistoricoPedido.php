@@ -56,4 +56,10 @@ class HistoricoPedido extends Model
     {
         return $this->belongsTo(Historico::class, 'historico_rotas_id_historico');
     }
+
+    // Modelo HistoricoPedido
+    public function historico()
+    {
+        return $this->belongsTo(Historico::class, 'id_historico');  // Atualizado
+    }
 }

@@ -12,21 +12,21 @@ class Pedido extends Model
     protected $table = 'pedido';
 
     protected $primaryKey = 'id_pedido';
-    
+
     public $timestamps = true;
 
-    
+
     protected $fillable = [
-        'codigo_rastreamento',  
-        'id_notaFiscal',        
+        'codigo_rastreamento',
+        'id_notaFiscal',
     ];
 
     protected $casts = [
-        'id_pedido' => 'int',           
-        'id_notaFiscal' => 'int',      
-        'codigo_rastreamento' => 'string', 
-        'created_at' => 'datetime',    
-        'updated_at' => 'datetime',   
+        'id_pedido' => 'int',
+        'id_notaFiscal' => 'int',
+        'codigo_rastreamento' => 'string',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function notaFiscal()
@@ -40,12 +40,19 @@ class Pedido extends Model
     }
 
     public function historicos()
-    {
-        return $this->hasMany(Historico::class, 'pedido_id_pedido', 'id_pedido');
-    }
+{
+    return $this->hasMany(HistoricoPedido::class, 'id_pedido', 'id_pedido'); // Corrigido
+}
 
-    public function rotas()
-    {
-        return $this->hasManyThrough(Rota::class, Historico::class, 'pedido_id_pedido', 'id_rotas', 'id_pedido', 'rotas_id_rotas');
-    }
+   public function rotas()
+{
+    return $this->hasManyThrough(
+        Rota::class, 
+        HistoricoPedido::class,   // Atualizado para HistoricoPedido
+        'id_pedido',              // Chave estrangeira em HistoricoPedido
+        'id_rotas',               // Chave estrangeira em Rota
+        'id_pedido',              // Chave primária em Pedido
+        'rotas_id_rotas'          // Chave local em HistoricoPedido
+    );
+}
 }
