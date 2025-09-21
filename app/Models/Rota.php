@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\Model;
 class Rota extends Model
 {
     protected $table = 'rotas';
-    protected $primaryKey = 'id_rotas'; 
+    protected $primaryKey = 'id_rotas';
     public $timestamps = false;
     protected $casts = [
         'id_veiculo' => 'int',
@@ -57,7 +57,7 @@ class Rota extends Model
         'observacoes',
         'id_origem',
         'id_destino',
-        ];
+    ];
 
     public function motorista()
     {
@@ -79,23 +79,39 @@ class Rota extends Model
         return $this->belongsTo(CentroDistribuicao::class, 'id_destino');
     }
 
-     public function historicos()
+    public function historicos()
     {
         return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
     }
-public function pedidos()
+
+    public function historicoRotas()
+    {
+        return $this->belongsTo(Historico::class, 'historico_rotas_id_historico');
+    }
+
+
+    public function historicoPedidos()
 {
     return $this->hasManyThrough(
-        Pedido::class,          
-        Historico::class,      
-        'rotas_id_rotas',     
-        'id_pedido',         
-        'id_rotas',           
-        'pedido_id_pedido'
+        HistoricoPedido::class, // Modelo de destino
+        Historico::class,       // Modelo intermediário
+        'rotas_id_rotas',       // Chave estrangeira em Historico
+        'historico_rotas_id_historico', // Chave estrangeira em HistoricoPedido
+        'id_rotas',             // Chave local em Rota
+        'id_historico'          // Chave local em Historico
     );
 }
 
 
-
-
+    public function pedidos()
+    {
+        return $this->hasManyThrough(
+            Pedido::class,
+            Historico::class,
+            'rotas_id_rotas',
+            'id_pedido',
+            'id_rotas',
+            'pedido_id_pedido'
+        );
+    }
 }

@@ -23,7 +23,6 @@ class RotaRequest extends FormRequest
     {
         return [
             'rotas_id_rotas' => 'required',
-            'pedido_id_pedido' => 'required',
             'data' => 'required|date|before_or_equal:' . now()->format('Y-m-d H:i:s'),
             'status' => 'required',
             'foto' => 'nullable|image|max:2048',
