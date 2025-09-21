@@ -4,7 +4,6 @@
     <div class="container">
         <h1 class="mb-4">📍 Detalhes da Rota #{{ $data->id_rotas }}</h1>
 
-        {{-- 🔹 Informações da Rota --}}
         <div class="card mb-4 shadow-sm">
             <div class="card-header text-white" style="background: linear-gradient(90deg, #264653, #2a9d8f);">
                 <h5 class="mb-0">Informações da Rota</h5>
@@ -30,7 +29,6 @@
             </div>
         </div>
 
-        {{-- 📜 Histórico de Status --}}
         @if ($data->historicos && $data->historicos->count() > 0)
             <div class="card mb-4 shadow-sm">
                 <div class="card-header bg-secondary text-white">
@@ -59,7 +57,6 @@
             </div>
         @endif
 
-        {{-- 🗺️ Mapa da Rota --}}
         <div class="card mb-4 shadow-sm">
             <div class="card-header text-white" style="background: linear-gradient(90deg, #264653, #2a9d8f);">
                 <h5 class="mb-0">Mapa da Rota</h5>
@@ -70,7 +67,6 @@
         </div>
     </div>
 
-    {{-- 📦 Mapbox Scripts --}}
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
 
@@ -82,10 +78,10 @@
 
         const map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11', // Mapa detalhado com ruas e avenidas
+            style: 'mapbox://styles/mapbox/streets-v11', 
             center: origem,
-            zoom: 13, // Zoom ajustado para maior visibilidade
-            pitch: 45, // Inclinação para uma visualização 3D
+            zoom: 13, 
+            pitch: 45, 
             bearing: 0
         });
 
@@ -95,7 +91,6 @@
             padding: 80
         });
 
-        // Função para criar o marcador com o nome do motorista e placa no meio da rota
         function createMarkerWithFixedLabel(coordinates, color, labelText, customIconHTML = null) {
             const el = document.createElement('div');
             el.style.position = 'relative';
@@ -145,7 +140,6 @@
                 const duracaoMin = Math.round(data.routes[0].duration / 60);
                 const distanciaKm = (data.routes[0].distance / 1000).toFixed(1);
 
-                // Adicionando a linha da rota ao mapa
                 map.addSource('route', {
                     type: 'geojson',
                     data: {
@@ -169,11 +163,9 @@
                     }
                 });
 
-                // Calculando o ponto médio da rota
                 const midwayPoint = route.coordinates[Math.floor(route.coordinates.length / 2)];
 
 
-                // Criando o marcador do motorista no meio da rota, com o nome e placa
                 const motoristaText = "{{ $data->motorista->usuario->nome }} - {{ $data->veiculo->placa }}";
                 createMarkerWithFixedLabel(midwayPoint, '#ff6347', motoristaText);
 
@@ -205,9 +197,8 @@
                     curve: 1.2
                 });
 
-                // Movendo a câmera para o ponto médio da rota
                 map.flyTo({
-                    center: midwayPoint, // Centraliza no ponto médio da rota
+                    center: midwayPoint,
                     zoom: 13,
                     speed: 1.2,
                     curve: 1.2

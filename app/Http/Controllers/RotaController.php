@@ -64,10 +64,10 @@ class RotaController extends Controller
         $rota->id_motorista = $request->id_motorista;
         $rota->id_veiculo = $request->id_veiculo;
         $rota->observacoes = $request->observacoes ?? '';
-        $rota->save(); 
+        $rota->save();
 
         $historico = Historico::create([
-            'rotas_id_rotas' => $rota->id_rotas, 
+            'rotas_id_rotas' => $rota->id_rotas,
             'data' => $request->data_inicio,
             'status' => 'Aguardando liberação',
             'foto' => '',
@@ -87,8 +87,8 @@ class RotaController extends Controller
                 foreach ($pedidos as $pedido) {
                     HistoricoPedido::create([
                         'id_pedido' => $pedido->id_pedido,
-                        'historico_rotas_id_historico' => $historico->id_historico, 
-                        'status' => 'Aguardando liberação',
+                        'historico_rotas_id_historico' => $historico->id_historico,
+                        'status' => '2',
                     ]);
                 }
             }
@@ -96,13 +96,6 @@ class RotaController extends Controller
 
         return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
     }
-
-
-
-
-
-
-
 
     public function store_entrega(Request $request)
     {
@@ -133,33 +126,51 @@ class RotaController extends Controller
 
             $rota->save();
 
-             $historico = Historico::create([
-            'rotas_id_rotas' => $rota->id_rotas, 
-            'data' => $request->data_inicio,
-            'status' => 'Aguardando liberação',
-            'foto' => '',
-            'observacao' => $request->observacoes ?? '',
-        ]);
+            $historico = Historico::create([
+                'rotas_id_rotas' => $rota->id_rotas,
+                'data' => $request->data_inicio,
+                'status' => 'Aguardando liberação',
+                'foto' => '',
+                'observacao' => $request->observacoes ?? '',
+            ]);
 
-        if ($request->filled('chave_nota')) {
-            $chaves_nota = explode(',', $request->chave_nota);
+            if ($request->filled('chave_nota')) {
+                $chaves_nota = explode(',', $request->chave_nota);
 
-            foreach ($chaves_nota as $chave) {
-                $chave = trim($chave);
+                foreach ($chaves_nota as $chave) {
+                    $chave = trim($chave);
 
-                $pedidos = Pedido::whereHas('notaFiscal', function ($query) use ($chave) {
-                    $query->where('chave_acesso', $chave);
-                })->get();
+                    $pedidos = Pedido::whereHas('notaFiscal', function ($query) use ($chave) {
+                        $query->where('chave_acesso', $chave);
+                    })->get();
 
-                foreach ($pedidos as $pedido) {
-                    HistoricoPedido::create([
-                        'id_pedido' => $pedido->id_pedido,
-                        'historico_rotas_id_historico' => $historico->id_historico, 
-                        'status' => 'Aguardando liberação',
-                    ]);
+                    foreach ($pedidos as $pedido) {
+
+                        switch ($rota->tipo) {
+                            case 'coleta':
+                                HistoricoPedido::create([
+                                    'id_pedido' => $pedido->id_pedido,
+                                    'historico_rotas_id_historico' => $historico->id_historico,
+                                    'status' => '1',
+                                ]);
+                                break;
+
+
+                            case 'entrega':
+                                HistoricoPedido::create([
+                                    'id_pedido' => $pedido->id_pedido,
+                                    'historico_rotas_id_historico' => $historico->id_historico,
+                                    'status' => '3',
+                                ]);
+                                break;
+
+                            default:
+                                return redirect()->route('rotas.index')->with('error', 'Erro ao cadastrar a rota: ');
+                                break;
+                        }
+                    }
                 }
             }
-        }
 
             return redirect()->route('rotas.index')->with('success', 'Rota cadastrada com sucesso!');
         } catch (\Exception $e) {
@@ -186,17 +197,27 @@ class RotaController extends Controller
                 ->orderBy('data', 'desc')
                 ->first();
             if ($ultimoHistorico && $ultimoHistorico->status == 'Finalizado') {
-                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
-            }
-            if ($request->hasFile('foto')) {
-                $path = $request->file('foto')->store('historicos', 'public');
-                $data['foto'] = $path;
-            } else {
-                $data['foto'] = null;
+                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota finalizado.');
             }
             $historico = Historico::create($data);
             $tipo = $data['tipo'];
+            
             switch ($tipo) {
+                case 'coleta':
+                    if ($data['status'] === 'Em trânsito') {
+                        $pedido = Pedido::find($data['pedido_id_pedido']);
+                        if ($pedido) {
+                            $pedido->status = 'Em trânsito';
+                            $pedido->save();
+                        }
+                    } elseif ($data['status'] === 'Finalizado') {
+                        $pedido = Pedido::find($data['pedido_id_pedido']);
+                        if ($pedido) {
+                            $pedido->status = 'Transferência Finalizada';
+                            $pedido->save();
+                        }
+                    }
+                    break;
                 case 'Transferencia':
                     if ($data['status'] === 'Em trânsito') {
                         $pedido = Pedido::find($data['pedido_id_pedido']);
