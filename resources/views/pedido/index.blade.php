@@ -76,8 +76,7 @@
 
                             <td>{{ $pedido->notaFiscal->numero_nfe }}</td>
                             <td>{{ $pedido->codigo_rastreamento }}</td>
-                            <td>{{ ucfirst($pedido->status) }}</td>
-
+                            <td>{{ $pedido->historicos->first()?->status ?? 'Pedido recebido' }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <!-- Visualizar Pedido -->

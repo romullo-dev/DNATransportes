@@ -7,14 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pedido extends Model
 {
-    use HasFactory;
-
     protected $table = 'pedido';
-
     protected $primaryKey = 'id_pedido';
-
     public $timestamps = true;
-
 
     protected $fillable = [
         'codigo_rastreamento',
@@ -41,18 +36,21 @@ class Pedido extends Model
 
     public function historicos()
 {
-    return $this->hasMany(HistoricoPedido::class, 'id_pedido', 'id_pedido'); // Corrigido
+    return $this->hasMany(HistoricoPedido::class, 'id_pedido', 'id_pedido')
+                ->orderBy('created_at', 'desc'); // mais recente primeiro
 }
 
-   public function rotas()
-{
-    return $this->hasManyThrough(
-        Rota::class, 
-        HistoricoPedido::class,   // Atualizado para HistoricoPedido
-        'id_pedido',              // Chave estrangeira em HistoricoPedido
-        'id_rotas',               // Chave estrangeira em Rota
-        'id_pedido',              // Chave primária em Pedido
-        'rotas_id_rotas'          // Chave local em HistoricoPedido
-    );
-}
+
+    public function historicoRotas()
+    {
+        return $this->hasManyThrough(
+    Rota::class,
+    HistoricoPedido::class,
+    'id_pedido',   // FK em historico_pedido
+    'id_rotas',    // FK em rota (mas isso NÃO existe em historico_pedido)
+    'id_pedido',   // PK em pedido
+    'id'           // PK em historico_pedido
+);
+
+    }
 }

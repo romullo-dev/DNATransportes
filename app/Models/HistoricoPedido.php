@@ -21,25 +21,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class HistoricoPedido extends Model
 {
-    protected $table = 'historico_pedido'; // Nome da tabela no banco
-    protected $primaryKey = 'id'; // Chave primária
-    public $timestamps = true; // Corrigido para "true" em minúsculas
+    protected $table = 'historico_pedido';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+
+    protected $fillable = [
+        'id_pedido',
+        'status',
+        'historico_rotas_id_historico',
+    ];
 
     protected $casts = [
         'id' => 'int',
         'id_pedido' => 'int',
-        'id_rotas' => 'int',
-        'data_pedido' => 'datetime',
-        'status' => 'string',
         'historico_rotas_id_historico' => 'int',
-    ];
-
-    protected $fillable = [
-        'id_pedido',
-        'id_rotas',
-        'data_pedido',
-        'status',
-        'historico_rotas_id_historico',
+        'status' => 'string',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function pedido()
@@ -47,19 +45,8 @@ class HistoricoPedido extends Model
         return $this->belongsTo(Pedido::class, 'id_pedido');
     }
 
-    public function rota()
-    {
-        return $this->belongsTo(Rota::class, 'id_rotas');
-    }
-
     public function historicoRotas()
     {
-        return $this->belongsTo(Historico::class, 'historico_rotas_id_historico');
-    }
-
-    // Modelo HistoricoPedido
-    public function historico()
-    {
-        return $this->belongsTo(Historico::class, 'id_historico');  // Atualizado
+        return $this->belongsTo(Historico::class, 'historico_rotas_id_historico', 'id_historico');
     }
 }

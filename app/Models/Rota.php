@@ -35,15 +35,6 @@ class Rota extends Model
     protected $table = 'rotas';
     protected $primaryKey = 'id_rotas';
     public $timestamps = false;
-    protected $casts = [
-        'id_veiculo' => 'int',
-        'id_motorista' => 'int',
-        'distancia' => 'float',
-        'previsao' => 'datetime',
-        'data_criacao' => 'datetime',
-        'id_origem' => 'int',
-        'id_destino' => 'int'
-    ];
 
     protected $fillable = [
         'id_motorista',
@@ -53,10 +44,21 @@ class Rota extends Model
         'previsao',
         'data_rota',
         'data_criacao',
-        'status',
+        'data_inicio',
         'observacoes',
         'id_origem',
         'id_destino',
+    ];
+
+    protected $casts = [
+        'id_veiculo' => 'int',
+        'id_motorista' => 'int',
+        'distancia' => 'float',
+        'previsao' => 'datetime',
+        'data_criacao' => 'datetime',
+        'data_inicio' => 'datetime',
+        'id_origem' => 'int',
+        'id_destino' => 'int',
     ];
 
     public function motorista()
@@ -80,38 +82,19 @@ class Rota extends Model
     }
 
     public function historicos()
-{
-    return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
-}
-
-    public function historicoRotas()
     {
-        return $this->belongsTo(Historico::class, 'historico_rotas_id_historico');
+        return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
     }
 
-
     public function historicoPedidos()
-{
-    return $this->hasManyThrough(
-        HistoricoPedido::class, 
-        Historico::class,         // Agora usa Historico como intermediário
-        'rotas_id_rotas',         // Chave estrangeira em Historico
-        'historico_rotas_id_historico', // Chave estrangeira em HistoricoPedido
-        'id_rotas',               // Chave primária em Rota
-        'id_historico'            // Chave local em Historico
-    );
-}
-
-
-    public function pedidos()
     {
         return $this->hasManyThrough(
-            Pedido::class,
+            HistoricoPedido::class,
             Historico::class,
-            'rotas_id_rotas',
-            'id_pedido',
-            'id_rotas',
-            'pedido_id_pedido'
+            'rotas_id_rotas',              // FK em historico_rotas
+            'historico_rotas_id_historico',// FK em historico_pedido
+            'id_rotas',                    // PK em rotas
+            'id_historico'                 // PK em historico_rotas
         );
     }
 }
