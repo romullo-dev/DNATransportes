@@ -15,41 +15,42 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \DateTime $created_at
  * @property \DateTime $updated_at
  * @property string $status
- * @property string|null $foto
- * @property string|null $observacao
+ * @property string $foto
  * 
  * @property Pedido $pedido
  * @property Rota $rota
  */
 class Historico extends Model
 {
-    protected $table = 'historico_rotas';
+    protected $table = 'historico';
     protected $primaryKey = 'id_historico';
-    public $timestamps = true;
-
-    protected $fillable = [
-        'rotas_id_rotas',
-        'data',
-        'status',
-        'foto',
-        'observacao',
-    ];
-
+    public $timestamps = true; 
+	
     protected $casts = [
         'id_historico' => 'int',
         'rotas_id_rotas' => 'int',
+        'pedido_id_pedido' => 'int',
         'data' => 'datetime',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
 
-    public function rota()
+    protected $fillable = [
+        'rotas_id_rotas',
+        'pedido_id_pedido',
+        'data',
+        'status',
+        'foto',
+        'observacao'
+    ];
+
+    public function pedido(): BelongsTo
     {
-        return $this->belongsTo(Rota::class, 'rotas_id_rotas', 'id_rotas');
+        return $this->belongsTo(Pedido::class, 'pedido_id_pedido');
     }
 
-    public function pedidos()
+    public function rota(): BelongsTo
     {
-        return $this->hasMany(HistoricoPedido::class, 'historico_rotas_id_historico', 'id_historico');
+        return $this->belongsTo(Rota::class, 'rotas_id_rotas');
     }
 }

@@ -26,23 +26,21 @@
         {{-- Filtro --}}
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-4">
-                <input type="text" name="busca" class="form-control"
-                    placeholder="Buscar por motorista, placa, origem..." value="{{ request('busca') }}">
+                <input type="text" name="busca" class="form-control" placeholder="Buscar por motorista, placa, origem..."
+                    value="{{ request('busca') }}">
             </div>
             <div class="col-md-3">
                 <select name="tipo" class="form-select">
                     <option value="">Tipo de Rota</option>
                     <option value="Entrega" {{ request('tipo') == 'Entrega' ? 'selected' : '' }}>Entrega</option>
-                    <option value="transferencia" {{ request('tipo') == 'transferencia' ? 'selected' : '' }}>Transferência
-                    </option>
+                    <option value="transferencia" {{ request('tipo') == 'transferencia' ? 'selected' : '' }}>Transferência</option>
                     <option value="coleta" {{ request('tipo') == 'coleta' ? 'selected' : '' }}>Coleta</option>
                 </select>
             </div>
             <div class="col-md-3">
                 <select name="status" class="form-select">
                     <option value="">Status</option>
-                    <option value="Em trânsito" {{ request('status') == 'Em trânsito' ? 'selected' : '' }}>Em trânsito
-                    </option>
+                    <option value="Em trânsito" {{ request('status') == 'Em trânsito' ? 'selected' : '' }}>Em trânsito</option>
                     <option value="Finalizado" {{ request('status') == 'Finalizado' ? 'selected' : '' }}>Finalizado</option>
                     <option value="Cancelado" {{ request('status') == 'Cancelado' ? 'selected' : '' }}>Cancelado</option>
                 </select>
@@ -82,13 +80,12 @@
                                 <td>{{ $rotas->origem->uf ?? '-' }}</td>
                                 <td>{{ $rotas->destino->uf ?? '-' }}</td>
                                 <td>
-                                    {{ optional($rotas->historicos->last())->status ?? ($rotas->ultimo_status ?? 'Sem histórico') }}
+                                    {{ optional($rotas->historicos->last())->status ?? $rotas->ultimo_status ?? 'Sem histórico' }}
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
                                         <!-- Botão Visualizar -->
-                                        <a href="{{ route('rotas.show', $rotas->id_rotas) }}"
-                                            class="btn btn-warning btn-sm" title="Visualizar">
+                                        <a href="{{ route('rotas.show', $rotas->id_rotas) }}" class="btn btn-warning btn-sm" title="Visualizar">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
 
@@ -99,7 +96,7 @@
                                         </button>
 
                                         <!-- Botão Excluir -->
-                                        <form action="#" method="POST"
+                                        <form action="#" method="POST" 
                                             onsubmit="return confirm('Tem certeza que deseja excluir esta rota?')">
                                             @csrf
                                             @method('DELETE')
@@ -120,31 +117,6 @@
             @foreach ($rota as $rotas)
                 @include('rotas.modais.edit', ['rotas' => $rotas])
             @endforeach
-            
-            {{-- Paginação --}}
-            <div class="d-flex justify-content-center mt-4">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination pagination-sm">
-                        <li class="page-item {{ $rota->onFirstPage() ? 'disabled' : '' }}">
-                            <a class="page-link" href="{{ $rota->previousPageUrl() }}" aria-label="Previous">
-                                <span aria-hidden="true">&lt;</span>
-                            </a>
-                        </li>
-
-                        @foreach ($rota->getUrlRange(1, $rota->lastPage()) as $page => $url)
-                            <li class="page-item {{ $rota->currentPage() == $page ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                            </li>
-                        @endforeach
-
-                        <li class="page-item {{ $rota->hasMorePages() ? '' : 'disabled' }}">
-                            <a class="page-link" href="{{ $rota->nextPageUrl() }}" aria-label="Next">
-                                <span aria-hidden="true">&gt;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
         @endif
 
     </div>

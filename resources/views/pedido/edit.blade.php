@@ -1,3 +1,5 @@
+<!-- resources/views/pedido/index.blade.php -->
+
 @extends('layouts.app')
 
 @section('content')

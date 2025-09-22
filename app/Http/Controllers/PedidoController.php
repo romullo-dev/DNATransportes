@@ -11,25 +11,20 @@ class PedidoController extends Controller
 {
     public function index()
     {
-
-        
         $result = Pedido::with([
             'notaFiscal.remetente',
             'notaFiscal.destinatario',
             'notaFiscal.enderecoRemetente',
             'notaFiscal.enderecoDestinatario',
-            'frete',
-            'historicos' 
+            'frete'
         ])->paginate(10);
-
-        //dd($result);
 
         return view('pedido.index', compact('result'));
     }
 
     public function painel()
     {
-        return view('painel.index');
+        return view('painel.index' );
     }
 
 
@@ -45,7 +40,7 @@ class PedidoController extends Controller
         try {
             $codigoRastreamento = $request->input('codigo_rastreamento');
 
-            $pedido = Pedido::with([
+             $pedido = Pedido::with([
                 'historicos',
                 'frete',
                 'notaFiscal.remetente',
@@ -53,7 +48,7 @@ class PedidoController extends Controller
                 'notaFiscal.enderecoRemetente',
                 'notaFiscal.enderecoDestinatario'
             ])
-                ->where('codigo_rastreamento', $codigoRastreamento)
+                ->where('codigo_rastreamento', $codigoRastreamento) 
                 ->first();
 
             if (!$pedido) {
@@ -66,6 +61,9 @@ class PedidoController extends Controller
         }
     }
 
+
+
+
     public function edit($id)
     {
         $pedido = Pedido::with([
@@ -74,26 +72,20 @@ class PedidoController extends Controller
             'notaFiscal.enderecoRemetente',
             'notaFiscal.enderecoDestinatario',
             'frete',
-            'historicos.historicoRotas.rota' // já traz rota via histórico
-        ])->findOrFail($id);
+            'rotas.historicos',
+        ])
+            ->findOrFail($id);
 
-        // Pegando todas as rotas desse pedido
-        $rotas = $pedido->historicos
-            ->pluck('historicoRotas.rota')
-            ->filter()        // remove nulls
-            ->unique('id_rotas'); // evita duplicatas
+        $rotas = $pedido->rotas->unique('id_rotas');
 
-       // return view('pedido.edit', compact('pedido', 'rotas'));
+        return view('pedido.edit', compact('pedido', 'rotas'));
     }
-
-
-
 
     public function update(Request $request, $id)
     {
         $pedido = Pedido::findOrFail($id);
 
-        if ($pedido->status != 'em_rota_entrega') {
+        if ($pedido->status != 'em rota entrega') {
             return redirect()->back()->with('error', 'O status só pode ser alterado quando a carga estiver em rota de entrega.');
         }
 

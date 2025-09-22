@@ -86,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rastreamento', [PedidoController::class, 'rastreamento'])->name('rastreamento');
         Route::post('/show', [PedidoController::class, 'show'])->name('show');
         Route::get('/editar/{id}', [PedidoController::class, 'edit'])->name('edit');
-        Route::post('/editando/{id}', [PedidoController::class, 'update'])->name('update');
+        Route::put('/editando/{id}', [PedidoController::class, 'update'])->name('update');
         Route::get('/painel', [PedidoController::class, 'painel'])->name('painel');
     });
 
