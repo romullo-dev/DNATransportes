@@ -18,6 +18,9 @@ Route::get('/', function () {
     return view('home.home');
 });
 
+Route::get('/all', [UsuarioController::class, 'all'])->name('all');
+
+
 
 //return redirect()->route('login');
 

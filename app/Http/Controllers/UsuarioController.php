@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Storage;
 
 class UsuarioController extends Controller
 {
+    public function all ()
+    {
+        return Usuario::all();
+    }
 
     public function store(UsuarioRequest $request)
     {
