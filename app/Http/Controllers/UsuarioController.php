@@ -37,13 +37,10 @@ class UsuarioController extends Controller
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
 
-                // Gera um nome único aleatório, mantém a extensão
                 $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-                // Salva na pasta public/usuarios
                 $file->move(public_path('usuarios'), $filename);
 
-                // Salva só o nome no banco
                 $data['foto'] = $filename;
             }
 
@@ -79,20 +76,16 @@ class UsuarioController extends Controller
             });
         }
 
-        // Aplicando o filtro de tipo
         if ($tipo) {
             $usuarios->where('tipo_usuario', $tipo);
         }
 
-        // Aplicando o filtro de status
         if ($status) {
             $usuarios->where('status_funcionario', $status);
         }
 
-        // Paginação e passando os resultados para a view
         $usuarios = $usuarios->paginate(10);
 
-        // Retorna para a view com os resultados
         return view('User.user', compact('usuarios'));
     }
 
