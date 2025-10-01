@@ -58,7 +58,7 @@ class UsuarioController extends Controller
     {
         $usuarios = Usuario::orderBy('created_at', 'desc')->paginate(7);
 
-        return view('User.user', compact('usuarios'));
+        return view('user.user', compact('usuarios'));
     }
 
     public function procurar(Request $request)
@@ -86,7 +86,7 @@ class UsuarioController extends Controller
 
         $usuarios = $usuarios->paginate(10);
 
-        return view('User.user', compact('usuarios'));
+        return view('user.user', compact('usuarios'));
     }
 
 
@@ -161,13 +161,13 @@ class UsuarioController extends Controller
     public function show($id)
     {
         $usuario = Usuario::findOrFail($id);
-        return view('User.ver', compact('usuario'));
+        return view('user.ver', compact('usuario'));
     }
 
     public function senha($id)
     {
         $usuario = Usuario::findOrFail($id);
-        return view('User.modais.senhas', compact('usuario'));
+        return view('user.modais.senhas', compact('usuario'));
     }
 
     /**
