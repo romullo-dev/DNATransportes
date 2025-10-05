@@ -95,8 +95,6 @@ class ImportacaoController extends Controller
                 'status' => $request->status,
             ]);
 
-
-
             Frete::create([
                 'id_pedido' => $pedido->id_pedido,
             ]);
