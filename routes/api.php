@@ -14,6 +14,3 @@ Route::post('/login', [API::class, 'loginApi'])->name('login.submit');
 Route::get('/rotas', [API::class, 'index']);
 
 Route::POST('/historico', [API::class, 'historico']);
-
-
-

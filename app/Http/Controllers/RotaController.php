@@ -159,7 +159,6 @@ class RotaController extends Controller
 
                     default:
                         return redirect()->route('rotas.index')->with('error', 'Erro ao cadastrar a rota de entrega: ');
-                        break;
                 }
             }
 
