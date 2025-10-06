@@ -65,18 +65,13 @@ class RotaController extends Controller
         $rota->save();
 
 
-
-        // Caso tenha chaves de nota enviadas
         if ($request->filled('chave_nota')) {
-            // Limpa e prepara as chaves
+
             $chaves_nota = array_filter(array_map('trim', explode(',', $request->chave_nota)));
 
-            // Busca todos os pedidos de uma vez só
             $pedidos = Pedido::whereHas('notaFiscal', function ($query) use ($chaves_nota) {
                 $query->whereIn('chave_acesso', $chaves_nota);
             })->get();
-
-            // Se quiser confirmar o resultado antes de criar os históricos:
 
             foreach ($pedidos as $pedido) {
                 Historico::create([
