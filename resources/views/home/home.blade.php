@@ -81,7 +81,7 @@
           <img src="{{ asset('images/fotocapa2.jpg') }}" class="d-block w-100" alt="Capa 1">
         </div>
         <div class="carousel-item">
-          <img src="{{ asset('images/fotocapa2.jpg') }}" class="d-block w-100" alt="Capa 2">
+          <!--<img src="{{ asset('images/fotocapa2.jpg') }}" class="d-block w-100" alt="Capa 2">-->
         </div>
       </div>
     </div>
