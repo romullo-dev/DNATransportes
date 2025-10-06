@@ -185,77 +185,48 @@ class RotaController extends Controller
     {
         try {
             $data = $request->validated();
-            $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
-            $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
-                ->orderBy('data', 'desc')
-                ->first();
-            if ($ultimoHistorico && $ultimoHistorico->status == 'Finalizado') {
-                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
-            }
-            if ($request->hasFile('foto')) {
-                $path = $request->file('foto')->store('historicos', 'public');
-                $data['foto'] = $path;
-            } else {
-                $data['foto'] = null;
-            }
-            $historico = Historico::create($data);
-            $tipo = $data['tipo'];
-            switch ($tipo) {
-                case 'Coleta':
-                    if ($data['status'] === 'Em rota de coleta') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Em trânsito';
-                            $pedido->save();
-                        }
-                    } elseif ($data['status'] === 'Finalizado') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Coleta Finalizada';
-                            $pedido->save();
-                        }
-                    }
-                    break;
-                case 'Transferencia':
-                    if ($data['status'] === 'Em trânsito') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Em trânsito';
-                            $pedido->save();
-                        }
-                    } elseif ($data['status'] === 'Finalizado') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Transferência Finalizada';
-                            $pedido->save();
-                        }
-                    }
-                    break;
-                case 'Entrega':
-                    if ($data['status'] === 'Em trânsito') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Em rota entrega';
-                            $pedido->save();
-                        }
-                    } elseif ($data['status'] === 'Finalizado') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'entregue';
-                            $pedido->save();
-                        }
-                    }
-                    break;
-                default:
-                    return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ');
-            }
+        $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
+
+        // 1️⃣ Verifica se a rota já foi finalizada
+        $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+            ->orderByDesc('data')
+            ->first();
+
+        if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
+            return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
+        }
+
+        // 2️⃣ Upload da foto (se existir)
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('historicos', 'public');
+        } else {
+            $data['foto'] = null;
+        }
+
+        // 3️⃣ Busca todos os pedidos associados à rota
+        $pedidos = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+            ->pluck('pedido_id_pedido')
+            ->unique(); // evita duplicar pedidos repetidos na rota
+
+        // 4️⃣ Cria um novo histórico para cada pedido da rota
+        foreach ($pedidos as $pedidoId) {
+            Historico::create([
+                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                'pedido_id_pedido' => $pedidoId,
+                'data' => $data['data'],
+                'status' => $data['status'], // mantém o mesmo texto (case original)
+                'foto' => $data['foto'],
+                'observacao' => $data['observacao'] ?? null,
+            ]);
+        }
+
 
             return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
         } catch (\Exception $e) {
             return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ' . $e->getMessage());
         }
     }
-    
+
     public function destroy(Rota $rota)
     {
         //
