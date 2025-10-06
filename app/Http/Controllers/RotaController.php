@@ -186,7 +186,6 @@ class RotaController extends Controller
             $data = $request->validated();
         $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
 
-        // 1️⃣ Verifica se a rota já foi finalizada
         $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
             ->orderByDesc('data')
             ->first();
@@ -194,26 +193,23 @@ class RotaController extends Controller
         if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
             return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
         }
-
-        // 2️⃣ Upload da foto (se existir)
+ 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('historicos', 'public');
         } else {
             $data['foto'] = null;
         }
 
-        // 3️⃣ Busca todos os pedidos associados à rota
         $pedidos = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
             ->pluck('pedido_id_pedido')
-            ->unique(); // evita duplicar pedidos repetidos na rota
+            ->unique(); 
 
-        // 4️⃣ Cria um novo histórico para cada pedido da rota
         foreach ($pedidos as $pedidoId) {
             Historico::create([
                 'rotas_id_rotas' => $data['rotas_id_rotas'],
                 'pedido_id_pedido' => $pedidoId,
                 'data' => $data['data'],
-                'status' => $data['status'], // mantém o mesmo texto (case original)
+                'status' => $data['status'], 
                 'foto' => $data['foto'],
                 'observacao' => $data['observacao'] ?? null,
             ]);
