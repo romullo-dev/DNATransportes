@@ -20,7 +20,7 @@
                         <option value="" disabled selected>Selecione o status</option>
                         <option value="Em trânsito">Em trânsito</option>
                         <option value="Finalizado">Finalizado</option>
-                        <option value="Cancelado">Cancelado</option>
+                        <option value="Ocorrência">Ocorrência</option>
                     </select>
                 </div>
                 <div class="col-md-12">

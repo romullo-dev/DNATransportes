@@ -17,7 +17,7 @@ class RotaController extends Controller
 {
     public function index()
     {
-        $rota =  Rota::with(['pedidos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
+        $rota = Rota::with(['pedidos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
         return View('rotas.index', compact('rota'));
     }
 
@@ -77,7 +77,7 @@ class RotaController extends Controller
                 Historico::create([
                     'rotas_id_rotas' => $rota->id_rotas,
                     'pedido_id_pedido' => $pedido->id_pedido,
-                    'status' => 'Em rota',
+                    'status' => 'Aguardando transferência',
                     'data' => now(),
                 ]);
 
@@ -132,7 +132,7 @@ class RotaController extends Controller
                                 'rotas_id_rotas' => $rota->id_rotas,
                                 'pedido_id_pedido' => $pedido->id_pedido,
                                 'data' => now(),
-                                'status' => 'Em rota de entrega',
+                                'status' => 'Em processo de separação no destino',
                                 'foto' => '',
                                 'observacao' => $request->observacoes ?? '',
                             ]);
@@ -145,7 +145,7 @@ class RotaController extends Controller
                                 'rotas_id_rotas' => $rota->id_rotas,
                                 'pedido_id_pedido' => $pedido->id_pedido,
                                 'data' => now(),
-                                'status' => 'Em rota de coleta',
+                                'status' => 'Aguardando coleta',
                                 'foto' => '',
                                 'observacao' => $request->observacoes ?? '',
                             ]);
@@ -179,37 +179,141 @@ class RotaController extends Controller
     {
         try {
             $data = $request->validated();
-        $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
+            $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
 
-        $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
-            ->orderByDesc('data')
-            ->first();
+            $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+                ->orderByDesc('data')
+                ->first();
 
-        if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
-            return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
-        }
- 
-        if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('historicos', 'public');
-        } else {
-            $data['foto'] = null;
-        }
+            if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
+                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
+            }
 
-        $pedidos = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
-            ->pluck('pedido_id_pedido')
-            ->unique(); 
+            if ($request->hasFile('foto')) {
+                $data['foto'] = $request->file('foto')->store('historicos', 'public');
+            } else {
+                $data['foto'] = null;
+            }
 
-        foreach ($pedidos as $pedidoId) {
-            Historico::create([
-                'rotas_id_rotas' => $data['rotas_id_rotas'],
-                'pedido_id_pedido' => $pedidoId,
-                'data' => $data['data'],
-                'status' => $data['status'], 
-                'foto' => $data['foto'],
-                'observacao' => $data['observacao'] ?? null,
-            ]);
-        }
+            $pedidos = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+                ->pluck('pedido_id_pedido')
+                ->unique();
 
+            $tipo = $data['tipo'];
+
+            switch ($tipo) {
+                case 'Coleta':
+                    if ($data['status'] === 'Em trânsito') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Em processo de coleta',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Finalizado') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Coleta realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        } 
+                    } elseif ($data['status'] === 'Ocorrência') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Coleta não realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        } 
+                    }
+                    break;
+                case 'Transferencia':
+                    if ($data['status'] === 'Em trânsito') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Em processo de transferência',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Finalizado') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Transferência realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Ocorrência') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Transferência não realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        } 
+                    }
+                    break;
+                case 'Entrega':
+                    if ($data['status'] === 'Em trânsito') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Em rota de entrega',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+
+                    } elseif ($data['status'] === 'Finalizado') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Entrega realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Ocorrência') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => $data['data'],
+                                'status' => 'Entrega não realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        } 
+                    }
+                    break;
+                default:
+                    return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ');
+            }
 
             return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
         } catch (\Exception $e) {
