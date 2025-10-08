@@ -118,6 +118,7 @@
                                                                     alt="Foto da movimentação"
                                                                     style="max-width: 100px; max-height: 100px;">
                                                             @else
+                                                            
                                                                 <em>Sem foto</em>
                                                             @endif
                                                         </td>
