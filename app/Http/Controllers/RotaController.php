@@ -201,6 +201,16 @@ class RotaController extends Controller
 
             $tipo = $data['tipo'];
 
+            if ($request->hasFile('foto')) {
+                $file = $request->file('foto');
+
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $file->move(public_path('canhotos'), $filename);
+
+                $data['foto'] = $filename;
+            }
+
             switch ($tipo) {
                 case 'Coleta':
                     if ($data['status'] === 'Em trânsito') {

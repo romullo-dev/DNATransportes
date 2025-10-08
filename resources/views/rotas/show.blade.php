@@ -1,180 +1,199 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h1 class="mb-4">📍 Detalhes da Rota #{{ $data->id_rotas }}</h1>
+<div class="container">
+    <h1 class="mb-4">📍 Detalhes da Rota #{{ $data->id_rotas }}</h1>
 
-        {{-- 🔹 Informações da Rota --}}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header text-white" style="background: linear-gradient(90deg, #264653, #2a9d8f);">
-                <h5 class="mb-0">Informações da Rota</h5>
-            </div>
-            <div class="card-body row">
-                <div class="col-md-6 mb-3">
-                    <p><strong>Motorista:</strong> {{ $data->motorista->usuario->nome ?? 'Não informado' }}</p>
-                    <p><strong>Documento:</strong> {{ $data->motorista->usuario->cpf ?? 'Não informado' }}</p>
-                    <p><strong>Veículo:</strong> {{ $data->veiculo->placa ?? 'Não informado' }}</p>
-                    <p><strong>Capacidade:</strong> KG {{ $data->veiculo->capacidade_kg ?? 'Não informado' }}</p>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }}
-                        ({{ $data->origem->uf ?? '--' }})</p>
-                    <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }}
-                        ({{ $data->destino->uf ?? '--' }})</p>
-                    <p><strong>Tipo de Rota:</strong> {{ $data->tipo ?? 'Não informado' }}
-                    <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}
-                    </p>
-                    <p><strong>Data de Criação:</strong>
-                        {{ $data->historicos->first()->created_at?->format('d/m/Y H:i') ?? '--' }}</p>
-                </div>
-            </div>
+    {{-- 🔹 Informações da Rota --}}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header text-white" style="background: linear-gradient(90deg, #264653, #2a9d8f);">
+            <h5 class="mb-0">Informações da Rota</h5>
         </div>
-
-        {{-- 📜 Histórico de Status --}}
-        @if ($data->historicos && $data->historicos->count() > 0)
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Histórico da Rota</h5>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-bordered table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Status</th>
-                                <th>Data/Hora</th>
-                                <th>Observações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data->historicos as $hist)
-                                <tr>
-                                    <td>{{ $hist->status }}</td>
-                                    <td>{{ $hist->created_at?->format('d/m/Y H:i') ?? '--' }}</td>
-                                    <td>{{ $hist->observacao ?? '--' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card-body row">
+            <div class="col-md-6 mb-3">
+                <p><strong>Motorista:</strong> {{ $data->motorista->usuario->nome ?? 'Não informado' }}</p>
+                <p><strong>Documento:</strong> {{ $data->motorista->usuario->cpf ?? 'Não informado' }}</p>
+                <p><strong>Veículo:</strong> {{ $data->veiculo->placa ?? 'Não informado' }}</p>
+                <p><strong>Capacidade:</strong> KG {{ $data->veiculo->capacidade_kg ?? 'Não informado' }}</p>
             </div>
-        @endif
-
-        {{-- 🗺️ Mapa da Rota --}}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header text-white" style="background: linear-gradient(90deg, #264653, #2a9d8f);">
-                <h5 class="mb-0">Mapa da Rota</h5>
-            </div>
-            <div class="card-body">
-                <div id="map" style="width: 100%; height: 500px; border-radius: 8px; overflow: hidden;"></div>
+            <div class="col-md-6 mb-3">
+                <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }}
+                    ({{ $data->origem->uf ?? '--' }})</p>
+                <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }}
+                    ({{ $data->destino->uf ?? '--' }})</p>
+                <p><strong>Tipo de Rota:</strong> {{ $data->tipo ?? 'Não informado' }}
+                <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}
+                </p>
+                <p><strong>Data de Criação:</strong>
+                    {{ $data->historicos->first()->created_at?->format('d/m/Y H:i') ?? '--' }}
+                </p>
             </div>
         </div>
     </div>
 
-    {{-- 📦 Mapbox Scripts --}}
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css" rel="stylesheet" />
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
+    {{-- 📜 Histórico de Status --}}
+    @if ($data->historicos && $data->historicos->count() > 0)
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Histórico da Rota</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>NFe</th>
+                        <th>Status</th>
+                        <th>Data/Hora</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($data->historicos as $hist)
+                    <tr>
+                        <td>{{ $hist->pedido->notaFiscal->numero_nfe }}</td>
+                        <td>{{ $hist->status }}</td>
+                        <td>{{ $hist->created_at?->format('d/m/Y H:i') ?? '--' }}</td>
+                        <td>{{ $hist->observacao ?? '--' }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
 
-    <script>
-        //  mapboxgl.accessToken = '{{ $mapboxToken }}';
+    {{-- 🗺️ Mapa da Rota --}}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header text-white" style="background: linear-gradient(90deg, #264653, #2a9d8f);">
+            <h5 class="mb-0">Mapa da Rota</h5>
+        </div>
+        <div class="card-body">
+            <div id="map" style="width: 100%; height: 500px; border-radius: 8px; overflow: hidden;"></div>
+        </div>
+    </div>
+</div>
 
-        const origem = [{{ $data->origem->longitude }}, {{ $data->origem->latitude }}];
-        const destino = [{{ $data->destino->longitude }}, {{ $data->destino->latitude }}];
+{{-- 📦 Mapbox Scripts --}}
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
 
-        const map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: origem,
-            zoom: 13, 
-            pitch: 45, 
-            bearing: 0
-        });
+<script>
+    //  mapboxgl.accessToken = '{{ $mapboxToken }}';
 
-        const bounds = new mapboxgl.LngLatBounds();
-        [origem, destino].forEach(coord => bounds.extend(coord));
-        map.fitBounds(bounds, {
-            padding: 80
-        });
+    const origem = [{
+        {
+            $data - > origem - > longitude
+        }
+    }, {
+        {
+            $data - > origem - > latitude
+        }
+    }];
+    const destino = [{
+        {
+            $data - > destino - > longitude
+        }
+    }, {
+        {
+            $data - > destino - > latitude
+        }
+    }];
 
-        function createMarkerWithFixedLabel(coordinates, color, labelText, customIconHTML = null) {
-            const el = document.createElement('div');
-            el.style.position = 'relative';
-            el.style.display = 'flex';
-            el.style.flexDirection = 'column';
-            el.style.alignItems = 'center';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: origem,
+        zoom: 13,
+        pitch: 45,
+        bearing: 0
+    });
 
-            if (customIconHTML) {
-                el.innerHTML = customIconHTML;
-            } else {
-                el.style.width = '30px';
-                el.style.height = '30px';
-                el.style.backgroundColor = color;
-                el.style.borderRadius = '50%';
-                el.style.border = '2px solid white';
-                el.style.boxShadow = '0 0 8px rgba(0,0,0,0.5)';
-            }
+    const bounds = new mapboxgl.LngLatBounds();
+    [origem, destino].forEach(coord => bounds.extend(coord));
+    map.fitBounds(bounds, {
+        padding: 80
+    });
 
-            const label = document.createElement('div');
-            label.textContent = labelText;
-            label.style.marginTop = '8px';
-            label.style.backgroundColor = '#264653';
-            label.style.color = 'white';
-            label.style.padding = '6px 12px';
-            label.style.borderRadius = '8px';
-            label.style.fontSize = '14px';
-            label.style.fontWeight = '600';
-            label.style.boxShadow = '0 4px 8px rgba(0,0,0,0.4)';
-            label.style.whiteSpace = 'nowrap';
-            label.style.pointerEvents = 'none';
-            label.style.userSelect = 'none';
+    function createMarkerWithFixedLabel(coordinates, color, labelText, customIconHTML = null) {
+        const el = document.createElement('div');
+        el.style.position = 'relative';
+        el.style.display = 'flex';
+        el.style.flexDirection = 'column';
+        el.style.alignItems = 'center';
 
-            el.appendChild(label);
-
-            return new mapboxgl.Marker(el).setLngLat(coordinates).addTo(map);
+        if (customIconHTML) {
+            el.innerHTML = customIconHTML;
+        } else {
+            el.style.width = '30px';
+            el.style.height = '30px';
+            el.style.backgroundColor = color;
+            el.style.borderRadius = '50%';
+            el.style.border = '2px solid white';
+            el.style.boxShadow = '0 0 8px rgba(0,0,0,0.5)';
         }
 
-        map.on('load', async () => {
-            const url =
-                `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+        const label = document.createElement('div');
+        label.textContent = labelText;
+        label.style.marginTop = '8px';
+        label.style.backgroundColor = '#264653';
+        label.style.color = 'white';
+        label.style.padding = '6px 12px';
+        label.style.borderRadius = '8px';
+        label.style.fontSize = '14px';
+        label.style.fontWeight = '600';
+        label.style.boxShadow = '0 4px 8px rgba(0,0,0,0.4)';
+        label.style.whiteSpace = 'nowrap';
+        label.style.pointerEvents = 'none';
+        label.style.userSelect = 'none';
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
+        el.appendChild(label);
 
-                const route = data.routes[0].geometry;
-                const duracaoMin = Math.round(data.routes[0].duration / 60);
-                const distanciaKm = (data.routes[0].distance / 1000).toFixed(1);
+        return new mapboxgl.Marker(el).setLngLat(coordinates).addTo(map);
+    }
 
-                map.addSource('route', {
-                    type: 'geojson',
-                    data: {
-                        type: 'Feature',
-                        geometry: route
-                    }
-                });
+    map.on('load', async () => {
+        const url =
+            `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
-                map.addLayer({
-                    id: 'route',
-                    type: 'line',
-                    source: 'route',
-                    layout: {
-                        'line-join': 'round',
-                        'line-cap': 'round'
-                    },
-                    paint: {
-                        'line-color': '#2a9d8f',
-                        'line-width': 6,
-                        'line-opacity': 0.8
-                    }
-                });
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
 
-                const midwayPoint = route.coordinates[Math.floor(route.coordinates.length / 2)];
+            const route = data.routes[0].geometry;
+            const duracaoMin = Math.round(data.routes[0].duration / 60);
+            const distanciaKm = (data.routes[0].distance / 1000).toFixed(1);
+
+            map.addSource('route', {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    geometry: route
+                }
+            });
+
+            map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: 'route',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#2a9d8f',
+                    'line-width': 6,
+                    'line-opacity': 0.8
+                }
+            });
+
+            const midwayPoint = route.coordinates[Math.floor(route.coordinates.length / 2)];
 
 
-                const motoristaText = "{{ $data->motorista->usuario->nome }} - {{ $data->veiculo->placa }}";
-                createMarkerWithFixedLabel(midwayPoint, '#ff6347', motoristaText);
+            const motoristaText = "{{ $data->motorista->usuario->nome }} - {{ $data->veiculo->placa }}";
+            createMarkerWithFixedLabel(midwayPoint, '#ff6347', motoristaText);
 
-                const infoBox = document.createElement('div');
-                infoBox.innerHTML = `
+            const infoBox = document.createElement('div');
+            infoBox.innerHTML = `
                     <div style="
                         position: absolute;
                         top: 10px;
@@ -192,25 +211,25 @@
                         📏 Distância: ${distanciaKm} km
                     </div>
                 `;
-                map.getContainer().appendChild(infoBox);
+            map.getContainer().appendChild(infoBox);
 
-                map.flyTo({
-                    center: midwayPoint, 
-                    zoom: 13,
-                    speed: 1.2,
-                    curve: 1.2
-                });
+            map.flyTo({
+                center: midwayPoint,
+                zoom: 13,
+                speed: 1.2,
+                curve: 1.2
+            });
 
-                map.flyTo({
-                    center: midwayPoint, 
-                    zoom: 13,
-                    speed: 1.2,
-                    curve: 1.2
-                });
+            map.flyTo({
+                center: midwayPoint,
+                zoom: 13,
+                speed: 1.2,
+                curve: 1.2
+            });
 
-            } catch (error) {
-                console.error('Erro ao carregar rota:', error);
-            }
-        });
-    </script>
+        } catch (error) {
+            console.error('Erro ao carregar rota:', error);
+        }
+    });
+</script>
 @endsection

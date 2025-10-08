@@ -110,7 +110,7 @@
                                                         <td>{{ $movimentacao->status }}</td>
                                                         <td>
                                                             @if ($movimentacao->foto)
-                                                                <img src="{{ asset('storage/' . $movimentacao->foto) }}"
+                                                                <img src="{{ asset('canhotos/' . $movimentacao->foto) }}"
                                                                     alt="Foto da movimentação"
                                                                     style="max-width: 100px; max-height: 100px;">
                                                             @else
