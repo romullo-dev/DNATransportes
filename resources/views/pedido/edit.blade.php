@@ -110,6 +110,10 @@
                                                         <td>{{ $movimentacao->status }}</td>
                                                         <td>
                                                             @if ($movimentacao->foto)
+                                                                <button class="btn btn-success d-flex align-items-center gap-2">
+                                                            <i class="bi bi-receipt"></i>
+                                                            <span>Comprovante</span>
+                                                            </button>
                                                                 <img src="{{ asset('canhotos/' . $movimentacao->foto) }}"
                                                                     alt="Foto da movimentação"
                                                                     style="max-width: 100px; max-height: 100px;">
