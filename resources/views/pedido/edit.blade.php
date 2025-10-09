@@ -109,19 +109,17 @@
                                                         <td>{{ $movimentacao->observacao }}</td>
                                                         <td>{{ $movimentacao->status }}</td>
                                                         <td>
-                                                            @if ($movimentacao->foto)
-                                                                <button class="btn btn-success d-flex align-items-center gap-2">
-                                                            <i class="bi bi-receipt"></i>
-                                                            <span>Comprovante</span>
-                                                            </button>
-                                                                <img src="{{ asset('canhotos/' . $movimentacao->foto) }}"
-                                                                    alt="Foto da movimentação"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            @else
-                                                                <em>Sem foto</em>
-                                                            @endif
+                                                                <button class="btn btn-success d-flex align-items-center gap-2"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#modalHistorico{{ $movimentacao->id_historico }}">
+                                                                    <i class="bi bi-receipt"></i>
+                                                                    <span>Comprovante</span>
+                                                                </button>
                                                         </td>
                                                     </tr>
+
+                                                        @include('pedido.modais.modal_comprovante', ['movimentacao' => $movimentacao])
+
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -161,8 +159,7 @@
                         <select name="status" class="form-select" required>
                             <option value="em_preparo" {{ $pedido->status == 'em_preparo' ? 'selected' : '' }}>Em Preparo
                             </option>
-                            <option value="no_centro_transferencia"
-                                {{ $pedido->status == 'no_centro_transferencia' ? 'selected' : '' }}>No Centro de
+                            <option value="no_centro_transferencia" {{ $pedido->status == 'no_centro_transferencia' ? 'selected' : '' }}>No Centro de
                                 Transferência</option>
                             <option value="em_transito" {{ $pedido->status == 'em_transito' ? 'selected' : '' }}>Em
                                 Trânsito</option>
