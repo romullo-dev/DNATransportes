@@ -109,12 +109,27 @@
                                                         <td>{{ $movimentacao->observacao }}</td>
                                                         <td>{{ $movimentacao->status }}</td>
                                                         <td>
+<<<<<<< HEAD
                                                                 <button class="btn btn-success d-flex align-items-center gap-2"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#modalHistorico{{ $movimentacao->id_historico }}">
                                                                     <i class="bi bi-receipt"></i>
                                                                     <span>Comprovante</span>
                                                                 </button>
+=======
+                                                            @if ($movimentacao->foto)
+                                                                <button class="btn btn-success d-flex align-items-center gap-2">
+                                                            <i class="bi bi-receipt"></i>
+                                                            <span>Comprovante</span>
+                                                            </button>
+                                                                <img src="{{ asset('canhotos/' . $movimentacao->foto) }}"
+                                                                    alt="Foto da movimentação"
+                                                                    style="max-width: 100px; max-height: 100px;">
+                                                            @else
+                                                            
+                                                                <em>Sem foto</em>
+                                                            @endif
+>>>>>>> 7bd34d584f6a1fb4bbbca73461ee2cb85bb40ab7
                                                         </td>
                                                     </tr>
 
