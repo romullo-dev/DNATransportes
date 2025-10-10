@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-            {{-- Cabeçalho no mesmo estilo do sistemaddx' --}}
+            {{-- Cabeçalho no mesmo estilo do sistema --}}
             <div class="modal-header text-white"
                  style="background: linear-gradient(90deg, #1d3557, #264653);">
                 <h5 class="modal-title mb-0 fw-bold d-flex align-items-center gap-2">
