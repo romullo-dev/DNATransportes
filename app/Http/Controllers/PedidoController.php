@@ -26,19 +26,17 @@ class PedidoController extends Controller
 
     public function painel()
     {
-        // 📦 Total de pedidos
+        
         $totalPedidos = \App\Models\Pedido::count();
 
-        // 🕓 Pega o último status de cada pedido
        $statusPedidos = \App\Models\Pedido::with(['historicos' => function ($q) {
     $q->latest('data');
 }])->get()->map(function ($pedido) {
     $status = optional($pedido->historicos->first())->status ?? 'Sem status';
-    return trim(strtolower($status)); // 🔥 normaliza pra minúsculo e remove espaços
+    return trim(strtolower($status));
 });
 
 
-        // Conta quantos há de cada tipo de status
         $resumoStatus = collect($statusPedidos)->countBy();
 
         $statusEntregue = $resumoStatus->get('entrega realizada', 0);
@@ -61,7 +59,6 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
 
         $statusOutros = $totalPedidos - ($statusEntregue + $statusTransito + $statusCancelado);
 
-        // 📅 Pedidos criados nos últimos 6 meses
         $meses = collect();
         $dadosPedidos = collect();
 
@@ -79,7 +76,6 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
 
         //dd($resumoStatus);
 
-        // 🔁 Retorna a view com os dados
         return view('painel.index', compact(
             'totalPedidos',
             'statusEntregue',
