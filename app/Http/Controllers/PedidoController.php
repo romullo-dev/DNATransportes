@@ -19,7 +19,7 @@ class PedidoController extends Controller
             'notaFiscal.enderecoRemetente',
             'notaFiscal.enderecoDestinatario',
             'frete'
-        ])->paginate(10);
+        ])->paginate(5);
 
         return view('pedido.index', compact('result'));
     }

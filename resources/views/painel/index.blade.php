@@ -64,8 +64,8 @@
                         </div>
                         <h6 class="text-secondary">{{ $card['title'] }}</h6>
                         <h2 class="fw-bold {{ $card['color'] }}">{{ $card['value'] }}</h2>
-                        <p class="small text-muted">{{ $card['desc'] }}</p>
-                    </div>
+                        <p class="small" style="color:#A8B2C3;">{{ $card['desc'] }}</p>
+                        </div>
                 </div>
             @endforeach
         </div>
