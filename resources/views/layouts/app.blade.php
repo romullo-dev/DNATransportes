@@ -103,14 +103,21 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNav">
+                    @php
+                        $usuarioAutenticado = Auth::user();
+                        $tipoUsuario = $usuarioAutenticado?->tipo_usuario;
+                    @endphp
+
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                        @if (in_array($tipoUsuario, ['admin', 'operador', 'motorista']))
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{{ route('pedidos.rastreamento') }}">
                                     <i class="bi bi-truck-front-fill me-1"></i> Rastreamento
                                 </a>
                             </li>
+                        @endif
 
+                        @if (in_array($tipoUsuario, ['admin', 'operador']))
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="operacionalDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -121,7 +128,7 @@
                                             <i class="bi bi-signpost"></i> Criação de Rotas</a>
                                     </li>
                                     <li><a class="dropdown-item" href="{{ route('rotas.index') }}">
-                                            <i class="bi bi-map-fill"></i> Rotas </a>
+                                            <i class="bi bi-map-fill"></i> Rotas</a>
                                     </li>
                                     <li><a class="dropdown-item" href="{{ route('pedidos.index') }}"><i
                                                 class="bi bi-box"></i> Pedidos</a>
@@ -138,7 +145,8 @@
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2"
                                             href="{{ route('centro.index') }}">
-                                            <i class="bi bi-truck fs-5 text-primary"></i> Centro de Distribuição
+                                            <i class="bi bi-building-fill-add fs-5 text-primary"></i> Centro de
+                                            Distribuição
                                         </a>
                                     </li>
 
@@ -155,30 +163,14 @@
                                             href="{{ route('modelo.index') }}">
                                             <i class="bi bi-gear fs-5 text-success"></i> Modelo do Veículo
                                         </a>
-                                    <li class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ route('motorista.index') }}"><i
-                                                class="bi bi-person-badge"></i> Motorista</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('read-user') }}"><i
-                                                class="bi bi-people"></i> Usuários</a></li>
-                                </ul>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                            href="{{ route('veiculo.index') }}">
-                                            <i class="bi bi-truck fs-5 text-primary"></i> Veículo
-                                        </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                            href="{{ route('modelo.index') }}">
-                                            <i class="bi bi-gear fs-5 text-success"></i> Modelo do Veículo
-                                        </a>
                                     <li class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ route('motorista.index') }}"><i
                                                 class="bi bi-person-badge"></i> Motorista</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('read-user') }}"><i
-                                                class="bi bi-people"></i> Usuários</a></li>
-
+                                    @if ($tipoUsuario === 'admin')
+                                        <li><a class="dropdown-item" href="{{ route('read-user') }}"><i
+                                                    class="bi bi-people"></i> Usuários</a></li>
+                                    @endif
                                 </ul>
                             </li>
 
@@ -195,17 +187,18 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item text-muted" href="#" aria-disabled="true">
                                             <i class="bi bi-person-circle me-2"></i> Perfil
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item text-muted" href="#" aria-disabled="true">
                                             <i class="bi bi-sliders me-2"></i> Configurações
                                         </a>
                                     </li>
                                 </ul>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{{ route('importacao.index') }}">
                                     <i class="bi bi-calculator me-1"></i> Importar XML
@@ -217,15 +210,14 @@
                                     <i class="bi bi-airplane-engines-fill me-1"></i> Painel
                                 </a>
                             </li>
+                        @endif
 
-                            <!-- Usuário / Logout -->
+                        @if ($usuarioAutenticado)
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
                                     role="button" data-bs-toggle="dropdown" style="color: #fff;">
-
-                                    <!-- Foto do usuário -->
-                                    @if (Auth::user()->foto)
-                                        <img src="{{ asset('usuarios/' . Auth::user()->foto) }}"
+                                    @if ($usuarioAutenticado->foto)
+                                        <img src="{{ asset('usuarios/' . $usuarioAutenticado->foto) }}"
                                             alt="Foto do usuário" class="rounded-circle border border-warning"
                                             style="width: 36px; height: 36px; object-fit: cover;">
                                     @else
@@ -236,8 +228,8 @@
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                                     <li>
                                         <a class="dropdown-item"
-                                            href="{{ route('show.user', ['id' => Auth::user()->id_usuario]) }}">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Ver usuário
+                                            href="{{ route('show.user', ['id' => $usuarioAutenticado->id_usuario]) }}">
+                                            <i class="bi bi-person-lines-fill me-2"></i> Ver usuário
                                         </a>
                                         <a class="dropdown-item" href="#"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -251,10 +243,10 @@
                                     @csrf
                                 </form>
                             </li>
-                        </ul>
-
-                        @yield('menu')
+                        @endif
                     </ul>
+
+                    @yield('menu')
                 </div>
             </div>
         </nav>
