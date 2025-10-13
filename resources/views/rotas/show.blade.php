@@ -17,16 +17,11 @@
                 <p><strong>Capacidade:</strong> KG {{ $data->veiculo->capacidade_kg ?? 'Não informado' }}</p>
             </div>
             <div class="col-md-6 mb-3">
-                <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }}
-                    ({{ $data->origem->uf ?? '--' }})</p>
-                <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }}
-                    ({{ $data->destino->uf ?? '--' }})</p>
-                <p><strong>Tipo de Rota:</strong> {{ $data->tipo ?? 'Não informado' }}
-                <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}
-                </p>
-                <p><strong>Data de Criação:</strong>
-                    {{ $data->historicos->first()->created_at?->format('d/m/Y H:i') ?? '--' }}
-                </p>
+                <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }} ({{ $data->origem->uf ?? '--' }})</p>
+                <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }} ({{ $data->destino->uf ?? '--' }})</p>
+                <p><strong>Tipo de Rota:</strong> {{ $data->tipo ?? 'Não informado' }}</p>
+                <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}</p>
+                <p><strong>Data de Criação:</strong> {{ $data->historicos->first()->created_at?->format('d/m/Y H:i') ?? '--' }}</p>
             </div>
         </div>
     </div>
@@ -50,7 +45,7 @@
                 <tbody>
                     @foreach ($data->historicos as $hist)
                     <tr>
-                        <td>{{ $hist->pedido->notaFiscal->numero_nfe }}</td>
+                        <td>{{ $hist->pedido->notaFiscal->numero_nfe ?? '--' }}</td>
                         <td>{{ $hist->status }}</td>
                         <td>{{ $hist->created_at?->format('d/m/Y H:i') ?? '--' }}</td>
                         <td>{{ $hist->observacao ?? '--' }}</td>
@@ -78,60 +73,40 @@
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
 
 <script>
-    //  mapboxgl.accessToken = '{{ $mapboxToken }}';
+    mapboxgl.accessToken = '{{ $mapboxToken ?? env('MAPBOX_TOKEN') }}';
 
-    const origem = [{
-        {
-            $data - > origem - > longitude
-        }
-    }, {
-        {
-            $data - > origem - > latitude
-        }
-    }];
-    const destino = [{
-        {
-            $data - > destino - > longitude
-        }
-    }, {
-        {
-            $data - > destino - > latitude
-        }
-    }];
+    const origem = [{{ $data->origem->longitude ?? 0 }}, {{ $data->origem->latitude ?? 0 }}];
+    const destino = [{{ $data->destino->longitude ?? 0 }}, {{ $data->destino->latitude ?? 0 }}];
 
     const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: origem,
-        zoom: 13,
+        zoom: 12,
         pitch: 45,
         bearing: 0
     });
 
     const bounds = new mapboxgl.LngLatBounds();
     [origem, destino].forEach(coord => bounds.extend(coord));
-    map.fitBounds(bounds, {
-        padding: 80
-    });
+    map.fitBounds(bounds, { padding: 80 });
 
-    function createMarkerWithFixedLabel(coordinates, color, labelText, customIconHTML = null) {
+    function createMarkerWithFixedLabel(coordinates, color, labelText) {
         const el = document.createElement('div');
         el.style.position = 'relative';
         el.style.display = 'flex';
         el.style.flexDirection = 'column';
         el.style.alignItems = 'center';
 
-        if (customIconHTML) {
-            el.innerHTML = customIconHTML;
-        } else {
-            el.style.width = '30px';
-            el.style.height = '30px';
-            el.style.backgroundColor = color;
-            el.style.borderRadius = '50%';
-            el.style.border = '2px solid white';
-            el.style.boxShadow = '0 0 8px rgba(0,0,0,0.5)';
-        }
+        // Bolinha marcador
+        el.style.width = '20px';
+        el.style.height = '20px';
+        el.style.backgroundColor = color;
+        el.style.borderRadius = '50%';
+        el.style.border = '2px solid white';
+        el.style.boxShadow = '0 0 8px rgba(0,0,0,0.5)';
 
+        // Label fixo
         const label = document.createElement('div');
         label.textContent = labelText;
         label.style.marginTop = '8px';
@@ -143,17 +118,13 @@
         label.style.fontWeight = '600';
         label.style.boxShadow = '0 4px 8px rgba(0,0,0,0.4)';
         label.style.whiteSpace = 'nowrap';
-        label.style.pointerEvents = 'none';
-        label.style.userSelect = 'none';
 
         el.appendChild(label);
-
         return new mapboxgl.Marker(el).setLngLat(coordinates).addTo(map);
     }
 
     map.on('load', async () => {
-        const url =
-            `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
         try {
             const response = await fetch(url);
@@ -165,20 +136,14 @@
 
             map.addSource('route', {
                 type: 'geojson',
-                data: {
-                    type: 'Feature',
-                    geometry: route
-                }
+                data: { type: 'Feature', geometry: route }
             });
 
             map.addLayer({
                 id: 'route',
                 type: 'line',
                 source: 'route',
-                layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
+                layout: { 'line-join': 'round', 'line-cap': 'round' },
                 paint: {
                     'line-color': '#2a9d8f',
                     'line-width': 6,
@@ -188,45 +153,32 @@
 
             const midwayPoint = route.coordinates[Math.floor(route.coordinates.length / 2)];
 
+            createMarkerWithFixedLabel(origem, '#2a9d8f', 'Origem');
+            createMarkerWithFixedLabel(destino, '#e76f51', 'Destino');
 
-            const motoristaText = "{{ $data->motorista->usuario->nome }} - {{ $data->veiculo->placa }}";
-            createMarkerWithFixedLabel(midwayPoint, '#ff6347', motoristaText);
+            const motoristaText = "{{ $data->motorista->usuario->nome ?? 'Motorista' }} - {{ $data->veiculo->placa ?? '' }}";
+            createMarkerWithFixedLabel(midwayPoint, '#f4a261', motoristaText);
 
             const infoBox = document.createElement('div');
             infoBox.innerHTML = `
-                    <div style="
-                        position: absolute;
-                        top: 10px;
-                        left: 10px;
-                        background-color: #264653;
-                        color: white;
-                        padding: 10px 16px;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        font-weight: 500;
-                        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-                        z-index: 999;
-                    ">
-                        🕒 Estimado: ${duracaoMin} min<br>
-                        📏 Distância: ${distanciaKm} km
-                    </div>
-                `;
+                <div style="
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    background-color: #264653;
+                    color: white;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                    z-index: 999;
+                ">
+                    🕒 Estimado: ${duracaoMin} min<br>
+                    📏 Distância: ${distanciaKm} km
+                </div>
+            `;
             map.getContainer().appendChild(infoBox);
-
-            map.flyTo({
-                center: midwayPoint,
-                zoom: 13,
-                speed: 1.2,
-                curve: 1.2
-            });
-
-            map.flyTo({
-                center: midwayPoint,
-                zoom: 13,
-                speed: 1.2,
-                curve: 1.2
-            });
-
         } catch (error) {
             console.error('Erro ao carregar rota:', error);
         }
