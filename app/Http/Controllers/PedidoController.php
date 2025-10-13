@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PedidosExport;
 use App\Models\NotaFiscal;
 use App\Models\Pedido;
 use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PedidoController extends Controller
 {
@@ -123,6 +125,13 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
             return redirect()->back()->with('error', 'Erro: ' . $e->getMessage());
         }
     }
+
+    public function exportarExcel()
+{
+    $nomeArquivo = 'Relatorio_Pedidos_DNA_' . now()->format('Ymd_His') . '.xlsx';
+    return Excel::download(new PedidosExport, $nomeArquivo);
+}
+
 
 
 

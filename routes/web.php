@@ -94,6 +94,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/foto', [PedidoController::class, 'foto'])->name('foto');
     });
 
+    Route::get('/pedidos/exportar', [PedidoController::class, 'exportarExcel'])->name('pedidos.exportar');
+
+
     Route::prefix('endereco')->name('endereco.')->group(function () {
         Route::get('/', [EnderecoController::class, 'index'])->name('index');
         Route::put('/{id_endereco}', [EnderecoController::class, 'update'])->name('update');
