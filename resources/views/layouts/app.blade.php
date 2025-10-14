@@ -108,143 +108,149 @@
                         $tipoUsuario = $usuarioAutenticado?->tipo_usuario;
                     @endphp
 
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-                        @if (in_array($tipoUsuario, ['admin', 'operador', 'motorista']))
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('pedidos.rastreamento') }}">
-                                    <i class="bi bi-truck-front-fill me-1"></i> Rastreamento
-                                </a>
-                            </li>
-                        @endif
+<ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+    @php
+        $usuarioAutenticado = Auth::user();
+        $tipoUsuario = $usuarioAutenticado?->tipo_usuario;
+    @endphp
 
-                        @if (in_array($tipoUsuario, ['admin', 'operador']))
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="operacionalDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-gear-wide-connected me-1"></i> Operacional
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="{{ route('rotas.create') }}">
-                                            <i class="bi bi-signpost"></i> Criação de Rotas</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('rotas.index') }}">
-                                            <i class="bi bi-map-fill"></i> Rotas</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('pedidos.index') }}"><i
-                                                class="bi bi-box"></i> Pedidos</a>
-                                    </li>
-                                </ul>
-                            </li>
+    {{-- ========== ACESSO COMUM A TODOS (CLIENTE, MOTORISTA, OPERADOR, ADMIN) ========== --}}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ route('pedidos.rastreamento') }}">
+            <i class="bi bi-truck-front-fill me-1"></i> Rastreamento
+        </a>
+    </li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="cadastrosDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-plus-fill me-1"></i> Cadastros
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                            href="{{ route('centro.index') }}">
-                                            <i class="bi bi-building-fill-add fs-5 text-primary"></i> Centro de
-                                            Distribuição
-                                        </a>
-                                    </li>
+    {{-- ========== CLIENTE ========== --}}
+    @if ($tipoUsuario === 'cliente')
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('pedidos.index') }}">
+                <i class="bi bi-box"></i> Pedidos
+            </a>
+        </li>
+    @endif
 
-                                    <li class="dropdown-divider"></li>
+    {{-- ========== OPERADOR E ADMIN ========== --}}
+    @if (in_array($tipoUsuario, ['admin', 'operador']))
+        {{-- Menu Operacional --}}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="operacionalDropdown"
+                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-gear-wide-connected me-1"></i> Operacional
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                <li><a class="dropdown-item" href="{{ route('rotas.create') }}">
+                        <i class="bi bi-signpost"></i> Criação de Rotas</a>
+                </li>
+                <li><a class="dropdown-item" href="{{ route('rotas.index') }}">
+                        <i class="bi bi-map-fill"></i> Rotas</a>
+                </li>
+                <li><a class="dropdown-item" href="{{ route('pedidos.index') }}">
+                        <i class="bi bi-box"></i> Pedidos</a>
+                </li>
+            </ul>
+        </li>
 
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                            href="{{ route('veiculo.index') }}">
-                                            <i class="bi bi-truck fs-5 text-primary"></i> Veículo
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                            href="{{ route('modelo.index') }}">
-                                            <i class="bi bi-gear fs-5 text-success"></i> Modelo do Veículo
-                                        </a>
-                                    </li>
-                                    <li class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ route('motorista.index') }}"><i
-                                                class="bi bi-person-badge"></i> Motorista</a></li>
-                                    @if ($tipoUsuario === 'admin')
-                                        <li><a class="dropdown-item" href="{{ route('read-user') }}"><i
-                                                    class="bi bi-people"></i> Usuários</a></li>
-                                    @endif
-                                </ul>
-                            </li>
+        {{-- Menu Cadastros --}}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="cadastrosDropdown"
+                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-plus-fill me-1"></i> Cadastros
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2"
+                        href="{{ route('centro.index') }}">
+                        <i class="bi bi-building-fill-add fs-5 text-primary"></i> Centro de Distribuição
+                    </a>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2"
+                        href="{{ route('veiculo.index') }}">
+                        <i class="bi bi-truck fs-5 text-primary"></i> Veículo
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2"
+                        href="{{ route('modelo.index') }}">
+                        <i class="bi bi-gear fs-5 text-success"></i> Modelo do Veículo
+                    </a>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ route('motorista.index') }}">
+                        <i class="bi bi-person-badge"></i> Motorista</a></li>
+                @if ($tipoUsuario === 'admin')
+                    <li><a class="dropdown-item" href="{{ route('read-user') }}">
+                            <i class="bi bi-people"></i> Usuários</a></li>
+                @endif
+            </ul>
+        </li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="ajusteDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-gear-fill me-1"></i> Ajuste
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark"
-                                    aria-labelledby="ajusteDropdown">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('endereco.index') }}">
-                                            <i class="bi bi-house-door me-2"></i> Endereço
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-muted" href="#" aria-disabled="true">
-                                            <i class="bi bi-person-circle me-2"></i> Perfil
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-muted" href="#" aria-disabled="true">
-                                            <i class="bi bi-sliders me-2"></i> Configurações
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+        {{-- Ajustes e Importação --}}
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('endereco.index') }}">
+                <i class="bi bi-house-door me-2"></i> Endereço
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('importacao.index') }}">
+                <i class="bi bi-calculator me-1"></i> Importar XML
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('pedidos.painel') }}">
+                <i class="bi bi-airplane-engines-fill me-1"></i> Painel
+            </a>
+        </li>
+    @endif
 
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('importacao.index') }}">
-                                    <i class="bi bi-calculator me-1"></i> Importar XML
-                                </a>
-                            </li>
+    {{-- ========== MOTORISTA ========== --}}
+    @if ($tipoUsuario === 'motorista')
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('rotas.index') }}">
+                <i class="bi bi-map-fill"></i> Rotas
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('pedidos.index') }}">
+                <i class="bi bi-box"></i> Pedidos
+            </a>
+        </li>
+    @endif
 
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{{ route('pedidos.painel') }}">
-                                    <i class="bi bi-airplane-engines-fill me-1"></i> Painel
-                                </a>
-                            </li>
-                        @endif
+    {{-- ========== PERFIL E LOGOUT (TODOS) ========== --}}
+    @if ($usuarioAutenticado)
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
+                role="button" data-bs-toggle="dropdown" style="color: #fff;">
+                @if ($usuarioAutenticado->foto)
+                    <img src="{{ asset('usuarios/' . $usuarioAutenticado->foto) }}"
+                        alt="Foto do usuário" class="rounded-circle border border-warning"
+                        style="width: 36px; height: 36px; object-fit: cover;">
+                @else
+                    <i class="bi bi-person-circle fs-3"></i>
+                @endif
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                <li>
+                    <a class="dropdown-item"
+                        href="{{ route('show.user', ['id' => $usuarioAutenticado->id_usuario]) }}">
+                        <i class="bi bi-person-lines-fill me-2"></i> Ver usuário
+                    </a>
+                    <a class="dropdown-item" href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="bi bi-box-arrow-right me-2"></i> Sair
+                    </a>
+                </li>
+            </ul>
 
-                        @if ($usuarioAutenticado)
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
-                                    role="button" data-bs-toggle="dropdown" style="color: #fff;">
-                                    @if ($usuarioAutenticado->foto)
-                                        <img src="{{ asset('usuarios/' . $usuarioAutenticado->foto) }}"
-                                            alt="Foto do usuário" class="rounded-circle border border-warning"
-                                            style="width: 36px; height: 36px; object-fit: cover;">
-                                    @else
-                                        <i class="bi bi-person-circle fs-3"></i>
-                                    @endif
-                                </a>
-
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-                                    <li>
-                                        <a class="dropdown-item"
-                                            href="{{ route('show.user', ['id' => $usuarioAutenticado->id_usuario]) }}">
-                                            <i class="bi bi-person-lines-fill me-2"></i> Ver usuário
-                                        </a>
-                                        <a class="dropdown-item" href="#"
-                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Sair
-                                        </a>
-                                    </li>
-                                </ul>
-
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                </form>
-                            </li>
-                        @endif
-                    </ul>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+        </li>
+    @endif
+</ul>
 
                     @yield('menu')
                 </div>
