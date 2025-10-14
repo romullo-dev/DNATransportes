@@ -122,11 +122,11 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
         }
     }
 
-    public function exportarExcel()
+    /*public function exportarExcel()
 {
     $nomeArquivo = 'Relatorio_Pedidos_DNA_' . now()->format('Ymd_His') . '.xlsx';
     return Excel::download(new PedidosExport, $nomeArquivo);
-}
+}*/
 
 
 
