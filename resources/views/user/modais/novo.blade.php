@@ -51,7 +51,6 @@
             <option value="admin">Admin</option>
             <option value="operador">Torre</option>
             <option value="motorista">Motorista</option>
-            <option value="cliente">Cliente</option>
           </select>
         </div>
 

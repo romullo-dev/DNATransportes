@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\PedidosExport;
 use App\Models\NotaFiscal;
 use App\Models\Pedido;
 use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 class PedidoController extends Controller
 {
@@ -19,24 +17,26 @@ class PedidoController extends Controller
             'notaFiscal.enderecoRemetente',
             'notaFiscal.enderecoDestinatario',
             'frete'
-        ])->paginate(5);
+        ])->paginate(10);
 
         return view('pedido.index', compact('result'));
     }
 
     public function painel()
     {
-        
+        // 📦 Total de pedidos
         $totalPedidos = \App\Models\Pedido::count();
 
+        // 🕓 Pega o último status de cada pedido
        $statusPedidos = \App\Models\Pedido::with(['historicos' => function ($q) {
     $q->latest('data');
 }])->get()->map(function ($pedido) {
     $status = optional($pedido->historicos->first())->status ?? 'Sem status';
-    return trim(strtolower($status));
+    return trim(strtolower($status)); // 🔥 normaliza pra minúsculo e remove espaços
 });
 
 
+        // Conta quantos há de cada tipo de status
         $resumoStatus = collect($statusPedidos)->countBy();
 
         $statusEntregue = $resumoStatus->get('entrega realizada', 0);
@@ -59,6 +59,7 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
 
         $statusOutros = $totalPedidos - ($statusEntregue + $statusTransito + $statusCancelado);
 
+        // 📅 Pedidos criados nos últimos 6 meses
         $meses = collect();
         $dadosPedidos = collect();
 
@@ -76,6 +77,7 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
 
         //dd($resumoStatus);
 
+        // 🔁 Retorna a view com os dados
         return view('painel.index', compact(
             'totalPedidos',
             'statusEntregue',
@@ -121,13 +123,6 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
             return redirect()->back()->with('error', 'Erro: ' . $e->getMessage());
         }
     }
-
-    /*public function exportarExcel()
-{
-    $nomeArquivo = 'Relatorio_Pedidos_DNA_' . now()->format('Ymd_His') . '.xlsx';
-    return Excel::download(new PedidosExport, $nomeArquivo);
-}*/
-
 
 
 
