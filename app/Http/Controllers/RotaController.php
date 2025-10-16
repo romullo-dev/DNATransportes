@@ -180,14 +180,19 @@ class RotaController extends Controller
         try {
             $data = $request->validated();
             $data['data'] = \Carbon\Carbon::parse($data['data'])->format('Y-m-d H:i:s');
+            $tipo = $data['tipo'];
+
 
             $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
                 ->orderByDesc('data')
                 ->first();
 
-            if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
-                return redirect()->route('rotas.index')->with('error', 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".');
+   
+            if ($ultimoHistorico && $ultimoHistorico->status === 'Coleta realizada' or 'Transferência realizada' or 'Entrega finalizada') {
+                return redirect()->route('rotas.index')->with('error', 'Ops! Esta rota já foi finalizada, portanto não é possível realizar alterações.');
             }
+
+            
 
             if ($request->hasFile('foto')) {
                 $data['foto'] = $request->file('foto')->store('historicos', 'public');
@@ -199,7 +204,6 @@ class RotaController extends Controller
                 ->pluck('pedido_id_pedido')
                 ->unique();
 
-            $tipo = $data['tipo'];
 
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
@@ -234,7 +238,7 @@ class RotaController extends Controller
                                 'foto' => $data['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
-                        } 
+                        }
                     } elseif ($data['status'] === 'Ocorrência') {
                         foreach ($pedidos as $pedidoId) {
                             Historico::create([
@@ -245,7 +249,7 @@ class RotaController extends Controller
                                 'foto' => $data['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
-                        } 
+                        }
                     }
                     break;
                 case 'Transferencia':
@@ -281,7 +285,7 @@ class RotaController extends Controller
                                 'foto' => $data['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
-                        } 
+                        }
                     }
                     break;
                 case 'Entrega':
@@ -296,7 +300,6 @@ class RotaController extends Controller
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
-
                     } elseif ($data['status'] === 'Finalizado') {
                         foreach ($pedidos as $pedidoId) {
                             Historico::create([
@@ -318,7 +321,7 @@ class RotaController extends Controller
                                 'foto' => $data['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
-                        } 
+                        }
                     }
                     break;
                 default:
