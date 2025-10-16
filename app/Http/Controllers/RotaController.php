@@ -188,9 +188,17 @@ class RotaController extends Controller
                 ->first();
 
    
-            if ($ultimoHistorico && $ultimoHistorico->status === 'Coleta realizada' or 'Transferência realizada' or 'Entrega finalizada') {
-                return redirect()->route('rotas.index')->with('error', 'Ops! Esta rota já foi finalizada, portanto não é possível realizar alterações.');
-            }
+            if (
+    $ultimoHistorico &&
+    in_array($ultimoHistorico->status, [
+        'Coleta realizada',
+        'Transferência realizada',
+        'Entrega realizada'
+    ])
+) {
+    return redirect()->route('rotas.index')
+        ->with('error', 'Ops! Esta rota já foi finalizada, portanto não é possível realizar alterações.');
+}
 
             
 
