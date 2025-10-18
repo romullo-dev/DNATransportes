@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/editando/{id}', [PedidoController::class, 'update'])->name('update');
         Route::get('/painel', [PedidoController::class, 'painel'])->name('painel');
         Route::get('/foto', [PedidoController::class, 'foto'])->name('foto');
+        
     });
 
     Route::prefix('endereco')->name('endereco.')->group(function () {
