@@ -13,6 +13,7 @@ use Dotenv\Validator;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use function Symfony\Component\Clock\now;
 
 class API extends Controller
 {
@@ -46,62 +47,161 @@ class API extends Controller
 
 
     public function historico(Request $request)
-{
-    try {
-        // ✅ Validação
-        $validated = $request->validate([
-            'pedido_id_pedido' => 'required|integer|exists:pedido,id_pedido',
-            'rotas_id_rotas' => 'required|integer|exists:rotas,id_rotas',
-            'status' => 'required|string|max:100',
-            'tipo' => 'required|string',
-            'data' => 'required|date',
-            'observacao' => 'nullable|string|max:500',
-            'foto' => 'nullable|file|image|max:4096',
-        ]);
+    {
+        try {
+            // ✅ Validação
+            $validated = $request->validate([
+                'pedido_id_pedido' => 'required|integer|exists:pedido,id_pedido',
+                'rotas_id_rotas' => 'required|integer|exists:rotas,id_rotas',
+                'status' => 'required|string|max:100',
+                'tipo' => 'required|string',
+                'observacao' => 'nullable|string|max:500',
+                'foto' => 'nullable|file|image|max:4096',
+            ]);
 
-        $validated['data'] = \Carbon\Carbon::parse($validated['data'])->format('Y-m-d H:i:s');
+            // 👇 Aqui sim: adiciona a data manualmente
+            $validated['data'] = now()->format('Y-m-d H:i:s');
 
-        // ✅ Upload da imagem
-        if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('historicos', 'public');
-        }
+            $data = $request;
+            $tipo = $data->tipo;
 
-        // ✅ Cria o histórico
-        $historico = \App\Models\Historico::create($validated);
+            $pedidos = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
+                ->pluck('pedido_id_pedido')
+                ->unique();
 
-        // ✅ Atualiza status do pedido
-        $pedido = \App\Models\Pedido::find($validated['pedido_id_pedido']);
-        if ($pedido) {
-            if ($validated['status'] === 'Finalizado') {
-                $pedido->status = match (strtolower($validated['tipo'])) {
-                    'coleta' => 'Coleta Finalizada',
-                    'transferencia' => 'Transferência Finalizada',
-                    'entrega' => 'Entregue',
-                    default => $pedido->status,
-                };
-            } elseif ($validated['status'] === 'Em trânsito') {
-                $pedido->status = 'Em trânsito';
+            // ✅ Upload da imagem
+            if ($request->hasFile('foto')) {
+                $validated['foto'] = $request->file('foto')->store('historicos', 'public');
             }
-            $pedido->save();
+
+            // ✅ Atualiza status do pedido
+            $pedido = Pedido::find($validated['pedido_id_pedido']);
+
+            switch ($tipo) {
+                case 'Coleta':
+                    if ($data['status'] === 'Em trânsito') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Em processo de coleta',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Finalizado') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Coleta realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Ocorrência') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Coleta não realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    }
+                    break;
+                case 'Transferencia':
+                    if ($data['status'] === 'Em trânsito') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Em processo de transferência',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Finalizado') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Transferência realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Ocorrência') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Transferência não realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    }
+                    break;
+                case 'Entrega':
+                    if ($data['status'] === 'Em trânsito') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Em rota de entrega',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Finalizado') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Entrega realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    } elseif ($data['status'] === 'Ocorrência') {
+                        foreach ($pedidos as $pedidoId) {
+                            Historico::create([
+                                'rotas_id_rotas' => $data['rotas_id_rotas'],
+                                'pedido_id_pedido' => $pedidoId,
+                                'data' => now(),
+                                'status' => 'Entrega não realizada',
+                                'foto' => $data['foto'],
+                                'observacao' => $data['observacao'] ?? null,
+                            ]);
+                        }
+                    }
+                    break;
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Histórico salvo e pedido atualizado com sucesso!'
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro de validação dos dados.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro interno: ' . $th->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Histórico salvo e pedido atualizado com sucesso!',
-            'data' => $historico,
-        ], 201);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erro de validação dos dados.',
-            'errors' => $e->errors(),
-        ], 422);
-    } catch (\Throwable $th) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erro interno: ' . $th->getMessage(),
-        ], 500);
     }
-}
-
 }
