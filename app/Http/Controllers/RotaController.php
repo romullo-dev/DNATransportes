@@ -187,20 +187,20 @@ class RotaController extends Controller
                 ->orderByDesc('data')
                 ->first();
 
-   
-            if (
-    $ultimoHistorico &&
-    in_array($ultimoHistorico->status, [
-        'Coleta realizada',
-        'Transferência realizada',
-        'Entrega realizada'
-    ])
-) {
-    return redirect()->route('rotas.index')
-        ->with('error', 'Ops! Esta rota já foi finalizada, portanto não é possível realizar alterações.');
-}
 
-            
+            if (
+                $ultimoHistorico &&
+                in_array($ultimoHistorico->status, [
+                    'Coleta realizada',
+                    'Transferência realizada',
+                    'Entrega realizada'
+                ])
+            ) {
+                return redirect()->route('rotas.index')
+                    ->with('error', 'Ops! Esta rota já foi finalizada, portanto não é possível realizar alterações.');
+            }
+
+
 
             if ($request->hasFile('foto')) {
                 $data['foto'] = $request->file('foto')->store('historicos', 'public');

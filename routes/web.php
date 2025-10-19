@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\EnderecoController;
+use App\Http\Controllers\HistoricoController;
 use App\Http\Controllers\ImportacaoController;
 use App\Http\Controllers\ModeloController;
 use App\Http\Controllers\MotoristaController;
@@ -92,13 +93,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/editando/{id}', [PedidoController::class, 'update'])->name('update');
         Route::get('/painel', [PedidoController::class, 'painel'])->name('painel');
         Route::get('/foto', [PedidoController::class, 'foto'])->name('foto');
-        
     });
 
     Route::prefix('endereco')->name('endereco.')->group(function () {
         Route::get('/', [EnderecoController::class, 'index'])->name('index');
         Route::put('/{id_endereco}', [EnderecoController::class, 'update'])->name('update');
     });
+
+    Route::prefix('historico')->name('historico.')->group(function () {
+        Route::post('/store', [HistoricoController::class, 'store'])->name('store');
+    });
+
 
     Route::prefix('rotas')->name('rotas.')->group(function () {
         Route::get('/', [RotaController::class, 'index'])->name('index');

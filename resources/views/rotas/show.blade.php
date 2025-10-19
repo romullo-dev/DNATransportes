@@ -1,6 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
+
+ @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
     <div class="container-fluid py-5" style="background-color: #1b1e22; min-height: 100vh;">
 
         {{-- 🔸 Cabeçalho --}}
@@ -66,10 +78,12 @@
                                     <td>{{ $pedido->notaFiscal->remetente->nome ?? '--' }}</td>
                                     <td>{{ $pedido->notaFiscal->destinatario->nome ?? '--' }}</td>
                                     <td class="text-center align-middle">
-                                        <a href="" class="btn btn-warning fw-semibold rounded-pill shadow-sm">
+                                        <button type="button" class="btn btn-warning fw-semibold rounded-pill shadow-sm"
+                                            data-bs-toggle="modal" data-bs-target="#modalStatus{{ $pedido->id_pedido }}">
                                             <i class="bi bi-pencil"></i>
-                                        </a>
+                                        </button>
                                     </td>
+
 
                                 </tr>
                             @endforeach
@@ -79,6 +93,63 @@
                 </div>
             </div>
         @endif
+
+        @foreach ($data->pedidos as $pedido)
+            <div class="modal fade" id="modalStatus{{ $pedido->id_pedido }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4 shadow-lg border-0">
+                        <div class="modal-header text-white" style="background: linear-gradient(90deg, #017aaa, #2a9d8f);">
+                            <h5 class="modal-title">
+                                <i class="bi bi-pencil-square me-2"></i> Atualizar Status — Pedido #{{ $pedido->id_pedido }}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <form action="{{ route('historico.store') }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <input type="hidden" name="pedido_id_pedido" value="{{ $pedido->id_pedido }}">
+                                <input type="hidden" name="rotas_id_rotas" value="{{ $data->id_rotas }}">
+                                <input type="hidden" name="tipo" value="{{ $data->tipo }}">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Status</label>
+                                    <select name="status" class="form-select rounded-pill" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Entrega não realizada">Entrega não realizada</option>
+                                        <option value="Entrega realizada">Entrega realizada</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label>Foto (opcional)</label>
+                                    <input name="foto" type="file" class="form-control">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="data" class="form-label"><i class="bi bi-calendar-event me-1"></i>Data</label>
+                                    <input type="datetime-local" class="form-control" id="data" name="data" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Observações</label>
+                                    <textarea name="observacao" class="form-control rounded-4" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success rounded-pill px-4 fw-semibold">
+                                    <i class="bi bi-check-circle me-2"></i> Salvar
+                                </button>
+                                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
 
         {{-- 📜 Histórico --}}
         @if ($data->historicos && $data->historicos->count() > 0)
