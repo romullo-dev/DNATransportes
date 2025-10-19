@@ -49,7 +49,6 @@ class API extends Controller
     public function historico(Request $request)
     {
         try {
-            // ✅ Validação
             $validated = $request->validate([
                 'pedido_id_pedido' => 'required|integer|exists:pedido,id_pedido',
                 'rotas_id_rotas' => 'required|integer|exists:rotas,id_rotas',
@@ -59,7 +58,6 @@ class API extends Controller
                 'foto' => 'nullable|file|image|max:4096',
             ]);
 
-            // 👇 Aqui sim: adiciona a data manualmente
             $validated['data'] = now()->format('Y-m-d H:i:s');
 
             $data = $request;
@@ -69,12 +67,16 @@ class API extends Controller
                 ->pluck('pedido_id_pedido')
                 ->unique();
 
-            // ✅ Upload da imagem
             if ($request->hasFile('foto')) {
-                $validated['foto'] = $request->file('foto')->store('historicos', 'public');
+                $file = $request->file('foto');
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('canhotos'), $filename);
+                $validated['foto'] = $filename; // ✅ SALVA O NOME CERTO
+            } else {
+                $validated['foto'] = null;
             }
 
-            // ✅ Atualiza status do pedido
+
             $pedido = Pedido::find($validated['pedido_id_pedido']);
 
             switch ($tipo) {
@@ -86,7 +88,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Em processo de coleta',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -97,7 +99,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Coleta realizada',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -108,7 +110,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Coleta não realizada',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -122,7 +124,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Em processo de transferência',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -133,7 +135,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Transferência realizada',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -144,7 +146,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Transferência não realizada',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -158,7 +160,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Em rota de entrega',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -169,7 +171,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Entrega realizada',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
@@ -180,7 +182,7 @@ class API extends Controller
                                 'pedido_id_pedido' => $pedidoId,
                                 'data' => now(),
                                 'status' => 'Entrega não realizada',
-                                'foto' => $data['foto'],
+                                'foto' =>  $validated['foto'],
                                 'observacao' => $data['observacao'] ?? null,
                             ]);
                         }
