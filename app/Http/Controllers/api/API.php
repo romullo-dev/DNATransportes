@@ -46,91 +46,62 @@ class API extends Controller
 
 
     public function historico(Request $request)
-    {
-        try {
-            // ✅ 1. Validação dos campos obrigatórios
-            $validated = $request->validate([x'
-            ]);
+{
+    try {
+        // ✅ Validação
+        $validated = $request->validate([
+            'pedido_id_pedido' => 'required|integer|exists:pedido,id_pedido',
+            'rotas_id_rotas' => 'required|integer|exists:rotas,id_rotas',
+            'status' => 'required|string|max:100',
+            'tipo' => 'required|string',
+            'data' => 'required|date',
+            'observacao' => 'nullable|string|max:500',
+            'foto' => 'nullable|file|image|max:4096',
+        ]);
 
-            // ✅ 2. Formatar a data
-            $validated['data'] = Carbon::parse($validated['data'])->format('Y-m-d H:i:s');
+        $validated['data'] = \Carbon\Carbon::parse($validated['data'])->format('Y-m-d H:i:s');
 
-            // ✅ 3. Verifica se o último histórico da rota já está finalizado
-            $ultimoHistorico = Historico::where('rotas_id_rotas', $validated['rotas_id_rotas'])
-                ->orderByDesc('data')
-                ->first();
-
-            if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Esta rota já foi finalizada, não é possível alterá-la.',
-                ], 400);
-            }
-
-            // ✅ 4. Upload de foto (se enviada)
-            if ($request->hasFile('foto')) {
-                $validated['foto'] = $request->file('foto')->store('historicos', 'public');
-            } else {
-                $validated['foto'] = null;
-            }
-
-            // ✅ 5. Cria o novo histórico
-            $historico = Historico::create($validated);
-
-            // ✅ 6. Atualiza o status do pedido de acordo com o tipo de rota
-            $pedido = Pedido::find($validated['pedido_id_pedido']);
-            if (!$pedido) {
-                return response()->json(['success' => false, 'message' => 'Pedido não encontrado.'], 404);
-            }
-
-            switch (strtolower($validated['tipo'])) {
-                case 'coleta':
-                    if ($validated['status'] === 'Em rota de coleta') {
-                        $pedido->status = 'Em trânsito';
-                    } elseif ($validated['status'] === 'Finalizado') {
-                        $pedido->status = 'Coleta Finalizada';
-                    }
-                    break;
-
-                case 'transferencia':
-                    if ($validated['status'] === 'Em trânsito') {
-                        $pedido->status = 'Em trânsito';
-                    } elseif ($validated['status'] === 'Finalizado') {
-                        $pedido->status = 'Transferência Finalizada';
-                    }
-                    break;
-
-                case 'entrega':
-                    if ($validated['status'] === 'Em trânsito') {
-                        $pedido->status = 'Em rota de entrega';
-                    } elseif ($validated['status'] === 'Finalizado') {
-                        $pedido->status = 'Entregue';
-                    }
-                    break;
-            }
-
-            $pedido->save();
-
-            // ✅ 7. Retorna sucesso com detalhes
-            return response()->json([
-                'success' => true,
-                'message' => 'Histórico registrado e pedido atualizado com sucesso!',
-                'data' => [
-                    'historico' => $historico,
-                    'pedido_status' => $pedido->status,
-                ],
-            ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro de validação dos dados enviados.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro interno no servidor: ' . $th->getMessage(),
-            ], 500);
+        // ✅ Upload da imagem
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $request->file('foto')->store('historicos', 'public');
         }
+
+        // ✅ Cria o histórico
+        $historico = \App\Models\Historico::create($validated);
+
+        // ✅ Atualiza status do pedido
+        $pedido = \App\Models\Pedido::find($validated['pedido_id_pedido']);
+        if ($pedido) {
+            if ($validated['status'] === 'Finalizado') {
+                $pedido->status = match (strtolower($validated['tipo'])) {
+                    'coleta' => 'Coleta Finalizada',
+                    'transferencia' => 'Transferência Finalizada',
+                    'entrega' => 'Entregue',
+                    default => $pedido->status,
+                };
+            } elseif ($validated['status'] === 'Em trânsito') {
+                $pedido->status = 'Em trânsito';
+            }
+            $pedido->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Histórico salvo e pedido atualizado com sucesso!',
+            'data' => $historico,
+        ], 201);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Erro de validação dos dados.',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Throwable $th) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Erro interno: ' . $th->getMessage(),
+        ], 500);
     }
+}
+
 }
