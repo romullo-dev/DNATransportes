@@ -19,28 +19,23 @@ class API extends Controller
     //LOGIN
     public function loginApi(Request $request)
     {
-        $credentials = $request->validate([
-            'user' => ['required'],
-            'password' => ['required'],
-        ]);
+        try {
+            $data = $request->validate(['user' => 'required', 'password' => 'required']);
+            $user = Usuario::where('user', $data['user'])->first();
 
-        $usuario = Usuario::where('user', $credentials['user'])->first();
+            if (!$user || !Hash::check($data['password'], $user->password)) {
+                return response()->json(['success' => false, 'message' => 'Usuário ou senha inválidos'], 401);
+            }
 
-        if ($usuario && Hash::check($credentials['password'], $usuario->password)) {
-            return response()->json([
-                'success' => true,
-                'user' => $usuario,
-            ]);
+            return response()->json(['success' => true, 'user' => $user]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Credenciais inválidas',
-        ], 401);
     }
 
+
     //TELA DE HOME
-     public function index()
+    public function index()
     {
         $rotas = Rota::with(['pedidos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->paginate(perPage: 5);
 
@@ -48,98 +43,94 @@ class API extends Controller
     }
 
     //EDITAR ROTA
+
+
     public function historico(Request $request)
     {
         try {
-            // Validação dos dados
-           
+            // ✅ 1. Validação dos campos obrigatórios
+            $validated = $request->validate([x'
+            ]);
 
-            $data = $request->all();
+            // ✅ 2. Formatar a data
+            $validated['data'] = Carbon::parse($validated['data'])->format('Y-m-d H:i:s');
 
-
-
-            // Convertendo a data para o formato adequado
-            $data['data'] = Carbon::parse($data['data'])->format('Y-m-d H:i:s');
-
-            // Verificar se o último histórico está finalizado
-            $ultimoHistorico = Historico::where('rotas_id_rotas', $data['rotas_id_rotas'])
-                ->orderBy('data', 'desc')
+            // ✅ 3. Verifica se o último histórico da rota já está finalizado
+            $ultimoHistorico = Historico::where('rotas_id_rotas', $validated['rotas_id_rotas'])
+                ->orderByDesc('data')
                 ->first();
 
-            if ($ultimoHistorico && $ultimoHistorico->status == 'Finalizado') {
-                return response()->json(['error' => 'Não é possível alterar a rota, pois o último histórico está como "Finalizado".'], 400);
+            if ($ultimoHistorico && $ultimoHistorico->status === 'Finalizado') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Esta rota já foi finalizada, não é possível alterá-la.',
+                ], 400);
             }
 
-            // Verificando se foi enviado uma foto
+            // ✅ 4. Upload de foto (se enviada)
             if ($request->hasFile('foto')) {
-                $path = $request->file('foto')->store('historicos', 'public');
-                $data['foto'] = $path;
+                $validated['foto'] = $request->file('foto')->store('historicos', 'public');
             } else {
-                $data['foto'] = null;
+                $validated['foto'] = null;
             }
 
-            // Criar o histórico
-            $historico = Historico::create($data);
+            // ✅ 5. Cria o novo histórico
+            $historico = Historico::create($validated);
 
-            // Lógica de atualização dos pedidos
-            $tipo = $data['tipo'];
-            switch ($tipo) {
-                case 'Coleta':
-                    if ($data['status'] === 'Em rota de coleta') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Em trânsito';
-                            $pedido->save();
-                        }
-                    } elseif ($data['status'] === 'Finalizado') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Coleta Finalizada';
-                            $pedido->save();
-                        }
+            // ✅ 6. Atualiza o status do pedido de acordo com o tipo de rota
+            $pedido = Pedido::find($validated['pedido_id_pedido']);
+            if (!$pedido) {
+                return response()->json(['success' => false, 'message' => 'Pedido não encontrado.'], 404);
+            }
+
+            switch (strtolower($validated['tipo'])) {
+                case 'coleta':
+                    if ($validated['status'] === 'Em rota de coleta') {
+                        $pedido->status = 'Em trânsito';
+                    } elseif ($validated['status'] === 'Finalizado') {
+                        $pedido->status = 'Coleta Finalizada';
                     }
                     break;
 
                 case 'transferencia':
-                    if ($data['status'] === 'Em trânsito') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Em trânsito';
-                            $pedido->save();
-                        }
-                    } elseif ($data['status'] === 'Finalizado') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Transferência Finalizada';
-                            $pedido->save();
-                        }
+                    if ($validated['status'] === 'Em trânsito') {
+                        $pedido->status = 'Em trânsito';
+                    } elseif ($validated['status'] === 'Finalizado') {
+                        $pedido->status = 'Transferência Finalizada';
                     }
                     break;
 
-                case 'Entrega':
-                    if ($data['status'] === 'Em trânsito') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Em rota entrega';
-                            $pedido->save();
-                        }
-                    } elseif ($data['status'] === 'Finalizado') {
-                        $pedido = Pedido::find($data['pedido_id_pedido']);
-                        if ($pedido) {
-                            $pedido->status = 'Entregue';
-                            $pedido->save();
-                        }
+                case 'entrega':
+                    if ($validated['status'] === 'Em trânsito') {
+                        $pedido->status = 'Em rota de entrega';
+                    } elseif ($validated['status'] === 'Finalizado') {
+                        $pedido->status = 'Entregue';
                     }
                     break;
-
-                default:
-                    return response()->json(['error' => 'Erro ao alterar a rota: tipo inválido'], 400);
             }
 
-            return response()->json(['success' => 'Rota alterada com sucesso!'], 200);
+            $pedido->save();
 
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao alterar a rota: ' . $e->getMessage()], 500);
+            // ✅ 7. Retorna sucesso com detalhes
+            return response()->json([
+                'success' => true,
+                'message' => 'Histórico registrado e pedido atualizado com sucesso!',
+                'data' => [
+                    'historico' => $historico,
+                    'pedido_status' => $pedido->status,
+                ],
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro de validação dos dados enviados.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro interno no servidor: ' . $th->getMessage(),
+            ], 500);
         }
     }
 }
