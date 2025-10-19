@@ -1,55 +1,78 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background-color: #3e4754;">
-    <div class="card shadow-lg rounded-4 border-0 text-light p-5" style="max-width: 850px; background-color: #293241;">
-        <!-- Cabeçalho -->
-        <div class="text-center mb-5">
-            <h1 class="display-5 text-warning fw-bold mb-2">
-                Olá, {{ Auth::user()->nome }}! ✨
-            </h1>
-            <p class="lead text-light">
-                Que bom te ver de volta! Aqui está um resumo das suas atividades recentes e atualizações importantes.
-            </p>
-        </div>
+<div class="min-vh-100 py-5 d-flex align-items-center" style="background-color: #12181F;">
+    <div class="container text-center text-light">
 
-        <!-- Cards de Atividades -->
-        <div class="row g-4 mb-4">
+        {{-- 🟡 Saudação --}}
+        <h1 class="fw-bold text-warning display-5 mb-3">
+            Bem-vindo(a), {{ Auth::user()->nome }}!
+        </h1>
+        <p class="lead mb-5 text-light-50">
+            O sistema <span class="text-warning fw-semibold">DNA Transportes</span> está pronto para otimizar suas operações logísticas.<br>
+            Gerencie rotas, pedidos e motoristas em um único ambiente moderno e intuitivo.
+        </p>
+
+        {{-- ⚙️ Bloco de ações principais --}}
+        <div class="row justify-content-center g-4 mb-5">
             @php
-                $cards = [
-                    ['icon'=>'⭐', 'text'=>'Novos pedidos prontos para análise.'],
-                    ['icon'=>'📦', 'text'=>'Verifique o status dos envios em tempo real.'],
-                    ['icon'=>'📈', 'text'=>'Relatórios atualizados de desempenho logístico.'],
-                    ['icon'=>'💬', 'text'=>'Mensagens e notificações da equipe.'],
+                $atalhos = [
+                    ['icon' => 'bi-signpost', 'text' => 'Gerenciar Rotas', 'route' => route('rotas.index'), 'color' => '#2A9D8F'],
+                    ['icon' => 'bi-box-seam', 'text' => 'Visualizar Pedidos', 'route' => route('pedidos.index'), 'color' => '#FFD700'],
+                    ['icon' => 'bi-person-badge', 'text' => 'Motoristas', 'route' => route('motorista.index'), 'color' => '#4CAF50'],
+                    ['icon' => 'bi-geo-alt', 'text' => 'Centros de Distribuição', 'route' => route('centro.index'), 'color' => '#EB8721'],
                 ];
             @endphp
 
-            @foreach($cards as $card)
-                <div class="col-12 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden"
-                         style="background-color: rgba(0, 0, 0, 0.2); transition: transform 0.3s, background 0.3s;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3 fs-2 text-warning">
-                                {{ $card['icon'] }}
-                            </div>
-                            <div class="text-light fw-medium">
-                                {{ $card['text'] }}
-                            </div>
+            @foreach ($atalhos as $a)
+                <div class="col-md-3 col-sm-6">
+                    <a href="{{ $a['route'] }}" class="text-decoration-none">
+                        <div class="card border-0 rounded-4 shadow-lg p-4 h-100"
+                             style="background: #1B212A; transition: 0.3s;">
+                            <i class="bi {{ $a['icon'] }} fs-1 mb-3" style="color: {{ $a['color'] }}"></i>
+                            <h6 class="fw-semibold text-light">{{ $a['text'] }}</h6>
                         </div>
-                        <div class="position-absolute top-0 start-0 w-100 h-100" style="pointer-events:none;"></div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>
 
-        <div class="text-center mt-4">
-            <a href="{{ route('pedidos.painel') }}" class="btn btn-warning btn-lg fw-bold px-5 shadow-lg" 
-               style="transition: transform 0.3s, box-shadow 0.3s;" 
-               onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0.75rem 1.5rem rgba(255,193,7,0.5)';" 
-               onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.3)';">
-                Ir para o Painel
-            </a>
+        {{-- 🚛 Bloco institucional --}}
+        <div class="card border-0 rounded-4 shadow-lg p-5 mb-5 mx-auto" style="background: #1B212A; max-width: 900px;">
+            <div class="row align-items-center">
+                <div class="col-md-8 text-start">
+                    <h3 class="fw-bold text-warning mb-3">Conectando distâncias. Movendo o Brasil.</h3>
+                    <p class="text-light-50">
+                        A <span class="text-warning fw-semibold">DNA Transportes</span> é mais do que um sistema — é uma plataforma que une tecnologia, eficiência e segurança
+                        para transformar a gestão logística em uma experiência fluida e precisa.
+                    </p>
+                    <p class="text-light-50 mb-0">
+                        Nosso objetivo é garantir total controle das rotas, rastreamento em tempo real
+                        e excelência em cada entrega.  
+                        <span class="fw-semibold text-warning">Seu sucesso é o nosso destino.</span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="bi bi-truck-front text-warning" style="font-size: 6rem;"></i>
+                </div>
+            </div>
         </div>
+
+        {{-- 🧾 Rodapé informativo --}}
+        <div class="text-light-50 small mt-4">
+            <i class="bi bi-shield-lock-fill text-success me-2"></i> Sistema seguro e atualizado — 
+            <span class="text-warning">{{ now()->format('d/m/Y H:i') }}</span>
+        </div>
+
     </div>
 </div>
+
+{{-- 🌙 Estilo DNA --}}
+<style>
+    .text-light-50 { color: rgba(255,255,255,0.6); }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+</style>
 @endsection

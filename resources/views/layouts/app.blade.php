@@ -19,7 +19,7 @@
         body {
             display: flex;
             flex-direction: column;
-            background-color: #101010;
+            background-color: #12181F;
             /* cor principal do sistema */
             color: #213d55;
             /* cor de texto padrão clara */

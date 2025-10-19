@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid py-5" style="min-height: 100vh; background: linear-gradient(180deg, #0b0b0b 0%, #101820 100%);">
+<div class="container-fluid py-5"
+     style="min-height: 100vh; background: linear-gradient(180deg, #101820 0%, #151a1f 50%, #1e2329 100%);">
 
     {{-- ✅ Mensagens --}}
     @if (session('success'))
@@ -82,7 +83,6 @@
 {{-- 📊 Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // 📈 Gráfico de Pedidos
     const ctxPedidos = document.getElementById('graficoPedidos');
     new Chart(ctxPedidos, {
         type: 'line',
@@ -124,7 +124,6 @@
         }
     });
 
-    // 🥧 Gráfico de Status
     const ctxStatus = document.getElementById('graficoStatus');
     new Chart(ctxStatus, {
         type: 'doughnut',
@@ -138,7 +137,7 @@
                     {{ $statusOutros }}
                 ],
                 backgroundColor: ['#2ecc71', '#3498db', '#e74c3c', '#FFD700'],
-                borderColor: '#0b0b0b',
+                borderColor: '#101820',
                 borderWidth: 3,
                 hoverOffset: 10
             }]
@@ -163,7 +162,7 @@
     :root {
         --dna-gold: #FFD700;
         --dna-orange: #eb8721;
-        --dna-dark: #0b0b0b;
+        --dna-dark: #101820;
         --dna-gray: #1c1f26;
         --dna-light: rgba(255,255,255,0.6);
     }
@@ -204,4 +203,3 @@
     canvas { max-width: 100%; }
 </style>
 @endsection
-    
