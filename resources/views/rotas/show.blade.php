@@ -183,17 +183,182 @@
 
 
         {{-- 🗺️ Mapa --}}
-        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="card-header text-white fw-semibold"
-                style="background: linear-gradient(90deg, #002b5c, #264653); border-bottom: 3px solid #19364d;">
-                <i class="bi bi-map me-2"></i> Mapa da Rota
-            </div>
-            <div class="card-body">
-                <div id="map" style="width: 100%; height: 500px; border-radius: 8px; overflow: hidden;"></div>
-            </div>
-        </div>
-
+<div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="card-header text-white fw-semibold"
+        style="background: linear-gradient(90deg, #002b5c, #264653); border-bottom: 3px solid #19364d;">
+        <i class="bi bi-map me-2"></i> Mapa da Rota
     </div>
+    <div class="card-body">
+        <div id="map" style="width: 100%; height: 500px; border-radius: 8px; overflow: hidden;"></div>
+        <div id="map-fallback"
+            class="text-center py-5 text-muted fw-semibold"
+            style="display:none;">
+            🚧 Nenhuma coordenada válida encontrada para esta rota.
+        </div>
+    </div>
+</div>
+
+{{-- 📦 Mapbox Scripts --}}
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
+
+<script>
+window.addEventListener('load', async () => {
+    mapboxgl.accessToken = '{{ $mapboxToken ?? env('MAPBOX_TOKEN') }}';
+
+    const origem = [{{ $data->origem->longitude ?? 0 }}, {{ $data->origem->latitude ?? 0 }}];
+    const destino = [{{ $data->destino->longitude ?? 0 }}, {{ $data->destino->latitude ?? 0 }}];
+    const motorista = "{{ $data->motorista->usuario->nome ?? 'Motorista' }}";
+    const veiculo = "{{ $data->veiculo->placa ?? '--' }}";
+    const tipoRota = "{{ $data->tipo ?? 'Rota' }}";
+
+    const temCoordenadasValidas = origem[0] !== 0 && destino[0] !== 0;
+
+    if (!temCoordenadasValidas) {
+        document.getElementById('map').style.display = 'none';
+        document.getElementById('map-fallback').style.display = 'block';
+        return;
+    }
+
+    // 🗺️ Cria o mapa
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/navigation-night-v1',
+        center: origem,
+        zoom: 5,
+        pitch: 60,
+        bearing: 20,
+        antialias: true
+    });
+
+    // 🧭 Controles de navegação
+    map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new mapboxgl.FullscreenControl());
+    map.addControl(new mapboxgl.ScaleControl({ unit: 'metric' }));
+    map.addControl(new mapboxgl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true
+    }));
+
+    // 📍 Ajusta o zoom entre origem e destino
+    const bounds = new mapboxgl.LngLatBounds();
+    [origem, destino].forEach(coord => bounds.extend(coord));
+    map.fitBounds(bounds, { padding: 120, duration: 1500 });
+
+    // 🔖 Função genérica para marcador com ícone e popup
+    function addMarker(coord, icon, color, title, desc) {
+        const el = document.createElement('div');
+        el.innerHTML = `<i class="bi ${icon}" style="font-size:26px;color:${color};
+                        filter:drop-shadow(0 0 5px #000)"></i>`;
+        return new mapboxgl.Marker(el)
+            .setLngLat(coord)
+            .setPopup(new mapboxgl.Popup({ offset: 25 })
+                .setHTML(`
+                    <div style="color:#0b0b0b;">
+                        <h6 style="margin:0;font-weight:700;">${title}</h6>
+                        <p style="margin:0;font-size:13px;">${desc}</p>
+                    </div>
+                `))
+            .addTo(map);
+    }
+
+    // 🟢 Origem e destino
+    addMarker(origem, "bi-geo-alt-fill", "#00c853",
+        "Origem", "{{ $data->origem->nome ?? 'Local não informado' }} ({{ $data->origem->uf ?? '--' }})");
+    addMarker(destino, "bi-flag-fill", "#ff5252",
+        "Destino", "{{ $data->destino->nome ?? 'Local não informado' }} ({{ $data->destino->uf ?? '--' }})");
+
+    // 🧭 Busca rota e desenha no mapa
+    try {
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origem.join(',')};${destino.join(',')}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
+        const response = await fetch(url);
+        const json = await response.json();
+
+        const route = json.routes[0].geometry;
+        const duracaoMin = Math.round(json.routes[0].duration / 60);
+        const distanciaKm = (json.routes[0].distance / 1000).toFixed(1);
+        const meio = route.coordinates[Math.floor(route.coordinates.length / 2)];
+
+        // 🚗 Linha principal
+        map.addSource('route', { type: 'geojson', data: { type: 'Feature', geometry: route } });
+        map.addLayer({
+            id: 'route',
+            type: 'line',
+            source: 'route',
+            layout: { 'line-join': 'round', 'line-cap': 'round' },
+            paint: {
+                'line-color': '#2a9d8f',
+                'line-width': 6,
+                'line-opacity': 0.9
+            }
+        });
+
+        // ✨ Linha animada (efeito de movimento)
+        map.addLayer({
+            id: 'route-animation',
+            type: 'line',
+            source: 'route',
+            paint: {
+                'line-color': '#ffbf00',
+                'line-width': 6,
+                'line-opacity': 0.6,
+                'line-dasharray': [0, 2]
+            }
+        });
+        let dashOffset = 0;
+        function animateRoute() {
+            dashOffset -= 0.1;
+            map.setPaintProperty('route-animation', 'line-dasharray', [dashOffset, 2]);
+            requestAnimationFrame(animateRoute);
+        }
+        animateRoute();
+
+        // 🚛 Motorista no meio da rota
+        const truckEl = document.createElement('div');
+        truckEl.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;">
+                <i class="bi bi-truck-front-fill"
+                   style="font-size:28px;color:#f4a261;
+                   filter:drop-shadow(0 0 6px #000)"></i>
+                <span style="
+                    background:#264653;
+                    color:#fff;
+                    font-size:12px;
+                    padding:3px 8px;
+                    border-radius:6px;
+                    margin-top:4px;
+                    font-weight:600;
+                ">${motorista}<br>${veiculo}</span>
+            </div>`;
+        new mapboxgl.Marker(truckEl).setLngLat(meio).addTo(map);
+
+        // 🧾 Caixa de informações da rota
+        const infoBox = document.createElement('div');
+        infoBox.innerHTML = `
+            <div style="
+                position:absolute;
+                top:10px;
+                left:10px;
+                background:#264653;
+                color:white;
+                padding:12px 16px;
+                border-radius:10px;
+                font-size:14px;
+                font-weight:500;
+                box-shadow:0 4px 10px rgba(0,0,0,0.3);
+            ">
+                <strong>🧭 Tipo:</strong> ${tipoRota}<br>
+                <strong>📏 Distância:</strong> ${distanciaKm} km<br>
+                <strong>⏱ Estimado:</strong> ${duracaoMin} min
+            </div>`;
+        map.getContainer().appendChild(infoBox);
+
+    } catch (err) {
+        console.error('Erro ao carregar rota:', err);
+    }
+});
+</script>
+
 
     {{-- 🎨 Fundo Unificado DNA --}}
     <style>
