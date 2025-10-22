@@ -30,7 +30,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'user' => 'Credenciais inválidas.',
+            'user' => 'Login ou senha incorreta!',
         ])->onlyInput('user');
     }
 

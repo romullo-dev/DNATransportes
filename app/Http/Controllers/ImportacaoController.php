@@ -100,7 +100,7 @@ class ImportacaoController extends Controller
 
             return redirect()->back()->with('success', 'Arquivo XML importado com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('importacao.index')->with('error', 'Erro ao importar: ' . $e->getMessage());
+            return redirect()->route('importacao.index')->with('error', 'Erro ao importar: ');
         }
     }
 }

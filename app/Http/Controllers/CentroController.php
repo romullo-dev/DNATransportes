@@ -43,7 +43,7 @@ class CentroController extends Controller
             CentroDistribuicao::create($data);
             return redirect()->back()->with('success', 'Centro de distribuição cadastrado com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('centro.index')->with('error', 'Erro ao cadastrar ' . $e->getMessage());
+            return redirect()->route('centro.index')->with('error', 'Erro ao cadastrar ');
         }
     }
 

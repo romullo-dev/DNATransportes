@@ -159,7 +159,7 @@ class RotaController extends Controller
 
             return redirect()->route('rotas.index')->with('success', 'Rota de entrega cadastrada com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('rotas.index')->with('error', 'Erro ao cadastrar a rota de entrega: ' . $e->getMessage());
+            return redirect()->route('rotas.index')->with('error', 'Erro ao cadastrar a rota de entrega: ');
         }
     }
 
@@ -338,7 +338,7 @@ class RotaController extends Controller
 
             return redirect()->route('rotas.index')->with('success', 'Rota alterada com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ' . $e->getMessage());
+            return redirect()->route('rotas.index')->with('error', 'Erro ao alterar a rota: ');
         }
     }
 

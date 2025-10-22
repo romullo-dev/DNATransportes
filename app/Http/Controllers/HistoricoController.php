@@ -48,7 +48,7 @@ class HistoricoController extends Controller
                 return back()->with('error', 'Atualização bloqueada — apenas notas de entrega estão disponíveis para alteração.');
             }
         } catch (\Throwable $th) {
-            return back()->with('error', 'Erro ao salvar histórico: ' . $th->getMessage());
+            return back()->with('error', 'Erro ao salvar histórico: ');
         }
     }
 }

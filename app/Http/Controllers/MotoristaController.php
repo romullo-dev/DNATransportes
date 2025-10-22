@@ -49,8 +49,8 @@ class MotoristaController extends Controller
          $motorista->update($data);
 
           return redirect()->route('motorista.index')->with('success', 'Usuário atualizado com sucesso!');
-        } catch (\Exception $e) {
-            return redirect()->route('motorista.index')->with('error', 'Erro ao atualizar o usuário: ' . $e->getMessage());
+        } catch (Exception $e) {
+            return redirect()->route('motorista.index')->with('error', 'Erro ao atualizar o usuário: ');
         }
 
     }

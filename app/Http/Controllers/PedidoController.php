@@ -120,7 +120,7 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
 
             return view('rastreio.rastreio', compact('pedido'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Erro: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erro: ');
         }
     }
 

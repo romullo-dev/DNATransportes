@@ -114,7 +114,7 @@ class UsuarioController extends Controller
 
             return redirect()->route('read-user')->with('success', 'Usuário atualizado com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('read-user')->with('error', 'Erro ao atualizar o usuário: ' . $e->getMessage());
+            return redirect()->route('read-user')->with('error', 'Erro ao atualizar o usuário: ');
         }
     }
 
@@ -136,7 +136,7 @@ class UsuarioController extends Controller
 
             return back()->with('success', 'Foto atualizada com sucesso!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Erro ao atualizar o usuário: ' . $e->getMessage());
+            return back()->with('error', 'Erro ao atualizar o usuário: ');
         }
     }
 
