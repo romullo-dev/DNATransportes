@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [MotoristaController::class, 'store'])->name('store');
         Route::post('/show/{id}', [MotoristaController::class, 'show'])->name('show');
         Route::put('/update/{id}', [MotoristaController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [MotoristaController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('modelo')->name('modelo.')->group(function () {
@@ -73,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('veiculo')->name('veiculo.')->group(function () {
         Route::get('/', [VeiculoController::class, 'index'])->name('index');
         Route::post('/store', [VeiculoController::class, 'store'])->name('store');
+        Route::put('/update', [VeiculoController::class, 'update'])->name('update');
     });
 
     Route::prefix('centro')->name('centro.')->group(function () {
@@ -82,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('importacao')->name('importacao.')->group(function () {
         Route::get('/', [ImportacaoController::class, 'index'])->name('index');
-        Route::post('/store',  [ImportacaoController::class, 'store'])->name('store');
+        Route::post('/store', [ImportacaoController::class, 'store'])->name('store');
     });
 
     Route::prefix('pedidos')->name('pedidos.')->group(function () {

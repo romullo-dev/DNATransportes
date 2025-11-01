@@ -88,11 +88,62 @@
 
 {{-- Estilo DNA Transportes --}}
 <style>
+  /* ====== DNA Transportes Style ====== */
+  body {
+    background-color: #12181F !important;
+    color: #f1f1f1;
+  }
+
+  .card {
+    background-color: #1b1e22;
+    border-radius: 1rem;
+    border: none;
+  }
+
+  .card-header {
+    border-bottom: none;
+  }
+
+  /* Campos de texto */
+  .form-control,
+  .form-select,
+  textarea {
+    background-color: #23272e !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #343a40 !important;
+    border-radius: 0.8rem !important;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none !important;
+  }
+
+  .form-control:focus,
+  .form-select:focus,
+  textarea:focus {
+    border-color: #2a9d8f !important;
+    box-shadow: 0 0 0 0.25rem rgba(42, 157, 143, 0.25) !important;
+    background-color: #252b33 !important;
+    color: #fff !important;
+  }
+
+  /* Placeholder */
+  ::placeholder {
+    color: #aaa !important;
+    opacity: 0.8;
+  }
+
+  /* Labels */
+  .form-label {
+    color: #f8c146;
+    font-weight: 600;
+  }
+
+  /* Botão de salvar */
   .btn-gradient {
     background: linear-gradient(90deg, #017aaa, #2a9d8f);
     color: #fff;
     border: none;
     transition: 0.3s;
+    border-radius: 50px;
   }
 
   .btn-gradient:hover {
@@ -101,14 +152,39 @@
     transform: translateY(-1px);
   }
 
-  .form-control:focus, .form-select:focus {
-    border-color: #2a9d8f;
-    box-shadow: 0 0 0 0.25rem rgba(42, 157, 143, 0.25);
+  /* Botão de fechar do alerta */
+  .btn-close {
+    filter: invert(1);
   }
 
-  ::placeholder {
-    color: #aaa !important;
+  /* Sombras e bordas suaves */
+  .shadow-lg {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Textarea mais bonito */
+  textarea.form-control {
+    border-radius: 0.8rem !important;
+    resize: none;
+  }
+
+  /* Ajuste para selects */
+  .form-select {
+    padding-right: 2.5rem !important;
+  }
+
+  /* Botão no final do form */
+  .d-flex.justify-content-end {
+    margin-top: 1rem;
+  }
+
+  /* Animação leve ao focar */
+  input:focus,
+  select:focus,
+  textarea:focus {
+    transform: scale(1.01);
   }
 </style>
+
 
 @endsection

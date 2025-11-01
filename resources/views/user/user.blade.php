@@ -3,14 +3,14 @@
 @section('content')
     {{-- ✅ Mensagens de sucesso/erro --}}
     @if (session('success'))
-        <div class="alert alert-success text-center fw-semibold rounded-pill shadow-sm" role="alert">
-            {{ session('success') }}
+        <div class="alert alert-success text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm" role="alert">
-            {{ session('error') }}
+        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
         </div>
     @endif
 
@@ -20,14 +20,14 @@
             <h2 class="fw-bold text-warning mb-3 mb-md-0">
                 <i class="bi bi-person-fill-gear me-2"></i> Usuários
             </h2>
-            <button type="button" class="btn btn-success rounded-pill px-4 shadow-sm fw-semibold"
-                data-bs-toggle="modal" data-bs-target="#modalNovoUsuario">
+            <button type="button" class="btn btn-warning text-dark rounded-pill px-4 shadow-sm fw-semibold"
+                data-bs-toggle="modal" data-bs-target="#modalNovoUsuario" style="transition: all 0.3s;">
                 <i class="bi bi-plus-circle me-1"></i> Novo Usuário
             </button>
         </div>
 
         {{-- 🔍 Filtros --}}
-        <form method="GET" class="row g-3 align-items-end mb-4 bg-dark p-4 rounded-4 shadow-sm"
+        <form method="GET" class="row g-3 align-items-end mb-4 bg-dark p-4 rounded-4 shadow-sm border border-secondary"
             action="{{ route('usuarios.procurar') }}">
             <div class="col-md-4">
                 <label class="form-label text-light fw-semibold"><i class="bi bi-search me-1"></i>Buscar</label>
@@ -62,22 +62,22 @@
         </form>
 
         {{-- 📋 Tabela de Usuários --}}
-        <div class="table-responsive rounded-4 shadow-lg overflow-hidden">
+        <div class="table-responsive rounded-4 shadow-lg overflow-hidden border border-secondary">
             <table class="table table-dark table-hover align-middle mb-0">
-                <thead style="background: linear-gradient(90deg, #017aaa, #2a9d8f);">
-                    <tr class="text-light">
-                        <th>Data de Criação</th>
+                <thead style="background: linear-gradient(90deg, #eb8721, #d67400);">
+                    <tr class="text-light text-center">
+                        <th>Data</th>
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Telefone</th>
                         <th>Tipo</th>
-                        <th class="text-center">Ações</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($usuarios as $usuario)
                         <tr class="border-bottom border-secondary">
-                            <td>{{ $usuario->created_at->format('d/m/Y') }}</td>
+                            <td class="text-center">{{ $usuario->created_at->format('d/m/Y') }}</td>
                             <td class="fw-semibold text-warning">{{ $usuario->nome }}</td>
                             <td>{{ $usuario->email }}</td>
                             <td>{{ $usuario->telefone }}</td>
@@ -92,9 +92,8 @@
                                     </button>
 
                                     <!-- Editar -->
-                                    <button type="button" class="btn btn-sm btn-outline-info rounded-circle"
-                                        title="Editar" data-bs-toggle="modal"
-                                        data-bs-target="#modalEdit{{ $usuario->id_usuario }}">
+                                    <button type="button" class="btn btn-sm btn-outline-info rounded-circle" title="Editar"
+                                        data-bs-toggle="modal" data-bs-target="#modalEdit{{ $usuario->id_usuario }}">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
 
@@ -118,8 +117,9 @@
 
         {{-- Paginação --}}
         <div class="d-flex justify-content-center mt-4">
-            {{ $usuarios->links('pagination::bootstrap-5') }}
+{{ $usuarios->appends(request()->query())->links('pagination::simple-bootstrap-5') }}
         </div>
+
 
         {{-- Modais --}}
         @include('User.modais.novo')
@@ -135,70 +135,56 @@
 
     {{-- 🎨 Estilo DNA Transportes --}}
     <style>
-        body {
-            background-color: #12181F !important;
-            color: #f1f1f1;
-        }
-
-        .table-dark td,
-        .table-dark th {
-            color: #e0e0e0 !important;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: rgba(255, 215, 0, 0.05) !important;
-        }
-
-        .btn-outline-warning:hover {
-            background: linear-gradient(90deg, #017aaa, #2a9d8f);
-            border: none;
-            color: #fff;
-        }
-
-        .modal-content {
-            background-color: #1b1e22;
-            color: #f1f1f1;
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-header {
-            background: linear-gradient(90deg, #017aaa, #2a9d8f);
-            color: #fff;
-            border-bottom: none;
-        }
-
-        .modal-footer {
-            background-color: #12181F;
-            border-top: 1px solid #2a9d8f;
-        }
-
-        .form-control,
-        .form-select {
-            background-color: #23272e;
-            color: #fff;
-            border: 1px solid #343a40;
+        /* 🎨 Paginação DNA Transportes */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.4rem;
+            background-color: transparent;
+            padding: 0.6rem;
             border-radius: 0.6rem;
         }
 
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #2a9d8f;
-            box-shadow: 0 0 0 0.25rem rgba(42, 157, 143, 0.25);
+        .page-item {
+            margin: 0 3px;
         }
 
-        input[type="file"]::file-selector-button {
-            background: #2a9d8f;
-            color: #fff;
-            border: none;
-            padding: 0.4rem 0.8rem;
+        .page-item .page-link {
+            background-color: #1b1f27;
+            color: #eb8721;
+            border: 1px solid #2a2f3a;
+            font-weight: 600;
             border-radius: 0.5rem;
-            margin-right: 0.8rem;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
         }
 
-        input[type="file"]::file-selector-button:hover {
-            background: #1f8574;
+        .page-item .page-link:hover {
+            background-color: #eb8721;
+            color: #12181f;
+            border-color: #eb8721;
+            transform: translateY(-2px);
+        }
+
+        .page-item.active .page-link {
+            background-color: #eb8721;
+            color: #12181f;
+            border-color: #eb8721;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(235, 135, 33, 0.5);
+        }
+
+        .page-item.disabled .page-link {
+            background-color: #23272e;
+            color: #777;
+            border-color: #2a2f3a;
+            cursor: not-allowed;
+        }
+
+        .page-link:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(235, 135, 33, 0.4);
         }
     </style>
 @endsection

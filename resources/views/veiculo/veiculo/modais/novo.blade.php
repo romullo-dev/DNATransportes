@@ -18,10 +18,14 @@
 
                     <!-- Ano -->
                     <div class="col-md-2">
-                        <label class="form-label" for="ano"><i class="bi bi-calendar-event me-1"></i>Ano</label>
-                        <input type="number" name="ano" id="ano"  class="form-control" min="1900"
-                            max="2099" required>
+                        <label class="form-label" for="ano">
+                            <i class="bi bi-calendar-event me-1"></i>Ano
+                        </label>
+                        <input type="number" name="ano" id="ano" class="form-control" min="1900"
+                            max="2099" maxlength="4" required
+                            oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);">
                     </div>
+
 
                     <!-- Cor -->
                     <div class="col-md-3">
@@ -57,13 +61,16 @@
                     <!-- Renavam -->
                     <div class="col-md-6">
                         <label class="form-label" for="renavam"><i class="bi bi-123 me-1"></i>RENAVAM</label>
-                        <input type="text" name="renavam" id="renavam" class="form-control">
+                        <input type="text" name="renavam" id="renavam" class="form-control" minlength="11"
+                            maxlength="11" required>
                     </div>
 
                     <!-- Chassi -->
                     <div class="col-md-6">
-                        <label class="form-label" for="chassi"><i class="bi bi-upc-scan me-1"></i>Chassi</label>
-                        <input type="text" name="chassi" id="chassi" class="form-control">
+                        <label class="form-label"  for="chassi"><i
+                                class="bi bi-upc-scan me-1"></i>Chassi</label>
+                        <input type="text" name="chassi" id="chassi" class="form-control" minlength="17"
+                            maxlength="17" required>
                     </div>
 
                     <!-- Tara -->

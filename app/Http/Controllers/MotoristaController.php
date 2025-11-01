@@ -11,17 +11,17 @@ use Illuminate\Http\Request;
 class MotoristaController extends Controller
 {
     public function index()
-{
-    $usuarios = Usuario::with('motorista')
-        ->where('tipo_usuario', 'motorista')
-        ->paginate(10);
+    {
+        $usuarios = Usuario::with('motorista')
+            ->where('tipo_usuario', 'motorista')
+            ->paginate(10);
 
-    $usuariosSelect = Usuario::where('tipo_usuario', 'motorista')
-        ->doesntHave('motorista')
-        ->get();
-        
-    return view('motorista.index', compact('usuarios', 'usuariosSelect'));
-}
+        $usuariosSelect = Usuario::where('tipo_usuario', 'motorista')
+            ->doesntHave('motorista')
+            ->get();
+
+        return view('motorista.index', compact('usuarios', 'usuariosSelect'));
+    }
 
 
 
@@ -40,15 +40,27 @@ class MotoristaController extends Controller
         //
     }
 
+    public function destroy($id)
+    {
+        try {
+            $motorista = Motorista::findOrFail($id);
+            $motorista->delete();
+
+            return redirect()->back()->with('success', 'Motorista excluído com sucesso!');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Erro ao excluir motorista: ' );
+        }
+    }
+
+
 
     public function update(MotoristaRequest $request, Motorista $motorista)
     {
-        try
-        {
-         $data = $request->only(['cnh', 'categoria', 'validade_cnh']);
-         $motorista->update($data);
+        try {
+            $data = $request->only(['cnh', 'categoria', 'validade_cnh']);
+            $motorista->update($data);
 
-          return redirect()->route('motorista.index')->with('success', 'Usuário atualizado com sucesso!');
+            return redirect()->route('motorista.index')->with('success', 'Usuário atualizado com sucesso!');
         } catch (Exception $e) {
             return redirect()->route('motorista.index')->with('error', 'Erro ao atualizar o usuário: ');
         }
@@ -58,8 +70,5 @@ class MotoristaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+
 }

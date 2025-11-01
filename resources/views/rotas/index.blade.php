@@ -106,22 +106,14 @@
                                             class="btn btn-sm btn-outline-warning rounded-circle" title="Visualizar">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
-
-                                        <button type="button" class="btn btn-sm btn-outline-info rounded-circle"
+                                         <button type="button" class="btn btn-sm btn-outline-info rounded-circle"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalEdit{{ $rotas->id_rotas }}" title="Editar">
                                             <i class="bi bi-pencil-fill"></i>
                                         </button>
-
-                                        <form action="#" method="POST"
-                                            onsubmit="return confirm('Tem certeza que deseja excluir esta rota?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Excluir">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                        </form>
                                     </div>
+
+                                    
                                 </td>
                             </tr>
                         @endforeach

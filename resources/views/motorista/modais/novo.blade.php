@@ -21,7 +21,7 @@
 
                 <div class="col-md-6">
                     <label for="cnh">CNH</label>
-                    <input name="cnh" class="form-control" required maxlength="20">
+                    <input name="cnh" class="form-control" required maxlength="11">
                 </div>
 
                 <div class="col-md-6">

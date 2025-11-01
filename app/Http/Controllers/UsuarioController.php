@@ -50,13 +50,13 @@ class UsuarioController extends Controller
 
             return redirect()->back()->with('success', 'Usuário cadastrado com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Erro ao cadastrar usuário.' . $e);
+            return redirect()->back()->with('error', 'Erro ao cadastrar usuário.');
         }
     }
 
     public function read()
     {
-        $usuarios = Usuario::orderBy('created_at', 'desc')->paginate(7);
+        $usuarios = Usuario::orderBy('created_at', 'desc')->paginate(5);
 
         return view('User.user', compact('usuarios'));
     }

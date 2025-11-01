@@ -24,12 +24,6 @@
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <strong>Informações do Pedido</strong>
-
-                {{-- Botão de editar status do pedido --}}
-                <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#modalEditPedido{{ $pedido->id_pedido }}">
-                    <i class="bi bi-pencil-fill"></i> Editar Status
-                </button>
             </div>
             <div class="card-body">
                 <p><strong>Cliente:</strong> {{ $pedido->notaFiscal->remetente->nome }}</p>
