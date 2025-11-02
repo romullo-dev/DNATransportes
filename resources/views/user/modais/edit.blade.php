@@ -6,7 +6,7 @@
             @method('PUT')
 
             <div class="modal-header text-white"
-                style="background: linear-gradient(90deg, #eb8721, #d67400); border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                style="background: linear-gradient(90deg, #be9312, #ffc107); border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
                 <h5 class="modal-title fw-bold"><i class="bi bi-person-gear me-2"></i>Editar Usuário</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -78,7 +78,7 @@
                     <i class="bi bi-x-circle me-1"></i>Cancelar
                 </button>
                 <button class="btn rounded-pill px-4 fw-semibold text-dark"
-                    style="background-color:#eb8721; border:none;">
+                    style="background-color:#ffc107; border:none;">
                     <i class="bi bi-check2-circle me-1"></i>Salvar Alterações
                 </button>
             </div>

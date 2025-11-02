@@ -22,7 +22,7 @@ class MotoristaRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_Usuario' => 'required|exists:usuario,id_usuario',
+            'id_Usuario' => 'required',
             'cnh' => 'required|string|max:20',
             'categoria' => 'required|string|in:A,B,C,D,E,AB',
             'validade_cnh' => 'required|date|after_or_equal:today',

@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="card shadow-lg rounded-4 border-0" style="background-color:#1b1f27; color:#e0e0e0;">
         <div class="card-header text-white d-flex justify-content-between align-items-center"
-            style="background:linear-gradient(90deg,#eb8721,#d67400); border-top-left-radius:1rem; border-top-right-radius:1rem;">
+            style="background:linear-gradient(90deg, #be9312, #ffc107); border-top-left-radius:1rem; border-top-right-radius:1rem;">
             <h5 class="mb-0 fw-bold"><i class="bi bi-map-fill me-2"></i>Cadastrar Nova Rota</h5>
         </div>
 
@@ -135,7 +135,7 @@
 
                 <div class="d-flex justify-content-end mt-3">
                     <button type="submit" class="btn btn-success px-4 py-2"
-                        style="background-color:#eb8721; border:none; font-weight:600;">
+                        style="background-color:#ffc107; border:none; font-weight:600;">
                         <i class="bi bi-check2-circle me-1"></i>Salvar Coleta
                     </button>
                 </div>
@@ -226,7 +226,7 @@
 
                 <div class="d-flex justify-content-end mt-3">
                     <button type="submit" class="btn btn-success px-4 py-2"
-                        style="background-color:#eb8721; border:none; font-weight:600;">
+                        style="background-color:#ffc107; border:none; font-weight:600;">
                         <i class="bi bi-check2-circle me-1"></i>Salvar Transferência
                     </button>
                 </div>
@@ -305,7 +305,7 @@
 
                 <div class="d-flex justify-content-end mt-3">
                     <button type="submit" class="btn btn-success px-4 py-2"
-                        style="background-color:#eb8721; border:none; font-weight:600;">
+                        style="background-color:#ffc107; border:none; font-weight:600;">
                         <i class="bi bi-check2-circle me-1"></i>Salvar Entrega
                     </button>
                 </div>

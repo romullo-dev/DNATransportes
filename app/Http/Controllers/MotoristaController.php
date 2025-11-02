@@ -31,7 +31,7 @@ class MotoristaController extends Controller
             Motorista::create($request->validated());
             return redirect()->route('motorista.index')->with('success', 'Motorista criado com sucesso!');
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Erro ao cadastrar motorista.');
+            return redirect()->back()->with('error', 'Erro ao cadastrar motorista.' );
         }
     }
 
@@ -48,21 +48,21 @@ class MotoristaController extends Controller
 
             return redirect()->back()->with('success', 'Motorista excluído com sucesso!');
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Erro ao excluir motorista: ' );
+            return redirect()->back()->with('error', 'O motorista não pôde ser excluído — ele está vinculado a uma rota ativa!' );
         }
     }
 
 
 
-    public function update(MotoristaRequest $request, Motorista $motorista)
+    public function update(Request $request, Motorista $motorista)
     {
         try {
             $data = $request->only(['cnh', 'categoria', 'validade_cnh']);
             $motorista->update($data);
 
-            return redirect()->route('motorista.index')->with('success', 'Usuário atualizado com sucesso!');
+            return redirect()->route('motorista.index')->with('success', 'Motorista atualizado com sucesso!');
         } catch (Exception $e) {
-            return redirect()->route('motorista.index')->with('error', 'Erro ao atualizar o usuário: ');
+            return redirect()->route('motorista.index')->with('error', 'Erro ao atualizar o Motorista');
         }
 
     }

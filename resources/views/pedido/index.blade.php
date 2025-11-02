@@ -2,15 +2,17 @@
 
 @section('content')
     {{-- ✅ Mensagens de sucesso/erro --}}
-    @if (session('success'))
-        <div class="alert alert-success text-center fw-semibold rounded-pill shadow-sm" role="alert">
+     @if (session('success'))
+        <div class="alert alert-warning text-center fw-semibold rounded-pill shadow-sm mt-3 border-0 text-dark" role="alert"
+            style="background-color: #ffc107; color: #1b1e22;">
+            <i class="bi bi-check-circle-fill me-2 text-dark"></i>
             {{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm" role="alert">
-            {{ session('error') }}
+        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
         </div>
     @endif
 
@@ -19,26 +21,27 @@
         {{-- 🔍 Filtros --}}
         <form method="GET" class="row g-3 align-items-end mb-4 bg-dark p-4 rounded-4 shadow-sm">
             <div class="col-md-4 col-12">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-search me-1"></i>Buscar</label>
+                <label class="form-label text-light fw-semibold"><i class="bi bi-search me-1"></i>Buscar(NFe & Código) </label>
+                <input type="text" name="busca" class="form-control bg-dark text-light border-secondary"
+                    placeholder="Buscar por nome ou CPF" value="{{ request('busca') }}">
+            </div>
+            <div class="col-md-4 col-12">
+                <label class="form-label text-light fw-semibold"><i class="bi bi-search me-1"></i>Remetente </label>
                 <input type="text" name="busca" class="form-control bg-dark text-light border-secondary"
                     placeholder="Buscar por nome ou CPF" value="{{ request('busca') }}">
             </div>
 
-            <div class="col-md-3 col-12">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-person-badge me-1"></i>Tipo de Usuário</label>
-                <select name="tipo" class="form-select bg-dark text-light border-secondary">
-                    <option value="">Tipo de Usuário</option>
-                    {{-- <option value="admin" {{ request('tipo') == 'admin' ? 'selected' : '' }}>Admin</option> --}}
-                </select>
-            </div>
-
-            <div class="col-md-3 col-12">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-check2-circle me-1"></i>Status</label>
-                <select name="status" class="form-select bg-dark text-light border-secondary">
-                    <option value="">Status</option>
-                    {{-- <option value="ativo" {{ request('status') == 'ativo' ? 'selected' : '' }}>Ativo</option> --}}
-                </select>
-            </div>
+            <div class="col-md-2">
+        <label class="form-label text-light fw-semibold mb-1">
+            <i class="bi bi-flag-fill text-warning me-2"></i> UF
+        </label>
+        <select name="uf" class="form-select border-secondary text-light" style="background-color:#212529;">
+            <option value="">Todas</option>
+            @foreach (['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)
+                <option value="{{ $uf }}" {{ request('uf') == $uf ? 'selected' : '' }}>{{ $uf }}</option>
+            @endforeach
+        </select>
+    </div>
 
             <div class="col-md-2 col-12 text-end">
                 <button type="submit" class="btn btn-outline-warning w-100 rounded-pill fw-semibold">
@@ -88,15 +91,27 @@
                                 @php
                                     $ultimoHistorico = $pedido->historicos->last();
                                     $status = $ultimoHistorico?->status ?? 'Sem histórico';
+
                                     $badgeClass = match ($status) {
+                                        'Aguardando coleta' => 'bg-secondary text-light',
+                                        'Em processo de coleta' => 'bg-info text-dark',
+                                        'Coleta realizada' => 'bg-success',
+                                        'Coleta não realizada' => 'bg-danger',
+                                        'Aguardando transferência' => 'bg-secondary text-light',
                                         'Em processo de transferência' => 'bg-warning text-dark',
-                                        'Finalizado' => 'bg-success',
-                                        'Cancelado' => 'bg-danger',
+                                        'Transferência realizada' => 'bg-success',
+                                        'Transferência não realizada' => 'bg-danger',
+                                        'Em processo de separação no destino' => 'bg-info text-dark',
+                                        'Em rota de entrega' => 'bg-primary',
                                         'Entrega realizada' => 'bg-success',
                                         'Entrega não realizada' => 'bg-danger',
-                                        default => 'bg-secondary',
+                                        'Finalizado' => 'bg-success',
+                                        'Cancelado' => 'bg-danger',
+                                        'Sem histórico' => 'bg-dark text-light',
+                                        default => 'bg-secondary text-light',
                                     };
                                 @endphp
+
 
                                 <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill fw-semibold">
                                     {{ $status }}
@@ -108,8 +123,7 @@
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     {{-- Visualizar --}}
                                     <button class="btn btn-sm btn-outline-warning rounded-circle shadow-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalShow{{ $pedido->id_pedido }}">
+                                        data-bs-toggle="modal" data-bs-target="#modalShow{{ $pedido->id_pedido }}">
                                         <i class="bi bi-eye-fill"></i>
                                     </button>
 

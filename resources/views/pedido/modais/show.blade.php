@@ -5,7 +5,7 @@
 
             {{-- 🟦 Cabeçalho --}}
             <div class="modal-header text-white" 
-                style="background: linear-gradient(90deg, #017aaa, #2a9d8f); border: none;">
+                style="background: linear-gradient(90deg, #ffc107,  #be9312); border: none;">
                 <h5 class="modal-title fw-semibold">
                     <i class="bi bi-box-arrow-in-up-right me-2"></i>
                     Detalhes do Pedido #{{ $pedidos->id_pedido }}
@@ -81,7 +81,7 @@
             </div>
 
             {{-- 🔸 Rodapé --}}
-            <div class="modal-footer" style="background-color: #12181F; border-top: 1px solid #2a9d8f;">
+            <div class="modal-footer" style="background-color: #12181F;">
                 <button type="button" class="btn btn-outline-warning rounded-pill fw-semibold px-4" data-bs-dismiss="modal">
                     <i class="bi bi-x-lg me-1"></i> Fechar
                 </button>

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <form method="POST" action="{{ route('centro.store') }}" class="modal-content">
             @csrf
-            <div class="modal-header" style="background: linear-gradient(90deg,#eb8721,#d67400); color: #fff;">
+            <div class="modal-header" style="background: linear-gradient(90deg,#ffc107,#be9312); color: #fff;">
                 <h5 class="modal-title fw-bold" id="modalNovoCentroLabel">
                     <i class="bi bi-geo-alt-fill me-2"></i>Novo Centro de Distribuição
                 </h5>
@@ -91,8 +91,8 @@
             </div>
 
             <div class="modal-footer" style="background-color:#1b1f27; border-top:1px solid #2f333d;">
-                <button type="submit" class="btn btn-primary fw-semibold border-0"
-                    style="background-color:#eb8721;">
+                <button type="submit" class="btn btn-warning fw-semibold border-0"
+                    style="background-color:##ffc107;">
                     <i class="bi bi-save me-1"></i>Salvar
                 </button>
                 <button type="reset" class="btn btn-secondary border-0"

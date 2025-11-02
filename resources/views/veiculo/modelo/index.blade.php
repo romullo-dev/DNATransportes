@@ -2,25 +2,25 @@
 
 @section('content')
 
-@if(session('success'))
-  <div class="alert alert-success alert-dismissible fade show rounded-pill text-center shadow-sm fw-semibold" role="alert">
-    {{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-@endif
+ @if (session('success'))
+        <div class="alert alert-warning text-center fw-semibold rounded-pill shadow-sm mt-3 border-0 text-dark" role="alert"
+            style="background-color: #ffc107; color: #1b1e22;">
+            <i class="bi bi-check-circle-fill me-2 text-dark"></i>
+            {{ session('success') }}
+        </div>
+    @endif
 
-@if(session('error'))
-  <div class="alert alert-danger alert-dismissible fade show rounded-pill text-center shadow-sm fw-semibold" role="alert">
-    {{ session('error') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-@endif
+    @if (session('error'))
+        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
+        </div>
+    @endif
 
 <div class="container-fluid py-5" style="background-color: #12181F; min-height: 100vh; color: #f1f1f1;">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
     <!-- Cabeçalho -->
     <div class="card-header d-flex justify-content-between align-items-center p-3"
-         style="background: linear-gradient(90deg, #017aaa, #2a9d8f); color: #fff;">
+         style="background: linear-gradient(90deg, #ffc107,  #be9312);">
       <h5 class="mb-0 fw-bold">
         <i class="bi bi-truck-front-fill me-2"></i> Cadastro de Modelo de Veículo
       </h5>
@@ -119,7 +119,7 @@
   .form-control:focus,
   .form-select:focus,
   textarea:focus {
-    border-color: #2a9d8f !important;
+    border-color: #ffc107 !important;
     box-shadow: 0 0 0 0.25rem rgba(42, 157, 143, 0.25) !important;
     background-color: #252b33 !important;
     color: #fff !important;
@@ -139,7 +139,7 @@
 
   /* Botão de salvar */
   .btn-gradient {
-    background: linear-gradient(90deg, #017aaa, #2a9d8f);
+    background: linear-gradient(90deg, #be9312);
     color: #fff;
     border: none;
     transition: 0.3s;
@@ -147,7 +147,7 @@
   }
 
   .btn-gradient:hover {
-    background: linear-gradient(90deg, #2a9d8f, #017aaa);
+    background: linear-gradient(90deg,#ffc107);
     box-shadow: 0 3px 10px rgba(42, 157, 143, 0.4);
     transform: translateY(-1px);
   }

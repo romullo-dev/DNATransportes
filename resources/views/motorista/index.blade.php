@@ -2,60 +2,78 @@
 
 @section('content')
     {{-- ✅ Mensagens de sucesso/erro --}}
-    @if (session('success'))
-        <div class="alert alert-success text-center fw-semibold rounded-pill shadow-sm" role="alert">
+     @if (session('success'))
+        <div class="alert alert-warning text-center fw-semibold rounded-pill shadow-sm mt-3 border-0 text-dark" role="alert"
+            style="background-color: #ffc107; color: #1b1e22;">
+            <i class="bi bi-check-circle-fill me-2 text-dark"></i>
             {{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm" role="alert">
-            {{ session('error') }}
+        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
         </div>
     @endif
-
     <div class="container-fluid py-5" style="background-color: #12181F; min-height: 100vh; color: #f1f1f1;">
         {{-- 🟠 Cabeçalho --}}
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-warning mb-3 mb-md-0">
                 <i class="bi bi-truck-front-fill me-2"></i> Motoristas
             </h2>
-            <button class="btn btn-warning rounded-pill px-4 shadow-sm fw-semibold text-dark"
-                data-bs-toggle="modal" data-bs-target="#modalNovoMotorista">
+            <button class="btn btn-warning rounded-pill px-4 shadow-sm fw-semibold text-dark" data-bs-toggle="modal"
+                data-bs-target="#modalNovoMotorista">
                 <i class="bi bi-person-plus-fill me-1"></i> Novo Motorista
             </button>
         </div>
 
-        {{-- 🔍 Filtros --}}
+        {{-- 🔍 Filtros Motoristas --}}
         <form method="GET" class="row g-3 align-items-end mb-4 bg-dark p-4 rounded-4 shadow-sm border border-secondary">
+            {{-- Buscar --}}
             <div class="col-md-4">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-search me-1"></i>Buscar</label>
-                <input type="text" name="busca" class="form-control bg-dark text-light border-secondary"
-                    placeholder="Nome ou CPF..." value="{{ request('busca') }}">
+                <label class="form-label text-light fw-semibold">
+                    <i class="bi bi-search me-1 text-warning"></i>Buscar
+                </label>
+                <input type="text" name="busca"
+                    class="form-control bg-dark text-light border-secondary rounded-3 shadow-sm"
+                    placeholder="Nome, CPF ou CNH..." value="{{ request('busca') }}">
             </div>
+
+            {{-- Categoria CNH --}}
             <div class="col-md-3">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-person-badge me-1"></i>Tipo</label>
-                <select name="tipo" class="form-select bg-dark text-light border-secondary">
-                    <option value="">Todos</option>
-                    <option value="admin" {{ request('tipo') == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="operador" {{ request('tipo') == 'operador' ? 'selected' : '' }}>Operador</option>
-                    <option value="motorista" {{ request('tipo') == 'motorista' ? 'selected' : '' }}>Motorista</option>
+                <label class="form-label text-light fw-semibold">
+                    <i class="bi bi-card-text me-1 text-warning"></i>Categoria CNH
+                </label>
+                <select name="categoria" class="form-select bg-dark text-light border-secondary rounded-3 shadow-sm">
+                    <option value="">Todas</option>
+                    <option value="A" {{ request('categoria') == 'A' ? 'selected' : '' }}>A</option>
+                    <option value="B" {{ request('categoria') == 'B' ? 'selected' : '' }}>B</option>
+                    <option value="C" {{ request('categoria') == 'C' ? 'selected' : '' }}>C</option>
+                    <option value="D" {{ request('categoria') == 'D' ? 'selected' : '' }}>D</option>
+                    <option value="E" {{ request('categoria') == 'E' ? 'selected' : '' }}>E</option>
                 </select>
             </div>
+
+            {{-- Status --}}
             <div class="col-md-3">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-toggle-on me-1"></i>Status</label>
-                <select name="status" class="form-select bg-dark text-light border-secondary">
+                <label class="form-label text-light fw-semibold">
+                    <i class="bi bi-toggle-on me-1 text-warning"></i>Status
+                </label>
+                <select name="status" class="form-select bg-dark text-light border-secondary rounded-3 shadow-sm">
                     <option value="">Todos</option>
                     <option value="ativo" {{ request('status') == 'ativo' ? 'selected' : '' }}>Ativo</option>
                     <option value="inativo" {{ request('status') == 'inativo' ? 'selected' : '' }}>Inativo</option>
                 </select>
             </div>
+
+            {{-- Botão Filtrar --}}
             <div class="col-md-2 text-end">
-                <button type="submit" class="btn btn-outline-warning w-100 rounded-pill fw-semibold">
+                <button type="submit" class="btn btn-outline-warning w-100 rounded-pill fw-semibold shadow-sm">
                     <i class="bi bi-funnel me-1"></i> Filtrar
                 </button>
             </div>
         </form>
+
 
         {{-- 🚛 Tabela de Motoristas --}}
         <div class="table-responsive rounded-4 shadow-lg overflow-hidden border border-secondary">
@@ -74,32 +92,32 @@
                     @forelse ($usuarios as $usuario)
                         @if ($usuario->motorista)
                             <tr class="border-bottom border-secondary">
-                                <td class="text-center">{{ $usuario->motorista->created_at?->format('d/m/Y H:i') ?? '-' }}</td>
-                                <td class="fw-semibold text-warning">{{ $usuario->nome }}</td>
+                                <td class="text-center">{{ $usuario->motorista->created_at?->format('d/m/Y H:i') ?? '-' }}
+                                </td>
+                                <td class="fw-semibold text-warning text-center">{{ $usuario->nome }}</td>
                                 <td class="text-center">{{ $usuario->motorista->cnh }}</td>
                                 <td class="text-center">{{ $usuario->motorista->categoria }}</td>
-                                <td class="text-center">{{ \Carbon\Carbon::parse($usuario->motorista->validade_cnh)->format('d/m/Y') }}</td>
+                                <td class="text-center">
+                                    {{ \Carbon\Carbon::parse($usuario->motorista->validade_cnh)->format('d/m/Y') }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <!-- Visualizar -->
-                                        <button class="btn btn-sm btn-outline-warning rounded-circle"
-                                            data-bs-toggle="modal"
+                                        <button class="btn btn-sm btn-outline-warning rounded-circle" data-bs-toggle="modal"
                                             data-bs-target="#modalShow{{ $usuario->motorista->id_motorista }}"
                                             title="Visualizar">
                                             <i class="bi bi-eye-fill"></i>
                                         </button>
 
                                         <!-- Editar -->
-                                        <button class="btn btn-sm btn-outline-info rounded-circle"
-                                            data-bs-toggle="modal"
+                                        <button class="btn btn-sm btn-outline-info rounded-circle" data-bs-toggle="modal"
                                             data-bs-target="#modalEdit{{ $usuario->motorista->id_motorista }}"
                                             title="Editar">
                                             <i class="bi bi-pencil-fill"></i>
                                         </button>
 
                                         <!-- Excluir -->
-                                        <form action="{{ route('motorista.destroy', $usuario->motorista->id_motorista) }}" method="post"
-                                            style="display:inline"
+                                        <form action="{{ route('motorista.destroy', $usuario->motorista->id_motorista) }}"
+                                            method="post" style="display:inline"
                                             onsubmit="return confirm('Tem certeza que quer apagar o motorista {{ $usuario->motorista->id_motorista }}?')">
                                             @csrf
                                             @method('DELETE')
@@ -144,8 +162,8 @@
         :root {
             --dna-dark: #12181F;
             --dna-gray: #1e242c;
-            --dna-orange: #eb8721;
-            --dna-orange-light: #ffb84d;
+            --dna-orange: #ffc107;
+            --dna-orange-light: #ffc107;
             --dna-border: #2d333b;
         }
 

@@ -4,7 +4,7 @@
         <div class="modal-content shadow-lg border-0 rounded-4 overflow-hidden" style="background-color: #101010; color: #fff;">
 
             <!-- Cabeçalho -->
-            <div class="modal-header" style="background-color: #EB8721; border-bottom: 2px solid #ffb84a;">
+            <div class="modal-header" style="background-color: #ffc107; border-bottom: 2px solid #ffb84a;">
                 <h5 class="modal-title mb-0 fw-bold d-flex align-items-center gap-2">
                     <i class="bi bi-receipt-fill"></i>
                     Comprovante da Movimentação #{{ $movimentacao->id_historico }}
@@ -19,7 +19,7 @@
                         <img src="{{ asset('canhotos/' . $movimentacao->foto) }}"
                              alt="Comprovante da movimentação"
                              class="img-fluid rounded-3"
-                             style="max-height: 650px; width: auto; object-fit: contain; border: 3px solid #EB8721;">
+                             style="max-height: 650px; width: auto; object-fit: contain; border: 3px solid #ffc107;">
                     </div>
                 @else
                     <div class="text-center text-muted py-5">
@@ -31,7 +31,7 @@
 
             <!-- Rodapé -->
             <div class="modal-footer d-flex justify-content-between align-items-center" style="background-color: #1a1a1a; border-top: 1px solid #333;">
-                <button type="button" class="btn btn-outline-light d-flex align-items-center gap-2" data-bs-dismiss="modal" style="border-color: #EB8721;">
+                <button type="button" class="btn btn-outline-light d-flex align-items-center gap-2" data-bs-dismiss="modal" style="border-color: #ffc107;">
                     <i class="bi bi-x-circle"></i> Fechar
                 </button>
 
@@ -39,12 +39,12 @@
                     <div class="d-flex gap-2">
                         <a href="{{ asset('canhotos/' . $movimentacao->foto) }}" target="_blank"
                            class="btn d-flex align-items-center gap-2"
-                           style="background-color: #EB8721; color: #fff; border: none;">
+                           style="background-color: #ffc107; color: #fff; border: none;">
                             <i class="bi bi-box-arrow-up-right"></i> Abrir em nova aba
                         </a>
                         <a href="{{ asset('canhotos/' . $movimentacao->foto) }}" download
                            class="btn d-flex align-items-center gap-2"
-                           style="background-color: transparent; color: #EB8721; border: 2px solid #EB8721;">
+                           style="background-color: transparent; color: #ffc107; border: 2px solid #ffc107;">
                             <i class="bi bi-download"></i> Baixar
                         </a>
                     </div>

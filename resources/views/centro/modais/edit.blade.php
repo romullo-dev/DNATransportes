@@ -6,7 +6,7 @@
       @method('PUT')
 
       <!-- Cabeçalho -->
-      <div class="modal-header" style="background: linear-gradient(90deg, #eb8721, #d67400); color:#fff;">
+      <div class="modal-header" style="background: linear-gradient(90deg, #ffc107,  #be9312); color:#fff;">
         <h5 class="modal-title fw-bold d-flex align-items-center">
           <i class="bi bi-pencil-square me-2"></i> Editar Centro de Distribuição
         </h5>

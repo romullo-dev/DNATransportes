@@ -8,7 +8,7 @@
                 @method($usuario->motorista ? 'PUT' : 'POST')
 
                 <!-- Cabeçalho -->
-                <div class="modal-header text-dark" style="background: linear-gradient(90deg, #eb8721, #ffb84d);">
+                <div class="modal-header text-dark" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
                     <h5 class="modal-title fw-bold">
                         <i class="bi bi-pencil-square me-2"></i>Editar Motorista
                     </h5>
@@ -47,8 +47,6 @@
                                 {{ ($usuario->motorista->categoria ?? '') == 'D' ? 'selected' : '' }}>D</option>
                             <option value="E"
                                 {{ ($usuario->motorista->categoria ?? '') == 'E' ? 'selected' : '' }}>E</option>
-                            <option value="AB"
-                                {{ ($usuario->motorista->categoria ?? '') == 'AB' ? 'selected' : '' }}>AB</option>
                         </select>
                     </div>
 
@@ -56,8 +54,10 @@
                     <div class="col-md-12">
                         <label class="fw-semibold mb-1">Validade da CNH</label>
                         <input type="date" name="validade_cnh"
-                            value="{{ old('validade_cnh', $usuario->motorista->validade_cnh ?? '') }}"
-                            class="form-control">
+                            value="{{ old('validade_cnh', isset($usuario->motorista->validade_cnh) ? \Carbon\Carbon::parse($usuario->motorista->validade_cnh)->format('Y-m-d') : '') }}"
+                            class="form-control" required>
+
+
                     </div>
                 </div>
 
@@ -78,8 +78,8 @@
 <style>
     /* ======== 🎨 DNA Transportes Modal Style ======== */
     :root {
-        --dna-orange: #eb8721;
-        --dna-orange-light: #ffb84d;
+        --dna-orange: #ffc107;
+        --dna-orange-light: #ffc107;
         --dna-dark: #12181F;
         --dna-gray: #1b1e22;
         --dna-input: #23272e;

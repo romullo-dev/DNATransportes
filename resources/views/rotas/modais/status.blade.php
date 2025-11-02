@@ -4,7 +4,7 @@
 <div class="container py-5" style="min-height: 100vh; background-color: #1b1e22;">
     <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
         <div class="card-header text-white fw-semibold"
-             style="background: linear-gradient(90deg, #017aaa, #2a9d8f); border-bottom: 3px solid #1f8574;">
+             style="background: linear-gradient(90deg, #ffffff, #2a9d8f); border-bottom: 3px solid #1f8574;">
             <i class="bi bi-pencil-square me-2"></i> Criar Histórico — Pedido #
         </div>
 

@@ -3,18 +3,16 @@
 @section('content')
     {{-- ✅ Mensagens de sucesso/erro --}}
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show text-center fw-semibold rounded-pill shadow-sm"
-            role="alert">
+        <div class="alert alert-warning text-center fw-semibold rounded-pill shadow-sm mt-3 border-0 text-dark" role="alert"
+            style="background-color: #ffc107; color: #1b1e22;">
+            <i class="bi bi-check-circle-fill me-2 text-dark"></i>
             {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show text-center fw-semibold rounded-pill shadow-sm"
-            role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
         </div>
     @endif
 
@@ -34,34 +32,24 @@
 
         {{-- 🔍 Filtros --}}
         <form method="GET" class="row g-3 align-items-end mb-4 bg-dark p-4 rounded-4 shadow-sm">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <label class="form-label text-light fw-semibold">
-                    <i class="bi bi-search me-1"></i> Buscar
+                    <i class="bi bi-search me-1"></i> Buscar (Placa)
                 </label>
                 <input type="text" name="busca" class="form-control bg-dark text-light border-secondary"
-                    placeholder="Buscar por nome ou CPF" value="{{ request('busca') }}">
+                    placeholder="Buscar por placa" value="{{ request('busca') }}">
             </div>
 
-            <div class="col-md-3">
-                <label class="form-label text-light fw-semibold"><i class="bi bi-person-badge me-1"></i> Tipo</label>
-                <select name="tipo" class="form-select bg-dark text-light border-secondary">
-                    <option value="">Tipo de Usuário</option>
-                    <option value="admin" {{ request('tipo') == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="operador" {{ request('tipo') == 'operador' ? 'selected' : '' }}>Operador</option>
-                    <option value="motorista" {{ request('tipo') == 'motorista' ? 'selected' : '' }}>Motorista</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label class="form-label text-light fw-semibold"><i class="bi bi-toggle-on me-1"></i> Status</label>
                 <select name="status" class="form-select bg-dark text-light border-secondary">
                     <option value="">Status</option>
-                    <option value="ativo" {{ request('status') == 'ativo' ? 'selected' : '' }}>Ativo</option>
-                    <option value="inativo" {{ request('status') == 'inativo' ? 'selected' : '' }}>Inativo</option>
+                    <option value="Ativo" {{ request('status') == 'Ativo' ? 'selected' : '' }}>Ativo</option>
+                    <option value="Inativo" {{ request('status') == 'Inativo' ? 'selected' : '' }}>Inativo</option>
                 </select>
             </div>
 
-            <div class="col-md-2 text-end">
+            <div class="col-md-3 text-end">
                 <button type="submit" class="btn btn-outline-warning w-100 rounded-pill fw-semibold">
                     <i class="bi bi-funnel me-1"></i> Filtrar
                 </button>
@@ -71,7 +59,7 @@
         {{-- 📋 Tabela de Veículos --}}
         <div class="table-responsive rounded-4 shadow-lg overflow-hidden">
             <table class="table table-dark table-hover align-middle mb-0">
-                <thead style="background: linear-gradient(90deg, #017aaa, #2a9d8f);">
+                <thead style="background: linear-gradient(90deg, #ffc107,  #be9312);">
                     <tr class="text-light">
                         <th>Data de Criação</th>
                         <th>Placa</th>
@@ -146,7 +134,7 @@
 
         /* Cabeçalho */
         .modal-header {
-            background: linear-gradient(90deg, #017aaa, #2a9d8f);
+            background: linear-gradient(90deg, #ffc107, #be9312);
             border-bottom: none;
             color: #fff;
             padding: 1rem 1.5rem;
@@ -154,7 +142,7 @@
 
         .modal-header .modal-title {
             font-weight: 600;
-            color: #FFD700;
+            color: #ffffff;
         }
 
         .btn-close {
@@ -194,7 +182,7 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #2a9d8f;
+            border-color: #ffc107;
             box-shadow: 0 0 0 0.25rem rgba(42, 157, 143, 0.25);
         }
 
@@ -222,7 +210,7 @@
 
         /* Botões personalizados */
         .btn-dna-save {
-            background: linear-gradient(90deg, #017aaa, #2a9d8f);
+            background: linear-gradient(90deg, #ffc107, #be9312);
             color: #fff;
             border: none;
             border-radius: 30px;
@@ -232,7 +220,7 @@
         }
 
         .btn-dna-save:hover {
-            background: linear-gradient(90deg, #2a9d8f, #017aaa);
+            background: linear-gradient(90deg, #ffc107, #be9312);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(42, 157, 143, 0.3);
         }

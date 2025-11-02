@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+
 <div class="container py-5" style="min-height: 85vh;">
     <div class="row justify-content-center align-items-center h-100">
         <div class="col-md-6">

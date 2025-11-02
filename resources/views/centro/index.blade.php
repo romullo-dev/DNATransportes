@@ -3,17 +3,19 @@
 @section('content')
     <div class="container-fluid py-4" style="color: #e0e0e0;">
         {{-- Mensagens de sucesso/erro --}}
-        @if (session('success'))
-            <div class="alert alert-success border-0 rounded-3 shadow-sm text-white" style="background-color:#2d7d46;">
-                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            </div>
-        @endif
+         @if (session('success'))
+        <div class="alert alert-warning text-center fw-semibold rounded-pill shadow-sm mt-3 border-0 text-dark" role="alert"
+            style="background-color: #ffc107; color: #1b1e22;">
+            <i class="bi bi-check-circle-fill me-2 text-dark"></i>
+            {{ session('success') }}
+        </div>
+    @endif
 
-        @if (session('error'))
-            <div class="alert alert-danger border-0 rounded-3 shadow-sm text-white" style="background-color:#c0392b;">
-                <i class="bi bi-exclamation-octagon-fill me-2"></i>{{ session('error') }}
-            </div>
-        @endif
+    @if (session('error'))
+        <div class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
+        </div>
+    @endif
 
         {{-- Cabeçalho --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -21,48 +23,78 @@
                 <i class="bi bi-geo-alt-fill me-2 text-warning"></i>Centro de Distribuição
             </h3>
             <button class="btn btn-warning fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalNovoCentro"
-                style="background-color:#eb8721; border:none;">
+                style="background-color:#ffc107; border:none;">
                 <i class="bi bi-plus-circle-fill me-2"></i>Novo Centro
             </button>
         </div>
 
-        {{-- Filtros --}}
-        <form method="GET" class="row g-3 mb-4 p-3 rounded-4 shadow-sm" style="background-color:#1f242d;">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-dark border-0 text-light"><i class="bi bi-search"></i></span>
-                    <input type="text" name="busca" class="form-control border-0 text-light"
-                        placeholder="Buscar por nome ou CPF" value="{{ request('busca') }}"
-                        style="background-color:#2a2f3a;">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <select name="tipo" class="form-select border-0 text-light" style="background-color:#2a2f3a;">
-                    <option value="">Tipo de Usuário</option>
-                    <option value="admin" {{ request('tipo') == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="operador" {{ request('tipo') == 'operador' ? 'selected' : '' }}>Operador</option>
-                    <option value="motorista" {{ request('tipo') == 'motorista' ? 'selected' : '' }}>Motorista</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select border-0 text-light" style="background-color:#2a2f3a;">
-                    <option value="">Status</option>
-                    <option value="ativo" {{ request('status') == 'ativo' ? 'selected' : '' }}>Ativo</option>
-                    <option value="inativo" {{ request('status') == 'inativo' ? 'selected' : '' }}>Inativo</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn w-100 fw-semibold shadow-sm text-dark"
-                    style="background-color:#eb8721; border:none;">
-                    <i class="bi bi-funnel-fill me-1"></i>Filtrar
-                </button>
-            </div>
-        </form>
+        {{-- 🏭 Filtros Centro de Distribuição --}}
+<form method="GET" class="row g-3 mb-4 p-4 rounded-4 shadow-sm" style="background-color:#1f242d;">
+
+    {{-- 🔍 Buscar por nome --}}
+    <div class="col-md-4">
+        <label class="form-label text-light fw-semibold mb-1">
+            <i class="bi bi-building-fill text-warning me-2"></i> Nome 
+        </label>
+        <div class="input-group">
+            <span class="input-group-text bg-dark border-0 text-warning">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="busca" class="form-control border-0 text-light"
+                value="{{ request('busca') }}" style="background-color:#2a2f3a;">
+        </div>
+    </div>
+
+    {{-- 🌆 Cidade --}}
+    <div class="col-md-3">
+        <label class="form-label text-light fw-semibold mb-1">
+            <i class="bi bi-geo-alt-fill text-warning me-2"></i> Cidade
+        </label>
+        <input type="text" name="cidade" class="form-control border-0 text-light"
+            value="{{ request('cidade') }}"
+            style="background-color:#2a2f3a;">
+    </div>
+
+    {{-- 🚩 UF --}}
+    <div class="col-md-2">
+        <label class="form-label text-light fw-semibold mb-1">
+            <i class="bi bi-flag-fill text-warning me-2"></i> UF
+        </label>
+        <select name="uf" class="form-select border-0 text-light" style="background-color:#2a2f3a;">
+            <option value="">Todas</option>
+            @foreach (['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)
+                <option value="{{ $uf }}" {{ request('uf') == $uf ? 'selected' : '' }}>{{ $uf }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    {{-- ⚙️ Status --}}
+    <div class="col-md-2">
+        <label class="form-label text-light fw-semibold mb-1">
+            <i class="bi bi-toggle2-on text-warning me-2"></i> Status
+        </label>
+        <select name="status" class="form-select border-0 text-light" style="background-color:#2a2f3a;">
+            <option value="">Todos</option>
+            <option value="ativo" {{ request('status') == 'ativo' ? 'selected' : '' }}>Ativo</option>
+            <option value="inativo" {{ request('status') == 'inativo' ? 'selected' : '' }}>Inativo</option>
+        </select>
+    </div>
+
+    {{-- 🔘 Botão Filtrar --}}
+    <div class="col-md-1 d-flex align-items-end">
+        <button type="submit" class="btn w-100 fw-semibold shadow-sm text-dark"
+            style="background-color:#ffc107; border:none;">
+            <i class="bi bi-funnel-fill me-1"></i>
+        </button>
+    </div>
+
+</form>
+
 
         {{-- Tabela --}}
         <div class="table-responsive rounded-4 shadow-sm" style="overflow:hidden;">
             <table class="table table-dark table-hover align-middle mb-0">
-                <thead style="background:linear-gradient(90deg,#eb8721,#d67400); color:#fff;">
+                <thead style="background:linear-gradient(90deg,#ffc107,#d67400); color:#fff;">
                     <tr>
                         <th><i class="bi bi-hash me-1"></i>Código</th>
                         <th><i class="bi bi-building me-1"></i>Nome</th>
@@ -144,7 +176,7 @@
 
         .form-select:focus,
         .form-control:focus {
-            border-color: #eb8721 !important;
+            border-color: #ffc107 !important;
             box-shadow: 0 0 5px rgba(235, 135, 33, 0.6) !important;
         }
 

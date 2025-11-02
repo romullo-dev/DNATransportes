@@ -58,7 +58,7 @@ class UsuarioController extends Controller
     {
         $usuarios = Usuario::orderBy('created_at', 'desc')->paginate(5);
 
-        return view('User.user', compact('usuarios'));
+        return view('user.user', compact('usuarios'));
     }
 
     public function procurar(Request $request)
@@ -86,7 +86,7 @@ class UsuarioController extends Controller
 
         $usuarios = $usuarios->paginate(10);
 
-        return view('User.user', compact('usuarios'));
+        return view('user.user', compact('usuarios'));
     }
 
 
@@ -148,6 +148,10 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = Usuario::findOrFail($id_usuario);
+            if ($usuario->motorista()->exists()) {
+    return back()->with('error', 'Não é possível excluir este usuário, pois ele está vinculado a um motorista.');
+}
+
             $usuario->delete();
             return Redirect()->route('read-user')->with('success', 'Usuário deletado com sucesso!');
         } catch (Exception $e) {
@@ -161,13 +165,13 @@ class UsuarioController extends Controller
     public function show($id)
     {
         $usuario = Usuario::findOrFail($id);
-        return view('User.ver', compact('usuario'));
+        return view('user.ver', compact('usuario'));
     }
 
     public function senha($id)
     {
         $usuario = Usuario::findOrFail($id);
-        return view('User.modais.senhas', compact('usuario'));
+        return view('user.modais.senhas', compact('usuario'));
     }
 
     /**

@@ -33,7 +33,6 @@
                         <option value="C">C</option>
                         <option value="D">D</option>
                         <option value="E">E</option>
-                        <option value="AB">AB</option>
                     </select>
                 </div>
 

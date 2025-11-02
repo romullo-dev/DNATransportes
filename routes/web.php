@@ -62,7 +62,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [MotoristaController::class, 'index'])->name('index');
         Route::post('/store', [MotoristaController::class, 'store'])->name('store');
         Route::post('/show/{id}', [MotoristaController::class, 'show'])->name('show');
-        Route::put('/update/{id}', [MotoristaController::class, 'update'])->name('update');
+        Route::put('/update/{motorista}', [MotoristaController::class, 'update'])->name('update');
         Route::delete('/destroy/{id}', [MotoristaController::class, 'destroy'])->name('destroy');
     });
 

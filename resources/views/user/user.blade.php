@@ -3,8 +3,10 @@
 @section('content')
     {{-- ✅ Mensagens de sucesso/erro --}}
     @if (session('success'))
-        <div class="alert alert-success text-center fw-semibold rounded-pill shadow-sm mt-3" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+        <div class="alert alert-warning text-center fw-semibold rounded-pill shadow-sm mt-3 border-0 text-dark" role="alert"
+            style="background-color: #ffc107; color: #1b1e22;">
+            <i class="bi bi-check-circle-fill me-2 text-dark"></i>
+            {{ session('success') }}
         </div>
     @endif
 
@@ -117,7 +119,7 @@
 
         {{-- Paginação --}}
         <div class="d-flex justify-content-center mt-4">
-{{ $usuarios->appends(request()->query())->links('pagination::simple-bootstrap-5') }}
+            {{ $usuarios->appends(request()->query())->links('pagination::simple-bootstrap-5') }}
         </div>
 
 

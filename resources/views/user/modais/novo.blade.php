@@ -4,7 +4,7 @@
             @csrf
 
             <!-- Cabeçalho -->
-            <div class="modal-header" style="background: linear-gradient(90deg, #017aaa, #2a9d8f); color: #fff;">
+            <div class="modal-header" style="background: linear-gradient(90deg, #ffc107,  #be9312); color: #fff;">
                 <h5 class="modal-title fw-bold"><i class="bi bi-person-plus-fill me-2"></i>Novo Usuário</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -68,11 +68,11 @@
             </div>
 
             <!-- Rodapé -->
-            <div class="modal-footer" style="background-color: #12181F; border-top: 1px solid #2a9d8f;">
+            <div class="modal-footer" style="background-color: #12181F; border-top: 1px solid #ffc107;">
                 <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>Cancelar
                 </button>
-                <button type="submit" class="btn text-white fw-semibold" style="background-color: #2a9d8f; border: none;">
+                <button type="submit" class="btn text-white fw-semibold" style="background-color: #ffc107; border: none;">
                     <i class="bi bi-check-circle me-1"></i>Salvar
                 </button>
             </div>
@@ -91,12 +91,12 @@
 
     .form-control:focus,
     .form-select:focus {
-        border-color: #2a9d8f;
+        border-color: #ffc107;
         box-shadow: 0 0 0 0.25rem rgba(42, 157, 143, 0.25);
     }
 
     input[type="file"]::file-selector-button {
-        background: #2a9d8f;
+        background: #ffc107;
         color: #fff;
         border: none;
         padding: 0.4rem 0.8rem;

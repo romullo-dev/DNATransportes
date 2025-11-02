@@ -13,7 +13,7 @@
             {{ session('error') }}
         </div>
     @endif
-    <div class="container-fluid py-5" style="background-color: #1b1e22; min-height: 100vh;">
+    <div class="container-fluid py-5" style="background-color: #12181f; min-height: 100vh;">
 
         {{-- 🔸 Cabeçalho --}}
         <div class="text-center mb-5">
@@ -26,26 +26,83 @@
         {{-- 🧾 Informações da Rota --}}
         <div class="card mb-5 border-0 shadow-lg rounded-4 overflow-hidden info-card">
             <div class="card-header text-white fw-semibold"
-                style="background: linear-gradient(90deg, #017aaa, #2a9d8f); border-bottom: 3px solid #1f8574;">
+                style="background: linear-gradient(90deg, #be9312) #ffc107;">
                 <i class="bi bi-info-circle me-2"></i> Informações da Rota
             </div>
-            <div class="card-body row px-4 py-4">
-                <div class="col-md-6 mb-3">
-                    <p><strong>Motorista:</strong> {{ $data->motorista->usuario->nome ?? 'Não informado' }}</p>
-                    <p><strong>CPF:</strong> {{ $data->motorista->usuario->cpf ?? 'Não informado' }}</p>
-                    <p><strong>Veículo:</strong> {{ $data->veiculo->placa ?? 'Não informado' }}</p>
-                    <p><strong>Capacidade:</strong> KG {{ $data->veiculo->capacidade_kg ?? 'Não informado' }}</p>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <p><strong>Origem:</strong> {{ $data->origem->nome ?? 'Não informado' }}
-                        ({{ $data->origem->uf ?? '--' }})</p>
-                    <p><strong>Destino:</strong> {{ $data->destino->nome ?? 'Não informado' }}
-                        ({{ $data->destino->uf ?? '--' }})</p>
-                    <p><strong>Tipo de Rota:</strong> {{ $data->tipo ?? 'Não informado' }}</p>
-                    <p><strong>Status Atual:</strong> {{ optional($data->historicos->last())->status ?? 'Não informado' }}
-                    </p>
-                </div>
-            </div>
+            <div class="card-body row px-4 py-4 bg-dark text-light rounded-4 shadow-sm">
+
+    {{-- 🔹 Coluna Esquerda --}}
+    <div class="col-md-6 mb-3">
+
+        <p class="mb-2">
+            <i class="bi bi-person-badge-fill text-warning me-2"></i>
+            <strong>Motorista:</strong>
+            <span class="text-light">{{ $data->motorista->usuario->nome ?? 'Não informado' }}</span>
+        </p>
+
+        <p class="mb-2">
+            <i class="bi bi-person-vcard text-warning me-2"></i>
+            <strong>CPF:</strong>
+            <span class="text-light">{{ $data->motorista->usuario->cpf ?? 'Não informado' }}</span>
+        </p>
+
+        <p class="mb-2">
+            <i class="bi bi-truck-front-fill text-warning me-2"></i>
+            <strong>Veículo:</strong>
+            <span class="text-light">{{ $data->veiculo->placa ?? 'Não informado' }}</span>
+        </p>
+
+        <p class="mb-2">
+            <i class="bi bi-box-seam text-warning me-2"></i>
+            <strong>Capacidade:</strong>
+            <span class="text-light">
+                {{ $data->veiculo->capacidade_kg ? number_format($data->veiculo->capacidade_kg, 0, ',', '.') . ' Kg' : 'Não informado' }}
+            </span>
+        </p>
+
+    </div>
+
+    {{-- 🔹 Coluna Direita --}}
+    <div class="col-md-6 mb-3">
+
+        <p class="mb-2">
+            <i class="bi bi-geo-alt-fill text-warning me-2"></i>
+            <strong>Origem:</strong>
+            <span class="text-light">
+                {{ $data->origem->nome ?? 'Não informado' }} ({{ $data->origem->uf ?? '--' }})
+            </span>
+        </p>
+
+        <p class="mb-2">
+            <i class="bi bi-geo-alt text-warning me-2"></i>
+            <strong>Destino:</strong>
+            <span class="text-light">
+                {{ $data->destino->nome ?? 'Não informado' }} ({{ $data->destino->uf ?? '--' }})
+            </span>
+        </p>
+
+        <p class="mb-2">
+            <i class="bi bi-signpost-2-fill text-warning me-2"></i>
+            <strong>Tipo de Rota:</strong>
+            <span class="text-light">{{ $data->tipo ?? 'Não informado' }}</span>
+        </p>
+
+       <p class="mb-0">
+    <i class="bi bi-activity text-warning me-2"></i>
+    <strong>Status Atual:</strong>
+    @php $status = optional($data->historicos->last())->status ?? 'Não informado'; @endphp
+
+    <span class="fw-semibold text-light">
+        <i class="bi bi-dot me-1"></i> {{ ucfirst($status) }}
+    </span>
+</p>
+
+
+    </div>
+</div>
+
+
+
         </div>
 
         {{-- 📦 Notas Fiscais --}}
@@ -98,7 +155,7 @@
             <div class="modal fade" id="modalStatus{{ $pedido->id_pedido }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content rounded-4 shadow-lg border-0">
-                        <div class="modal-header text-white" style="background: linear-gradient(90deg, #017aaa, #2a9d8f);">
+                        <div class="modal-header text-white" style="background: linear-gradient(90deg, #ffc107,  #be9312);">
                             <h5 class="modal-title">
                                 <i class="bi bi-pencil-square me-2"></i> Atualizar Status — Pedido #{{ $pedido->id_pedido }}
                             </h5>
@@ -137,7 +194,7 @@
                             </div>
 
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-success rounded-pill px-4 fw-semibold">
+                                <button type="submit" class="btn btn-warning rounded-pill px-4 fw-semibold">
                                     <i class="bi bi-check-circle me-2"></i> Salvar
                                 </button>
                                 <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
@@ -155,7 +212,7 @@
         @if ($data->historicos && $data->historicos->count() > 0)
             <div class="card mb-5 border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="card-header text-white fw-semibold"
-                    style="background: linear-gradient(90deg, #1e5e73, #2a9d8f); border-bottom: 3px solid #1b7b6b;">
+                    style="background: linear-gradient(90deg, #be9312 , #ffc107);">
                     <i class="bi bi-clock-history me-2"></i> Histórico de Movimentações
                 </div>
                 <div class="card-body p-0">
@@ -185,7 +242,7 @@
         {{-- 🗺️ Mapa --}}
 <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
     <div class="card-header text-white fw-semibold"
-        style="background: linear-gradient(90deg, #002b5c, #264653); border-bottom: 3px solid #19364d;">
+        style="background: linear-gradient(90deg, #be9312, #0dcaf0 ); border-bottom: 3px solid #19364d;">
         <i class="bi bi-map me-2"></i> Mapa da Rota
     </div>
     <div class="card-body">
@@ -363,7 +420,7 @@ window.addEventListener('load', async () => {
     {{-- 🎨 Fundo Unificado DNA --}}
     <style>
         body {
-            background-color: #1b1e22 !important;
+            background-color: #12181f !important;
         }
 
         .info-card {

@@ -24,34 +24,34 @@ class PedidoController extends Controller
 
     public function painel()
     {
-        // 📦 Total de pedidos
         $totalPedidos = Pedido::count();
 
-        // 🕓 Pega o último status de cada pedido
         $statusPedidos = Pedido::with([
             'historicos' => function ($q) {
                 $q->latest('data');
             }
         ])->get()->map(function ($pedido) {
             $status = optional($pedido->historicos->first())->status ?? 'Sem status';
-            return trim(strtolower($status)); // 🔥 normaliza pra minúsculo e remove espaços
+            return trim(strtolower($status));
         });
 
 
-        // Conta quantos há de cada tipo de status
         $resumoStatus = collect($statusPedidos)->countBy();
 
         $statusEntregue = $resumoStatus->get('entrega realizada', 0);
 
         $statusTransito = $resumoStatus->filter(function ($value, $key) {
             return in_array($key, [
+                'aguardando coleta',
                 'em processo de coleta',
+                'coleta realizada',
+                'aguardando transferência',
                 'em processo de transferência',
+                'transferência realizada',
+                'em processo de separação no destino',
                 'em rota de entrega',
-                'Transferência realizada',
-                'Aguardando coleta',
-                'Coleta realizada'
             ]);
+
         })->sum();
 
         $statusCancelado = $resumoStatus->filter(function ($value, $key) {
@@ -64,7 +64,6 @@ class PedidoController extends Controller
 
         $statusOutros = $totalPedidos - ($statusEntregue + $statusTransito + $statusCancelado);
 
-        // 📅 Pedidos criados nos últimos 6 meses
         $meses = collect();
         $dadosPedidos = collect();
 
@@ -80,9 +79,7 @@ class PedidoController extends Controller
             $dadosPedidos->push($quantidade);
         }
 
-        //dd($resumoStatus);
 
-        // 🔁 Retorna a view com os dados
         return view('painel.index', compact(
             'totalPedidos',
             'statusEntregue',
