@@ -74,12 +74,16 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('veiculo')->name('veiculo.')->group(function () {
         Route::get('/', [VeiculoController::class, 'index'])->name('index');
         Route::post('/store', [VeiculoController::class, 'store'])->name('store');
-        Route::put('/update', [VeiculoController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [VeiculoController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [VeiculoController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('centro')->name('centro.')->group(function () {
         Route::get('/', [CentroController::class, 'index'])->name('index');
         Route::post('/store', [CentroController::class, 'store'])->name('store');
+        Route::put('/update/{id}', [CentroController::class, 'update'])->name('update');
+        Route::get('/show/{id}', [CentroController::class, 'show'])->name('show');
+        Route::delete('/destroy/{id}', [CentroController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('importacao')->name('importacao.')->group(function () {

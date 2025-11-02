@@ -25,15 +25,17 @@ class PedidoController extends Controller
     public function painel()
     {
         // 📦 Total de pedidos
-        $totalPedidos = \App\Models\Pedido::count();
+        $totalPedidos = Pedido::count();
 
         // 🕓 Pega o último status de cada pedido
-       $statusPedidos = \App\Models\Pedido::with(['historicos' => function ($q) {
-    $q->latest('data');
-}])->get()->map(function ($pedido) {
-    $status = optional($pedido->historicos->first())->status ?? 'Sem status';
-    return trim(strtolower($status)); // 🔥 normaliza pra minúsculo e remove espaços
-});
+        $statusPedidos = Pedido::with([
+            'historicos' => function ($q) {
+                $q->latest('data');
+            }
+        ])->get()->map(function ($pedido) {
+            $status = optional($pedido->historicos->first())->status ?? 'Sem status';
+            return trim(strtolower($status)); // 🔥 normaliza pra minúsculo e remove espaços
+        });
 
 
         // Conta quantos há de cada tipo de status
@@ -41,21 +43,24 @@ class PedidoController extends Controller
 
         $statusEntregue = $resumoStatus->get('entrega realizada', 0);
 
-$statusTransito = $resumoStatus->filter(function ($value, $key) {
-    return in_array($key, [
-        'em processo de coleta',
-        'em processo de transferência',
-        'em rota de entrega',
-    ]);
-})->sum();
+        $statusTransito = $resumoStatus->filter(function ($value, $key) {
+            return in_array($key, [
+                'em processo de coleta',
+                'em processo de transferência',
+                'em rota de entrega',
+                'Transferência realizada',
+                'Aguardando coleta',
+                'Coleta realizada'
+            ]);
+        })->sum();
 
-$statusCancelado = $resumoStatus->filter(function ($value, $key) {
-    return in_array($key, [
-        'coleta não realizada',
-        'transferência não realizada',
-        'entrega não realizada',
-    ]);
-})->sum();
+        $statusCancelado = $resumoStatus->filter(function ($value, $key) {
+            return in_array($key, [
+                'coleta não realizada',
+                'transferência não realizada',
+                'entrega não realizada',
+            ]);
+        })->sum();
 
         $statusOutros = $totalPedidos - ($statusEntregue + $statusTransito + $statusCancelado);
 
@@ -67,7 +72,7 @@ $statusCancelado = $resumoStatus->filter(function ($value, $key) {
             $data = \Carbon\Carbon::now()->subMonths($i);
             $mes = ucfirst($data->translatedFormat('M'));
 
-            $quantidade = \App\Models\Pedido::whereMonth('created_at', $data->month)
+            $quantidade = Pedido::whereMonth('created_at', $data->month)
                 ->whereYear('created_at', $data->year)
                 ->count();
 

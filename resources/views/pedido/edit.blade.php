@@ -1,61 +1,66 @@
-<!-- resources/views/pedido/index.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
+<div class="container-fluid py-4" style="color:#e0e0e0;">
+
     {{-- Mensagens de sucesso/erro --}}
     @if (session('success'))
-        <div class="alert alert-success" role="alert">
-            {{ session('success') }}
+        <div class="alert alert-success border-0 rounded-3 shadow-sm text-white" style="background-color:#2d7d46;">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger" role="alert">
-            {{ session('error') }}
+        <div class="alert alert-danger border-0 rounded-3 shadow-sm text-white" style="background-color:#c0392b;">
+            <i class="bi bi-exclamation-octagon-fill me-2"></i>{{ session('error') }}
         </div>
     @endif
 
-    {{-- Detalhes do Pedido --}}
-    <div class="container">
-        <h2>Detalhes do Pedido #{{ $pedido->id_pedido }}</h2>
+    {{-- Título --}}
+    <div class="mb-4">
+        <h3 class="fw-bold text-white">
+            <i class="bi bi-box-seam-fill text-warning me-2"></i>Detalhes do Pedido #{{ $pedido->id_pedido }}
+        </h3>
+    </div>
 
-        {{-- Informações do Pedido --}}
-        <div class="card mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <strong>Informações do Pedido</strong>
-            </div>
-            <div class="card-body">
-                <p><strong>Cliente:</strong> {{ $pedido->notaFiscal->remetente->nome }}</p>
-                <p><strong>Destinatário:</strong> {{ $pedido->notaFiscal->destinatario->nome }}</p>
-                <p><strong>Data de Emissão:</strong> {{ \Carbon\Carbon::parse($pedido->created_at)->format('d/m/Y') }}</p>
-
-                @if ($pedido->frete)
-                    <p><strong>Valor do Frete:</strong> R$ {{ number_format($pedido->frete->valor_frete, 2, ',', '.') }}</p>
-                @else
-                    <p class="text-muted">Sem frete</p>
-                @endif
-                <p><strong>Status:</strong> {{ ucfirst($pedido->status) }}</p>
-            </div>
+    {{-- Informações do Pedido --}}
+    <div class="card bg-dark border-0 shadow-sm rounded-4 mb-4" style="overflow:hidden;">
+        <div class="card-header text-dark fw-bold border-0" style="background:linear-gradient(90deg,#eb8721,#d67400);">
+            <i class="bi bi-file-earmark-text-fill me-2"></i>Informações do Pedido
         </div>
+        <div class="card-body text-light">
+            <p><strong class="text-warning">Cliente:</strong> {{ $pedido->notaFiscal->remetente->nome }}</p>
+            <p><strong class="text-warning">Destinatário:</strong> {{ $pedido->notaFiscal->destinatario->nome }}</p>
+            <p><strong class="text-warning">Data de Emissão:</strong> {{ \Carbon\Carbon::parse($pedido->created_at)->format('d/m/Y') }}</p>
 
-        {{-- Detalhes das Rotas --}}
-        @if ($pedido->rotas->isNotEmpty())
-            <div class="card mt-4">
-                <div class="card-header">
-                    <strong>Detalhes das Rotas</strong>
-                </div>
-                <div class="card-body">
-                    <table class="table table-striped table-bordered">
-                        <thead>
+            @if ($pedido->frete)
+                <p><strong class="text-warning">Valor do Frete:</strong> R$ {{ number_format($pedido->frete->valor_frete, 2, ',', '.') }}</p>
+            @else
+                <p class="text-muted"><em>Sem frete</em></p>
+            @endif
+
+            <p><strong class="text-warning">Status:</strong> {{ ucfirst($pedido->status) }}</p>
+        </div>
+    </div>
+
+    {{-- Detalhes das Rotas --}}
+    @if ($pedido->rotas->isNotEmpty())
+        <div class="card bg-dark border-0 shadow-sm rounded-4">
+            <div class="card-header text-dark fw-bold border-0" style="background:linear-gradient(90deg,#eb8721,#d67400);">
+                <i class="bi bi-signpost-split-fill me-2"></i>Detalhes das Rotas
+            </div>
+            <div class="card-body text-light">
+                <div class="table-responsive rounded-4 overflow-hidden">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead style="background:linear-gradient(90deg,#eb8721,#d67400); color:#fff;">
                             <tr>
-                                <th>Tipo de Rota</th>
-                                <th>Distância (km)</th>
-                                <th>Data da Rota</th>
-                                <th>Data de Início</th>
-                                <th>Observações</th>
-                                <th>Último Status</th>
-                                <th>Detalhar Histórico</th>
+                                <th><i class="bi bi-geo-alt-fill me-1"></i>Tipo de Rota</th>
+                                <th><i class="bi bi-rulers me-1"></i>Distância (km)</th>
+                                <th><i class="bi bi-calendar-event me-1"></i>Data da Rota</th>
+                                <th><i class="bi bi-clock-history me-1"></i>Data de Início</th>
+                                <th><i class="bi bi-chat-left-text me-1"></i>Observações</th>
+                                <th><i class="bi bi-flag me-1"></i>Último Status</th>
+                                <th class="text-center"><i class="bi bi-journal-text me-1"></i>Detalhar Histórico</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,51 +74,51 @@
 
                                     <td>
                                         @if ($rota->historicos->isNotEmpty())
-                                            {{ $rota->historicos->last()->status }}
+                                            <span class="badge bg-success px-3 py-2">
+                                                {{ $rota->historicos->last()->status }}
+                                            </span>
                                         @else
-                                            <em>Sem histórico</em>
+                                            <span class="text-muted"><em>Sem histórico</em></span>
                                         @endif
                                     </td>
 
-                                    <td>
-                                        <button class="btn btn-info btn-sm" data-bs-toggle="collapse"
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-info btn-sm fw-semibold"
+                                            data-bs-toggle="collapse"
                                             data-bs-target="#historico{{ $rota->id_rotas }}">
-                                            Detalhar Histórico
+                                            <i class="bi bi-clock-history me-1"></i>Ver Histórico
                                         </button>
                                     </td>
                                 </tr>
 
                                 {{-- Histórico --}}
-                                <tr class="collapse" id="historico{{ $rota->id_rotas }}">
-                                    <td colspan="7">
-                                        <table class="table table-sm table-bordered">
+                                <tr class="collapse bg-dark-subtle" id="historico{{ $rota->id_rotas }}">
+                                    <td colspan="7" class="p-3">
+                                        <table class="table table-sm table-dark table-striped rounded-3 mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Data</th>
                                                     <th>Observação</th>
                                                     <th>Status</th>
-                                                    <th>Foto</th>
+                                                    <th>Comprovante</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($rota->historicos as $movimentacao)
                                                     <tr>
-                                                        <td>{{ \Carbon\Carbon::parse($movimentacao->data)->format('d/m/Y H:i:s') }}
-                                                        </td>
+                                                        <td>{{ \Carbon\Carbon::parse($movimentacao->data)->format('d/m/Y H:i:s') }}</td>
                                                         <td>{{ $movimentacao->observacao }}</td>
                                                         <td>{{ $movimentacao->status }}</td>
                                                         <td>
-                                                                <button class="btn btn-success d-flex align-items-center gap-2"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#modalHistorico{{ $movimentacao->id_historico }}">
-                                                                    <i class="bi bi-receipt"></i>
-                                                                    <span>Comprovante</span>
-                                                                </button>
+                                                            <button class="btn btn-warning btn-sm text-dark fw-semibold"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#modalHistorico{{ $movimentacao->id_historico }}">
+                                                                <i class="bi bi-receipt me-1"></i>Comprovante
+                                                            </button>
                                                         </td>
                                                     </tr>
 
-                                                        @include('pedido.modais.modal_comprovante', ['movimentacao' => $movimentacao])
-
+                                                    @include('pedido.modais.modal_comprovante', ['movimentacao' => $movimentacao])
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -124,63 +129,31 @@
                     </table>
                 </div>
             </div>
-        @else
-            <div class="alert alert-warning mt-4">
-                Este pedido ainda não tem uma rota associada.
-            </div>
-        @endif
-    </div>
-
-    {{-- Modal único para editar o status do pedido --}}
-    <div class="modal fade" id="modalEditPedido{{ $pedido->id_pedido }}" tabindex="-1"
-        aria-labelledby="modalEditPedidoLabel{{ $pedido->id_pedido }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('pedidos.update', $pedido->id_pedido) }}" enctype="multipart/form-data"
-                class="modal-content">
-                @csrf
-                @method('PUT')
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditPedidoLabel{{ $pedido->id_pedido }}">
-                        Editar Status do Pedido #{{ $pedido->id_pedido }}
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status do Pedido</label>
-                        <select name="status" class="form-select" required>
-                            <option value="em_preparo" {{ $pedido->status == 'em_preparo' ? 'selected' : '' }}>Em Preparo
-                            </option>
-                            <option value="no_centro_transferencia" {{ $pedido->status == 'no_centro_transferencia' ? 'selected' : '' }}>No Centro de
-                                Transferência</option>
-                            <option value="em_transito" {{ $pedido->status == 'em_transito' ? 'selected' : '' }}>Em
-                                Trânsito</option>
-                            <option value="em_rota_entrega" {{ $pedido->status == 'em_rota_entrega' ? 'selected' : '' }}>Em
-                                Rota de Entrega</option>
-                            <option value="entregue" {{ $pedido->status == 'entregue' ? 'selected' : '' }}>Entregue
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="foto" class="form-label">Foto (Opcional)</label>
-                        <input type="file" name="foto" class="form-control" accept="image/*">
-                        @if ($pedido->foto)
-                            <p><em>Foto atual:
-                                    <img src="{{ asset('storage/' . $pedido->foto) }}" alt="Foto do pedido"
-                                        style="max-width: 100px; max-height: 100px;">
-                                </em></p>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                </div>
-            </form>
         </div>
-    </div>
+    @else
+        <div class="alert alert-warning mt-4 border-0 rounded-3 text-dark shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>Este pedido ainda não tem uma rota associada.
+        </div>
+    @endif
+</div>
+
+<style>
+    body {
+        background-color: #12181f !important;
+    }
+
+    .btn-outline-info {
+        color: #00bcd4;
+        border-color: #00bcd4;
+    }
+
+    .btn-outline-info:hover {
+        background-color: #00bcd4;
+        color: #12181f;
+    }
+
+    .table-dark th, .table-dark td {
+        vertical-align: middle !important;
+    }
+</style>
 @endsection

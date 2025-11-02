@@ -24,7 +24,7 @@
                     <div class="col-md-3">
                         <label class="form-label text-warning" for="cep"><i class="bi bi-mailbox me-1"></i>CEP</label>
                         <input type="text" name="cep" id="cep" maxlength="8" class="form-control border-0 shadow-sm"
-                            style="background-color:#2a2f3a; color:#fff;" placeholder="Ex: 01001000" required>
+                            style="background-color:#2a2f3a; color:#fff;" required>
                     </div>
 
                     <!-- Logradouro -->
@@ -66,7 +66,7 @@
                     <div class="col-md-6">
                         <label class="form-label text-warning" for="latitude"><i
                                 class="bi bi-compass-fill me-1"></i>Latitude</label>
-                        <input type="text" name="latitude" id="latitude" maxlength="45"
+                        <input type="text" name="latitude" id="latitude" maxlength="13"
                             class="form-control border-0 shadow-sm" style="background-color:#2a2f3a; color:#fff;" required>
                     </div>
 
@@ -74,7 +74,7 @@
                     <div class="col-md-6">
                         <label class="form-label text-warning" for="longitude"><i
                                 class="bi bi-compass me-1"></i>Longitude</label>
-                        <input type="text" name="longitude" id="longitude" maxlength="45"
+                        <input type="text" name="longitude" id="longitude" maxlength="13"
                             class="form-control border-0 shadow-sm" style="background-color:#2a2f3a; color:#fff;" required>
                     </div>
 

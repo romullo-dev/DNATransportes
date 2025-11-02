@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\CentroDistribuicao;
 use Doctrine\DBAL\Schema\View;
+use Exception;
 use Illuminate\Http\Request;
+use Log;
 
 class CentroController extends Controller
 {
@@ -20,7 +22,9 @@ class CentroController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create() {}
+    public function create()
+    {
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -50,32 +54,49 @@ class CentroController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CentroDistribuicao $centroDistribuicao)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $centro = CentroDistribuicao::findOrFail($id);
+
+            $validated = $request->validate([
+                'nome' => 'required|string|max:100',
+                'cep' => 'required|string|min:8|max:9',
+                'cidade' => 'required|string|max:100',
+                'uf' => 'required|string|max:2',
+                'status' => 'required|string|in:Ativo,Inativo',
+            ]);
+
+            $centro->update($validated);
+
+            return redirect()->back()->with('success', "✅ Centro <strong>{$centro->nome}</strong> atualizado com sucesso!");
+        } catch (Exception $e) {
+            Log::error('Erro ao atualizar centro: ' . $e->getMessage());
+            return redirect()->back()->with('error', '❌ Ocorreu um erro ao atualizar o centro. Verifique os dados.');
+        }
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Visualizar detalhes de um centro.
      */
-    public function edit(CentroDistribuicao $centroDistribuicao)
+    public function show($id)
     {
-        //
+        $centro = CentroDistribuicao::findOrFail($id);
+        return response()->json($centro);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Excluir centro.
      */
-    public function update(Request $request, CentroDistribuicao $centroDistribuicao)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CentroDistribuicao $centroDistribuicao)
-    {
-        //
+        try {
+            $centro = CentroDistribuicao::findOrFail($id);
+            $centro->delete();
+            return redirect()->back()->with('success', "✅ Centro <strong>{$centro->nome}</strong> excluído com sucesso!");
+        } catch (Exception $e) {
+            Log::error('Erro ao excluir centro: ' . $e->getMessage());
+            return redirect()->back()->with('error', '❌ Erro ao excluir o centro. Ele pode estar relacionado a outros registros.');
+        }
     }
 }

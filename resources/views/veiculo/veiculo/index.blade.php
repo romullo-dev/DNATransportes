@@ -102,14 +102,16 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
 
-                                        <form action="#" method="POST"
+                                        <form action="{{ route('veiculo.destroy', $veiculo->id_Veiculo) }}" method="POST"
                                             onsubmit="return confirm('Tem certeza que deseja excluir o veículo {{ $veiculo->placa }}?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle"
+                                                title="Excluir">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
+
                                     </div>
                                 </td>
                             </tr>
