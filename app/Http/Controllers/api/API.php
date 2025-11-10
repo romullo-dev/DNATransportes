@@ -71,7 +71,7 @@ class API extends Controller
                 $file = $request->file('foto');
                 $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('canhotos'), $filename);
-                $validated['foto'] = $filename; // ✅ SALVA O NOME CERTO
+                $validated['foto'] = $filename;
             } else {
                 $validated['foto'] = null;
             }
