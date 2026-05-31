@@ -86,7 +86,9 @@ class Rota extends Model
 
     public function historicos()
     {
-        return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
+        return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas')
+            ->orderByDesc('data')
+            ->orderByDesc('id_historico');
     }
 
     public function ocorrencias()
@@ -103,6 +105,12 @@ class Rota extends Model
             'id_pedido',
             'id_rotas',
             'pedido_id_pedido'
-        );
+        )->distinct();
+    }
+
+    public function alteracoes()
+    {
+        return $this->hasMany(RotaAlteracao::class, 'rotas_id_rotas', 'id_rotas')
+            ->latest();
     }
 }

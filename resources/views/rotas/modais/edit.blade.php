@@ -12,7 +12,7 @@
             <div class="modal-body">
                 <input type="hidden" name="rotas_id_rotas" value="{{ $rotas->id_rotas }}">
                 <input type="hidden" name="pedido_id_pedido"
-                    value="{{ optional($rotas->historicos->last())->pedido_id_pedido }}">
+                    value="{{ optional($rotas->historicos->first())->pedido_id_pedido }}">
 
                 <div class="mb-3">
                     <label for="status_{{ $rotas->id_rotas }}" class="form-label">Novo Status</label>

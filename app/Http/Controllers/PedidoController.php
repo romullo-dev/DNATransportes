@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\NotaFiscal;
 use App\Models\Pedido;
-use Illuminate\Container\Attributes\Storage;
+use App\Repositories\HistoricoRepository;
 use Illuminate\Http\Request;
 
 class PedidoController extends Controller
@@ -16,7 +15,8 @@ class PedidoController extends Controller
             'notaFiscal.destinatario',
             'notaFiscal.enderecoRemetente',
             'notaFiscal.enderecoDestinatario',
-            'frete'
+            'frete',
+            'historicos',
         ])->paginate(10);
 
         return view('pedido.index', compact('result'));
@@ -28,13 +28,13 @@ class PedidoController extends Controller
 
         $statusPedidos = Pedido::with([
             'historicos' => function ($q) {
-                $q->latest('data');
-            }
+                $q->orderByDesc('data')->orderByDesc('id_historico');
+            },
         ])->get()->map(function ($pedido) {
             $status = optional($pedido->historicos->first())->status ?? 'Sem status';
+
             return trim(strtolower($status));
         });
-
 
         $resumoStatus = collect($statusPedidos)->countBy();
 
@@ -79,7 +79,6 @@ class PedidoController extends Controller
             $dadosPedidos->push($quantidade);
         }
 
-
         return view('painel.index', compact(
             'totalPedidos',
             'statusEntregue',
@@ -91,16 +90,12 @@ class PedidoController extends Controller
         ));
     }
 
-
-
-
-
     public function rastreamento()
     {
         return view('rastreio.index');
     }
 
-    public function show(Request $request)
+    public function show(Request $request, HistoricoRepository $historicos)
     {
         try {
             $codigoRastreamento = $request->input('codigo_rastreamento');
@@ -111,23 +106,25 @@ class PedidoController extends Controller
                 'notaFiscal.remetente',
                 'notaFiscal.destinatario',
                 'notaFiscal.enderecoRemetente',
-                'notaFiscal.enderecoDestinatario'
+                'notaFiscal.enderecoDestinatario',
             ])
                 ->where('codigo_rastreamento', $codigoRastreamento)
                 ->first();
 
-            if (!$pedido) {
+            if (! $pedido) {
                 return redirect()->back()->with('error', 'Código de rastreio não encontrado.');
             }
 
-            return view('rastreio.rastreio', compact('pedido'));
+            $historicosPedido = $historicos->semDuplicidades($pedido->historicos);
+
+            return view('rastreio.rastreio', [
+                'pedido' => $pedido,
+                'historicos' => $historicosPedido,
+            ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro: ');
         }
     }
-
-
-
 
     public function edit($id)
     {

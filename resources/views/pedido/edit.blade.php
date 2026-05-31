@@ -42,7 +42,7 @@
                 @endif
 
                 @php
-                    $ultimoHistorico = $pedido->historicos->last();
+                    $ultimoHistorico = $pedido->historicos->first();
                     $status = $ultimoHistorico?->status ?? 'Sem histórico';
 
                     $badgeClass = match (strtolower($status)) {
@@ -109,7 +109,7 @@
                                         <td>
                                             @if ($rota->historicos->isNotEmpty())
                                                 <span class="badge bg-success px-3 py-2">
-                                                    {{ $rota->historicos->last()->status }}
+                                                    {{ $rota->historicos->first()->status }}
                                                 </span>
                                             @else
                                                 <span class="text-muted"><em>Sem histórico</em></span>

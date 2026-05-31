@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use DomainException;
+use Illuminate\Support\Str;
 
 enum StatusHistoricoPedido: string
 {
@@ -58,6 +59,13 @@ enum StatusHistoricoPedido: string
         }
 
         return $status;
+    }
+
+    public static function representaEntregaRealizada(?string $status): bool
+    {
+        $normalizado = str_replace([' ', '_', '-'], '', Str::lower(Str::ascii(trim((string) $status))));
+
+        return in_array($normalizado, ['entregarealizada', 'entregue'], true);
     }
 
     public function isFinalizadorDeRota(): bool

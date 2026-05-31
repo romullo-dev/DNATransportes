@@ -98,7 +98,7 @@
                                 <td>
                                     @php
                                         $status =
-                                            optional($rotas->historicos->last())->status ??
+                                            optional($rotas->historicos->first())->status ??
                                             ($rotas->ultimo_status ?? 'Sem histórico');
                                         $badgeClass = match ($status) {
                                             'Aguardando coleta' => 'bg-secondary text-light',
@@ -129,9 +129,15 @@
                                         </a>
                                         <button type="button" class="btn btn-sm btn-outline-info rounded-circle"
                                             data-bs-toggle="modal" data-bs-target="#modalEdit{{ $rotas->id_rotas }}"
-                                            title="Editar">
-                                            <i class="bi bi-pencil-fill"></i>
+                                            title="Movimentar">
+                                            <i class="bi bi-arrow-repeat"></i>
                                         </button>
+                                        @if (strtolower((string) Auth::user()?->tipo_usuario) === 'admin')
+                                            <a href="{{ route('rotas.admin.edit', $rotas->id_rotas) }}"
+                                                class="btn btn-sm btn-outline-warning rounded-circle" title="Editar ADM">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        @endif
                                     </div>
 
 

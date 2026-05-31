@@ -90,7 +90,7 @@
        <p class="mb-0">
     <i class="bi bi-activity text-warning me-2"></i>
     <strong>Status Atual:</strong>
-    @php $status = optional($data->historicos->last())->status ?? 'Não informado'; @endphp
+    @php $status = optional($data->historicos->first())->status ?? 'Não informado'; @endphp
 
     <span class="fw-semibold text-light">
         <i class="bi bi-dot me-1"></i> {{ ucfirst($status) }}
@@ -127,6 +127,7 @@
                         </thead>
                         <tbody class="table-light">
                             @foreach ($data->pedidos->unique('notaFiscal.numero_nfe') as $pedido)
+                                @php $pedidoEntregue = $pedido->estaEntregue(); @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $pedido->notaFiscal->numero_nfe ?? '--' }}</td>
@@ -135,10 +136,17 @@
                                     <td>{{ $pedido->notaFiscal->remetente->nome ?? '--' }}</td>
                                     <td>{{ $pedido->notaFiscal->destinatario->nome ?? '--' }}</td>
                                     <td class="text-center align-middle">
-                                        <button type="button" class="btn btn-warning fw-semibold rounded-pill shadow-sm"
-                                            data-bs-toggle="modal" data-bs-target="#modalStatus{{ $pedido->id_pedido }}">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                        @if ($pedidoEntregue)
+                                            <button type="button" class="btn btn-outline-warning fw-semibold rounded-pill shadow-sm"
+                                                onclick="alert('Este pedido já foi entregue e não pode entrar em uma nova rota.')">
+                                                <i class="bi bi-lock-fill"></i>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-warning fw-semibold rounded-pill shadow-sm"
+                                                data-bs-toggle="modal" data-bs-target="#modalStatus{{ $pedido->id_pedido }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        @endif
                                     </td>
 
 
@@ -209,7 +217,7 @@
 
 
         {{-- 📜 Histórico --}}
-        @if ($data->historicos && $data->historicos->count() > 0)
+        @if ($historicos && $historicos->count() > 0)
             <div class="card mb-5 border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="card-header text-white fw-semibold"
                     style="background: linear-gradient(90deg, #be9312 , #ffc107);">
@@ -225,10 +233,10 @@
                             </tr>
                         </thead>
                         <tbody class="table-light">
-                            @foreach ($data->historicos->unique('status') as $hist)
+                            @foreach ($historicos as $hist)
                                 <tr>
                                     <td>{{ $hist->status }}</td>
-                                    <td>{{ $hist->created_at?->format('d/m/Y H:i') ?? '--' }}</td>
+                                    <td>{{ $hist->data?->format('d/m/Y H:i') ?? '--' }}</td>
                                     <td>{{ $hist->observacao ?? '--' }}</td>
                                 </tr>
                             @endforeach

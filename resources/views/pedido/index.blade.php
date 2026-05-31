@@ -89,7 +89,7 @@
                             <td class="text-info fw-semibold">{{ $pedido->codigo_rastreamento }}</td>
                             <td>
                                 @php
-                                    $ultimoHistorico = $pedido->historicos->last();
+                                    $ultimoHistorico = $pedido->historicos->first();
                                     $status = $ultimoHistorico?->status ?? 'Sem histórico';
 
                                     $badgeClass = match ($status) {

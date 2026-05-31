@@ -20,7 +20,7 @@
                             <i class="bi bi-box-seam me-2 text-warning"></i>Pedido #{{ $pedido->id_pedido }}
                         </h4>
                         @php
-                            $ultimoHistorico = $pedido->historicos->last();
+                            $ultimoHistorico = $historicos->first();
                             $status = strtoupper($ultimoHistorico?->status ?? 'EM PROCESSAMENTO');
 
                             $badgeClass = match ($status) {
@@ -107,7 +107,7 @@
                         </h5>
 
                         <div class="timeline">
-                            @foreach ($pedido->historicos as $historico)
+                            @foreach ($historicos as $historico)
                                 <div class="timeline-item">
                                     <div class="timeline-dot"></div>
                                     <div class="timeline-content">

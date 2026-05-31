@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTOs\AdminRotaUpdateData;
 use App\DTOs\RotaData;
 use App\Models\CentroDistribuicao;
 use App\Models\Motorista;
@@ -14,7 +15,9 @@ class RotaRepository
 {
     public function listarComRelacionamentos(): Collection
     {
-        return Rota::with(['pedidos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])->get();
+        return Rota::with(['pedidos.historicos', 'motorista.usuario', 'veiculo', 'origem', 'destino', 'historicos'])
+            ->orderByDesc('data_inicio')
+            ->get();
     }
 
     /**
@@ -26,7 +29,7 @@ class RotaRepository
             'centros' => CentroDistribuicao::where('status', 'Ativo')->get(),
             'motoristas' => Motorista::with('usuario')->get(),
             'veiculos' => Veiculo::where('status_veiculo', 'Ativo')->get(),
-            'pedido' => Pedido::all(),
+            'pedido' => Pedido::with('historicos')->orderByDesc('created_at')->get(),
         ];
     }
 
@@ -38,6 +41,35 @@ class RotaRepository
     public function atualizar(Rota $rota, RotaData $data): Rota
     {
         $rota->update($this->payload($data, incluiDataCriacao: false));
+
+        return $rota->refresh();
+    }
+
+    public function carregarParaEdicaoAdmin(Rota $rota): Rota
+    {
+        return $rota->loadMissing([
+            'pedidos.notaFiscal.remetente',
+            'pedidos.notaFiscal.destinatario',
+            'pedidos.historicos',
+            'motorista.usuario',
+            'veiculo',
+            'origem',
+            'destino',
+            'historicos',
+            'alteracoes.usuario',
+        ]);
+    }
+
+    public function atualizarAdmin(Rota $rota, AdminRotaUpdateData $data): Rota
+    {
+        $rota->update([
+            'id_motorista' => $data->motoristaId,
+            'id_veiculo' => $data->veiculoId,
+            'id_origem' => $data->origemId,
+            'id_destino' => $data->destinoId ?? $data->origemId,
+            'status' => $data->status,
+            'observacoes' => $data->observacoes,
+        ]);
 
         return $rota->refresh();
     }

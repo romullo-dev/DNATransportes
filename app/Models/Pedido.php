@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusHistoricoPedido;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,7 +48,9 @@ class Pedido extends Model
 
     public function historicos()
     {
-        return $this->hasMany(Historico::class, 'pedido_id_pedido', 'id_pedido');
+        return $this->hasMany(Historico::class, 'pedido_id_pedido', 'id_pedido')
+            ->orderByDesc('data')
+            ->orderByDesc('id_historico');
     }
 
     public function rotas()
@@ -63,5 +66,31 @@ class Pedido extends Model
     public function comprovantes()
     {
         return $this->hasMany(ComprovanteEntrega::class, 'id_pedido', 'id_pedido');
+    }
+
+    public function statusAtual(): string
+    {
+        $historico = $this->relationLoaded('historicos')
+            ? $this->historicos->first()
+            : $this->historicos()->first();
+
+        return (string) ($historico?->status ?? $this->status ?? 'Sem histórico');
+    }
+
+    public function estaEntregue(): bool
+    {
+        if (StatusHistoricoPedido::representaEntregaRealizada($this->status)) {
+            return true;
+        }
+
+        if ($this->relationLoaded('historicos')) {
+            return $this->historicos->contains(
+                fn (Historico $historico) => $historico->status === StatusHistoricoPedido::ENTREGA_REALIZADA->value
+            );
+        }
+
+        return $this->historicos()
+            ->where('status', StatusHistoricoPedido::ENTREGA_REALIZADA->value)
+            ->exists();
     }
 }

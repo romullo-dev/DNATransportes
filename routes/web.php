@@ -111,6 +111,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [RotaController::class, 'store'])->name('store');
         Route::post('/entrega', [RotaController::class, 'store_entrega'])->name('entrega.store');
         Route::put('/update/{rota}', [RotaController::class, 'update'])->name('update');
+        Route::middleware('admin')->group(function () {
+            Route::get('/admin/{rota}/editar', [RotaController::class, 'editAdmin'])->name('admin.edit');
+            Route::put('/admin/{rota}', [RotaController::class, 'updateAdmin'])->name('admin.update');
+        });
         Route::get('/show/{rotas}', [RotaController::class, 'show'])->name('show');
         Route::post('/historico', [RotaController::class, 'historico'])->name('historico');
     });
