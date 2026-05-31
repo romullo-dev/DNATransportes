@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RotaRequest extends FormRequest
 {
@@ -22,13 +23,13 @@ class RotaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rotas_id_rotas' => 'required',
-            'pedido_id_pedido' => 'required',
-            'data' => 'required|date|before_or_equal:' . now()->format('Y-m-d H:i:s'),
-            'status' => 'required',
-            'foto' => 'nullable|image|max:2048',
-            'observacao' => 'nullable|string|max:255',
-            'tipo' => 'nullable'
+            'rotas_id_rotas' => ['required', 'integer', 'exists:rotas,id_rotas'],
+            'pedido_id_pedido' => ['nullable', 'integer', 'exists:pedido,id_pedido'],
+            'data' => ['required', 'date', 'before_or_equal:now'],
+            'status' => ['required', Rule::in(['Em trânsito', 'Finalizado', 'Ocorrência'])],
+            'foto' => ['nullable', 'image', 'max:4096'],
+            'observacao' => ['nullable', 'string', 'max:500'],
+            'tipo' => ['required', 'string'],
         ];
     }
 }

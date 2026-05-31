@@ -9,11 +9,9 @@ use App\Http\Controllers\ModeloController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\RotaController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\VeiculoController;
-use App\Models\CentroDistribuicao;
-use App\Models\Pedido;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('home.home');
@@ -21,9 +19,7 @@ Route::get('/', function () {
 
 Route::get('/all', [UsuarioController::class, 'all'])->name('all');
 
-
-
-//return redirect()->route('login');
+// return redirect()->route('login');
 
 Route::get('/login', [AuthController::class, 'index'])->name(name: 'login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
@@ -38,7 +34,6 @@ Route::middleware(['auth'])->group(function () {
     /*Route::prefix('user')->name('user.')->group(function() {
 
     });*/
-
 
     Route::get('/user-read', [UsuarioController::class, 'read'])->name('read-user');
 
@@ -110,12 +105,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [HistoricoController::class, 'store'])->name('store');
     });
 
-
     Route::prefix('rotas')->name('rotas.')->group(function () {
         Route::get('/', [RotaController::class, 'index'])->name('index');
         Route::get('/criacao', [RotaController::class, 'create'])->name('create');
         Route::post('/store', [RotaController::class, 'store'])->name('store');
         Route::post('/entrega', [RotaController::class, 'store_entrega'])->name('entrega.store');
+        Route::put('/update/{rota}', [RotaController::class, 'update'])->name('update');
         Route::get('/show/{rotas}', [RotaController::class, 'show'])->name('show');
         Route::post('/historico', [RotaController::class, 'historico'])->name('historico');
     });

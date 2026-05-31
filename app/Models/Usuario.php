@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'usuario';
+
     protected $primaryKey = 'id_usuario';
+
     public $timestamps = true;
 
     protected $fillable = [
@@ -23,7 +26,7 @@ class Usuario extends Authenticatable
         'status_funcionario',
         'email',
         'foto',
-        'telefone'
+        'telefone',
     ];
 
     protected $hidden = [
@@ -43,6 +46,6 @@ class Usuario extends Authenticatable
 
     public function motorista()
     {
-        return $this->hasOne(Motorista::class, 'id_Usuario');
+        return $this->hasOne(Motorista::class, 'id_Usuario', 'id_usuario');
     }
 }

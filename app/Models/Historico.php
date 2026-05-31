@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Historico
- * 
+ *
  * @property int $id_historico
  * @property int $rotas_id_rotas
  * @property int $pedido_id_pedido
@@ -16,23 +16,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \DateTime $updated_at
  * @property string $status
  * @property string $foto
- * 
  * @property Pedido $pedido
  * @property Rota $rota
  */
 class Historico extends Model
 {
     protected $table = 'historico';
+
     protected $primaryKey = 'id_historico';
-    public $timestamps = true; 
-	
+
+    public $timestamps = true;
+
     protected $casts = [
         'id_historico' => 'int',
         'rotas_id_rotas' => 'int',
         'pedido_id_pedido' => 'int',
         'data' => 'datetime',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -41,7 +42,9 @@ class Historico extends Model
         'data',
         'status',
         'foto',
-        'observacao'
+        'observacao',
+        'descricao',
+        'local',
     ];
 
     public function pedido(): BelongsTo
@@ -52,5 +55,15 @@ class Historico extends Model
     public function rota(): BelongsTo
     {
         return $this->belongsTo(Rota::class, 'rotas_id_rotas');
+    }
+
+    public function comprovante()
+    {
+        return $this->hasOne(ComprovanteEntrega::class, 'id_historico', 'id_historico');
+    }
+
+    public function ocorrencias()
+    {
+        return $this->hasMany(Ocorrencia::class, 'id_historico', 'id_historico');
     }
 }

@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Rota
- * 
+ *
  * @property int $id_rotas
  * @property int $id_veiculo
  * @property int $id_motorista
@@ -21,28 +22,31 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $observacoes
  * @property int|null $id_origem
  * @property int|null $id_destino
- * 
  * @property Motorista $motorista
  * @property Veiculo $veiculo
  * @property CentroDistribuicao|null $origem
  * @property CentroDistribuicao|null $destino
  * @property Collection|Historico[] $historicos
- *
- * @package App\Models
  */
 class Rota extends Model
 {
+    use HasFactory;
+
     protected $table = 'rotas';
-    protected $primaryKey = 'id_rotas'; 
+
+    protected $primaryKey = 'id_rotas';
+
     public $timestamps = false;
+
     protected $casts = [
         'id_veiculo' => 'int',
         'id_motorista' => 'int',
         'distancia' => 'float',
         'previsao' => 'datetime',
+        'data_inicio' => 'datetime',
         'data_criacao' => 'datetime',
         'id_origem' => 'int',
-        'id_destino' => 'int'
+        'id_destino' => 'int',
     ];
 
     protected $fillable = [
@@ -52,12 +56,13 @@ class Rota extends Model
         'distancia',
         'previsao',
         'data_rota',
+        'data_inicio',
         'data_criacao',
         'status',
         'observacoes',
         'id_origem',
         'id_destino',
-        ];
+    ];
 
     public function motorista()
     {
@@ -79,23 +84,25 @@ class Rota extends Model
         return $this->belongsTo(CentroDistribuicao::class, 'id_destino');
     }
 
-     public function historicos()
+    public function historicos()
     {
         return $this->hasMany(Historico::class, 'rotas_id_rotas', 'id_rotas');
     }
-public function pedidos()
-{
-    return $this->hasManyThrough(
-        Pedido::class,          
-        Historico::class,      
-        'rotas_id_rotas',     
-        'id_pedido',         
-        'id_rotas',           
-        'pedido_id_pedido'
-    );
-}
 
+    public function ocorrencias()
+    {
+        return $this->hasMany(Ocorrencia::class, 'id_rotas', 'id_rotas');
+    }
 
-
-
+    public function pedidos()
+    {
+        return $this->hasManyThrough(
+            Pedido::class,
+            Historico::class,
+            'rotas_id_rotas',
+            'id_pedido',
+            'id_rotas',
+            'pedido_id_pedido'
+        );
+    }
 }

@@ -2,52 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Historico;
-use App\Models\Pedido;
-use Illuminate\Http\Request;
+use App\Enums\TipoRota;
+use App\Http\Requests\EntregaHistoricoRequest;
+use App\Services\ComprovanteEntregaService;
+use App\Services\RotaHistoricoService;
 use Carbon\Carbon;
+use DomainException;
+use Throwable;
 
 class HistoricoController extends Controller
 {
-
-    public function store(Request $request)
-    {
+    public function store(
+        EntregaHistoricoRequest $request,
+        ComprovanteEntregaService $comprovantes,
+        RotaHistoricoService $historicos,
+    ) {
         try {
+            $data = $request->validated();
 
-            $tipo = $request->tipo;
-
-
-            //dd($request);
-
-
-            //dd($tipo);
-
-            if ($tipo === 'Entrega') {
-                $request->validate([]);
-
-                $pedido = Pedido::findOrFail($request->pedido_id_pedido);
-
-                // 📸 upload da foto (opcional)
-                $fotoPath = null;
-                if ($request->hasFile('foto')) {
-                    $fotoPath = $request->file('foto')->store('historicos', 'public');
-                }
-
-                Historico::create([
-                    'pedido_id_pedido' => $pedido->id_pedido,
-                    'rotas_id_rotas' => $request->rotas_id_rotas,
-                    'status' => $request->status,
-                    'observacao' => $request->observacao,
-                    'foto' => $fotoPath,
-                    'data' => $request->data,
-                ]);
-
-                return redirect()->route('rotas.show', ['rotas' => $request->rotas_id_rotas])
-                    ->with('success', 'Histórico criado com sucesso!');
-            } else {
-                return back()->with('error', 'Atualização bloqueada — apenas notas de entrega estão disponíveis para alteração.');
+            if (TipoRota::fromRequest($data['tipo']) !== TipoRota::ENTREGA) {
+                throw new DomainException('Atualização bloqueada — apenas notas de entrega estão disponíveis para alteração.');
             }
-        } catch (\Throwable $th) {
+
+            $foto = $comprovantes->armazenar($request->file('foto'));
+
+            $historicos->registrarEntregaPedido(
+                rotaId: (int) $data['rotas_id_rotas'],
+                pedidoId: (int) $data['pedido_id_pedido'],
+                status: $data['status'],
+                data: Carbon::parse($data['data']),
+                foto: $foto,
+                observacao: $data['observacao'] ?? null,
+            );
+
+            return redirect()->route('rotas.show', ['rotas' => $data['rotas_id_rotas']])
+                ->with('success', 'Histórico criado com sucesso!');
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (Throwable $th) {
+            report($th);
+
             return back()->with('error', 'Erro ao salvar histórico: ');
         }
     }

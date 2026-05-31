@@ -162,7 +162,7 @@
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
 
-                        <form action="{{ route('historico.store') }}" method="POST">
+                        <form action="{{ route('historico.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
                                 <input type="hidden" name="pedido_id_pedido" value="{{ $pedido->id_pedido }}">

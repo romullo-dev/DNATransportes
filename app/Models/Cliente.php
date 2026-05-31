@@ -10,12 +10,13 @@ class Cliente extends Model
     use HasFactory;
 
     protected $table = 'cliente';
+
     protected $primaryKey = 'id_cliente';
 
     protected $fillable = [
         'nome',
         'documento',
-        'tipo'
+        'tipo',
     ];
 
     public $timestamps = false;
@@ -29,5 +30,9 @@ class Cliente extends Model
     {
         return $this->hasMany(NotaFiscal::class, 'cliente_destinatario');
     }
-}
 
+    public function contatos()
+    {
+        return $this->hasMany(ClienteContato::class, 'id_cliente', 'id_cliente');
+    }
+}

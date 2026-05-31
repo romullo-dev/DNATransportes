@@ -10,10 +10,19 @@ class Produto extends Model
     use HasFactory;
 
     protected $table = 'produtos';
+
     protected $primaryKey = 'id_produto';
 
     protected $fillable = [
-        'nome'
+        'nome',
+        'sku',
+        'peso_kg',
+        'valor',
+    ];
+
+    protected $casts = [
+        'peso_kg' => 'float',
+        'valor' => 'float',
     ];
 
     public $timestamps = false;
@@ -22,5 +31,9 @@ class Produto extends Model
     {
         return $this->hasMany(NotaFiscal::class, 'id_produto');
     }
-}
 
+    public function notasFiscais()
+    {
+        return $this->hasMany(NotaFiscal::class, 'id_produto', 'id_produto');
+    }
+}

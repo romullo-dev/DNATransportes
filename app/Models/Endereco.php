@@ -10,6 +10,7 @@ class Endereco extends Model
     use HasFactory;
 
     protected $table = 'endereco';
+
     protected $primaryKey = 'id_endereco';
 
     protected $fillable = [
@@ -19,19 +20,18 @@ class Endereco extends Model
         'observacao',
         'uf',
         'bairro',
-        'cidade'
+        'cidade',
     ];
 
     public $timestamps = false;
 
     public function notasRemetente()
     {
-        return $this->hasMany(NotaFiscal::class, 'endereco_remetente');
+        return $this->hasMany(NotaFiscal::class, 'endereco_remetente', 'id_endereco');
     }
 
     public function notasDestinatario()
     {
-        return $this->hasMany(NotaFiscal::class, 'endereco_destinatario');
+        return $this->hasMany(NotaFiscal::class, 'endereco_destinatario', 'id_endereco');
     }
 }
-
