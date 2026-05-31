@@ -127,6 +127,10 @@
                                             class="btn btn-sm btn-outline-warning rounded-circle" title="Visualizar">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
+                                        <a href="{{ route('rotas.romaneio', $rotas->id_rotas) }}" target="_blank"
+                                            class="btn btn-sm btn-outline-light rounded-circle" title="Gerar Romaneio">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                                        </a>
                                         <button type="button" class="btn btn-sm btn-outline-info rounded-circle"
                                             data-bs-toggle="modal" data-bs-target="#modalEdit{{ $rotas->id_rotas }}"
                                             title="Movimentar">

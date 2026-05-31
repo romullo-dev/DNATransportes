@@ -12,6 +12,7 @@ use App\Http\Requests\UpdateRotaRequest;
 use App\Models\Rota;
 use App\Repositories\HistoricoRepository;
 use App\Services\ComprovanteEntregaService;
+use App\Services\RomaneioPdfService;
 use App\Services\RotaHistoricoService;
 use App\Services\RotaService;
 use DomainException;
@@ -110,6 +111,25 @@ class RotaController extends Controller
             report($e);
 
             return back()->withInput()->with('error', 'Erro ao atualizar rota.');
+        }
+    }
+
+    public function gerarRomaneio(Rota $rota, RomaneioPdfService $romaneio)
+    {
+        try {
+            $pdf = $romaneio->gerar($rota);
+            $filename = 'romaneio-rota-'.$rota->id_rotas.'.pdf';
+
+            return response($pdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$filename.'"',
+            ]);
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'Erro ao gerar romaneio da rota.');
         }
     }
 

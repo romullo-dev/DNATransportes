@@ -21,6 +21,10 @@
                 <i class="bi bi-geo-alt-fill me-2"></i> Detalhes da Rota #{{ $data->id_rotas }}
             </h1>
             <h5 class="text-muted">DNA Transportes — Monitoramento e Logística Inteligente</h5>
+            <a href="{{ route('rotas.romaneio', $data->id_rotas) }}" target="_blank"
+                class="btn btn-warning rounded-pill px-4 mt-3 fw-bold shadow-sm">
+                <i class="bi bi-file-earmark-pdf-fill me-2"></i>Gerar Romaneio
+            </a>
         </div>
 
         {{-- 🧾 Informações da Rota --}}
