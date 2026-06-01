@@ -52,7 +52,7 @@
     </form>
 
     <p class="mt-6 text-sm text-gray-400">
-      &copy; 2025 DNA Transporte & Logística
+      &copy; 2026 DNA Transporte & Logística
     </p>
   </div>
 
